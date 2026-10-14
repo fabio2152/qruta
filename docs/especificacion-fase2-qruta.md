@@ -361,6 +361,7 @@ Las reglas RE-01 a RE-10 de la sección 2 se mantienen. Las siguientes se agrega
 - **RE-26.** Solo el punto de recepción elegido como destino puede registrar la recepción, solo cuando el producto está en EN_DESTINO y una sola vez. La temperatura debe estar entre -40 °C y 60 °C, y la humedad entre 0 % y 100 %; fuera de esos valores se considera una lectura inválida del instrumento.
 - **RE-27.** Si el producto tiene destino, no puede pasar a ENTREGADO hasta que el destino haya registrado la recepción.
 - **RE-28.** Al pasar a ENTREGADO se guarda la hora de entrega y el transportista vuelve a quedar LIBRE.
+- **Aclaración (decisión del 14/10/2026).** El paso a ENTREGADO no es automático: lo hace el transportista asignado con `cambiarEstado`, después de que el destino registró la recepción (RE-04, RE-27). La flecha "Apto → ENTREGADO" del flujo de la sección 5 se entiende así.
 
 ### 7.4 Evaluación
 
@@ -374,6 +375,7 @@ Las reglas RE-01 a RE-10 de la sección 2 se mantienen. Las siguientes se agrega
 - **RE-33.** Solo el regulador puede bloquear un producto, en cualquier etapa, y el motivo es obligatorio. Un producto bloqueado no admite cambios de etapa, recepción, aceptación ni publicación.
 - **RE-34.** Solo el regulador puede desbloquear un producto, que vuelve a la etapa que tenía antes del bloqueo. El bloqueo y el desbloqueo quedan registrados en el historial, con su motivo.
 - **RE-35.** El regulador aprueba y suspende a productores y transportistas. Un usuario suspendido no puede operar. No se puede suspender a un transportista OCUPADO: primero debe terminar su traslado o el regulador debe bloquear el producto.
+- **RE-41 (requisito nuevo, 14/10/2026).** Si un producto se bloquea después de que su destino registró la recepción, sea por evaluación crítica o por el regulador, su transportista vuelve a quedar LIBRE: el traslado físico ya terminó. Así el transportista puede tomar otro lote (paso 8 del guion).
 - **RE-36.** Solo el regulador descarga el reporte sanitario en CSV, con una fila por producto y estas columnas: código, tipo, productor, región de origen, etapa, transportista, destino, duración del transporte en horas, temperatura de recepción, vida útil restante, ruptura, nivel de riesgo, apto y bloqueado.
 
 ### 7.6 Consulta pública
@@ -557,6 +559,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T57 (normal).** Palta recibida a 10,5 °C: hay ruptura, el riesgo es ALTO, es apta y no se bloquea. → RE-31
 - **T58 (normal).** Banano producido el 01/09/2026 a las 08:00 y recibido a 14 °C el 12/09/2026 a las 14:00 (270 horas): le quedan 66 horas, el 20 % o menos de su vida útil, y el riesgo es MEDIO. → RE-31
 - **T59 (límite).** Pollo recibido 168 horas después de su producción: vida útil restante de 0, riesgo CRITICO y bloqueado. → RE-29, RE-31, RE-32
+- **T75 (normal, requisito nuevo).** Después del bloqueo automático por evaluación crítica, el transportista del producto vuelve a quedar LIBRE. → RE-41
 - Refactor sugerido: reunir el cálculo en un `EvaluadorDeProducto` y usar constantes con nombre para los 3 °C y el 20 %.
 
 ### Ciclo 12 — Regulación
@@ -585,7 +588,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T73 (normal).** El administrador aprueba un mercado. → RE-15
 - **T74 (normal).** El resumen del administrador informa la cantidad de usuarios por rol y de productos por etapa. → RE-40
 
-**Total al terminar: 74 pruebas en 14 ciclos.**
+**Total al terminar: 75 pruebas en 14 ciclos** (T22 a T74, más T75 por el requisito nuevo RE-41).
 
 ---
 
