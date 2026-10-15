@@ -1,5 +1,7 @@
 package pe.qruta.trazabilidad.dominio;
 
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
+
 
 public class Usuario {
 
@@ -41,6 +43,11 @@ public class Usuario {
 
     public Rol getRol() {
         return rol;
+    }
+
+
+    public EstadoCuenta getEstadoCuenta() {
+        return null;
     }
 
 
