@@ -212,6 +212,25 @@ class RegulacionTest {
     }
 
 
+    @Test
+    void elReguladorSuspendeAUnProductorQueYaNoPuedeIniciarSesion() {
+
+        // Dado
+        // productor1 activo (prepararServicios)
+
+        // Cuando
+        regulacion.suspender("productor1", regulador);
+
+        // Entonces
+        assertThat(usuarios.buscarPorNombreUsuario("productor1").orElseThrow().getEstadoCuenta())
+            .isEqualTo(EstadoCuenta.SUSPENDIDA);
+
+        assertThatThrownBy(() -> new LoginService(usuarios).iniciarSesion("productor1", "clave123"))
+            .isInstanceOf(CuentaNoActivaException.class)
+            .hasMessage("Su cuenta está suspendida");
+    }
+
+
     /** Pollo aceptado por transportista1, con destino mercado1, que salió a las 08:00. */
     private Producto polloEnTransito() {
 
