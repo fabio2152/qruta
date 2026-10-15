@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.RelojAjustable;
+import pe.qruta.trazabilidad.dominio.CambioDeEstadoNoPermitidoException;
 import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
@@ -134,6 +135,21 @@ class RegulacionTest {
         assertThatThrownBy(() -> regulacion.bloquear(pollo.getId(), regulador, "  "))
             .isInstanceOf(DatoInvalidoException.class)
             .hasMessage("El motivo del bloqueo es obligatorio");
+    }
+
+
+    @Test
+    void unProductoBloqueadoNoPuedeCambiarDeEtapa() {
+
+        // Dado
+        Producto pollo = polloEnTransito();
+
+        regulacion.bloquear(pollo.getId(), regulador, "Sospecha de contaminación");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.cambiarEstado(pollo.getId(), EstadoProducto.EN_DESTINO, transportista))
+            .isInstanceOf(CambioDeEstadoNoPermitidoException.class)
+            .hasMessage("El producto está bloqueado y no puede cambiar de etapa");
     }
 
 
