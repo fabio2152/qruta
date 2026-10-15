@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
@@ -91,6 +92,21 @@ class CrearProductoTest {
         assertThatThrownBy(() -> servicio.crearProducto(datosDePollo(), transportista))
             .isInstanceOf(OperacionNoAutorizadaException.class)
             .hasMessage("Solo un productor puede crear productos");
+    }
+
+
+    @Test
+    void unProductoConFechaDeProduccionEnElFuturoSeRechaza() {
+
+        // Dado
+        DatosProducto datos = datosDePollo();
+
+        datos.setFechaProduccion(LocalDateTime.of(2026, 9, 1, 9, 0));
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.crearProducto(datos, productor))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("La fecha de producción no puede estar en el futuro");
     }
 
 
