@@ -39,6 +39,12 @@ public class RegistroService {
             );
         }
 
+        if (!solicitud.getCorreo().matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
+            throw new DatoInvalidoException(
+                "El correo no tiene un formato válido"
+            );
+        }
+
         if (usuarios.buscarPorNombreUsuario(solicitud.getNombreUsuario()).isPresent()) {
             throw new UsuarioYaExisteException(
                 "El nombre de usuario " + solicitud.getNombreUsuario() + " ya está registrado"
