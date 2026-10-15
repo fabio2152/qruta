@@ -160,6 +160,21 @@ class CrearProductoTest {
     }
 
 
+    @Test
+    void unPolloSinCertificadoSanitarioSenasaSeRechaza() {
+
+        // Dado
+        DatosProducto datos = datosDePollo();
+
+        datos.setCertificadoSanitarioSenasa("");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.crearProducto(datos, productor))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("Los productos pecuarios requieren certificado sanitario SENASA");
+    }
+
+
     private Productor productorDeTipo(TipoProductor tipoProductor) {
 
         return new Productor(
