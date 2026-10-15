@@ -1,5 +1,6 @@
 package pe.qruta.trazabilidad.servicio;
 
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
@@ -19,6 +20,12 @@ public class RegistroService {
 
 
     public Usuario registrar(SolicitudRegistro solicitud) {
+
+        if (solicitud.getContrasena().length() < 8) {
+            throw new DatoInvalidoException(
+                "La contraseña debe tener al menos 8 caracteres"
+            );
+        }
 
         Productor productor =
             new Productor(
