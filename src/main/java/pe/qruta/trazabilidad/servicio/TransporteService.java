@@ -82,6 +82,12 @@ public class TransporteService {
             );
         }
 
+        if (!puntoDeRecepcion.necesita(producto.getTipoProducto())) {
+            throw new DatoInvalidoException(
+                puntoDeRecepcion.getRazonSocial() + " no necesita " + producto.getTipoProducto()
+            );
+        }
+
         producto.asignarDestino(puntoDeRecepcion);
 
         productos.guardar(producto);
