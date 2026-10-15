@@ -1,6 +1,8 @@
 package pe.qruta.trazabilidad.servicio;
 
+import pe.qruta.trazabilidad.dominio.CambioDeEstadoNoPermitidoException;
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
+import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
@@ -61,6 +63,13 @@ public class TransporteService {
         if (!transportista.equals(producto.getIntermediarioAsignado())) {
             throw new OperacionNoAutorizadaException(
                 "Solo el transportista asignado elige el destino"
+            );
+        }
+
+        if (producto.getEstado() != EstadoProducto.EN_ORIGEN
+                && producto.getEstado() != EstadoProducto.EN_TRANSITO) {
+            throw new CambioDeEstadoNoPermitidoException(
+                "El destino solo se elige mientras el producto está EN_ORIGEN o EN_TRANSITO"
             );
         }
 
