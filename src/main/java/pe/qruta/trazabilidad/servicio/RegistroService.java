@@ -204,20 +204,34 @@ public class RegistroService {
                     )
                 );
 
-        if (usuario instanceof PuntoDeRecepcion && aprobador.getRol() == Rol.REGULADOR) {
+        validarQuienAprueba(usuario, aprobador);
+
+        usuario.activar();
+
+        usuarios.guardar(usuario);
+    }
+
+
+    /** RE-15: los mercados y centros de acopio no los aprueba el regulador; los productores y transportistas, solo él. */
+    private void validarQuienAprueba(
+            Usuario usuario,
+            Usuario aprobador
+    ) {
+
+        boolean esPuntoDeRecepcion = usuario instanceof PuntoDeRecepcion;
+
+        boolean apruebaElRegulador = aprobador.getRol() == Rol.REGULADOR;
+
+        if (esPuntoDeRecepcion && apruebaElRegulador) {
             throw new OperacionNoAutorizadaException(
                 "Las cuentas de mercados y centros de acopio las aprueba el administrador"
             );
         }
 
-        if (!(usuario instanceof PuntoDeRecepcion) && aprobador.getRol() != Rol.REGULADOR) {
+        if (!esPuntoDeRecepcion && !apruebaElRegulador) {
             throw new OperacionNoAutorizadaException(
                 "Solo el regulador aprueba productores y transportistas"
             );
         }
-
-        usuario.activar();
-
-        usuarios.guardar(usuario);
     }
 }
