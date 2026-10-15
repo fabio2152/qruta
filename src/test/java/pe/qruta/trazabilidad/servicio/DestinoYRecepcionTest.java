@@ -258,6 +258,19 @@ class DestinoYRecepcionTest {
     }
 
 
+    @Test
+    void unTransportistaNoAsignadoIntentaElegirElDestinoYSeRechaza() {
+
+        // Dado
+        Producto palta = paltaAceptadaPorElTransportista();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> transporte.elegirDestino(palta.getId(), otroTransportista, "mercado1"))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Solo el transportista asignado elige el destino");
+    }
+
+
     /** Palta aceptada, con destino mercado1, que viajó de 08:00 a 14:00 y está EN_DESTINO. */
     private Producto paltaEnDestino() {
 
