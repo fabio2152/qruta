@@ -88,6 +88,12 @@ public class Usuario {
     }
 
 
+    /** RE-35: un usuario suspendido no puede operar (ni iniciar sesión). */
+    public void suspender() {
+        estadoCuenta = EstadoCuenta.SUSPENDIDA;
+    }
+
+
     @Override
     public boolean equals(Object otro) {
         return otro instanceof Usuario usuario

@@ -99,6 +99,10 @@ public class RegulacionService {
                 "No se puede suspender a un transportista OCUPADO: primero debe terminar su traslado"
             );
         }
+
+        usuario.suspender();
+
+        usuarios.guardar(usuario);
     }
 
 
