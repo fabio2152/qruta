@@ -3,6 +3,7 @@ package pe.qruta.trazabilidad.servicio;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.RelojAjustable;
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
+import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
@@ -18,6 +20,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
+import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.EstadoMaduracion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
@@ -37,6 +40,8 @@ class DestinoYRecepcionTest {
     private ProductoService servicio;
 
     private TransporteService transporte;
+
+    private RecepcionService recepcion;
 
     private Productor productor;
 
@@ -61,6 +66,8 @@ class DestinoYRecepcionTest {
         servicio = new ProductoService(productos, reloj);
 
         transporte = new TransporteService(productos, usuarios);
+
+        recepcion = new RecepcionService(productos, reloj);
 
         productor = new Productor(
             "productor1", "Juan Mamani Quispe", "juan.mamani@correo.pe", "clave123", EstadoCuenta.ACTIVA,
@@ -120,6 +127,42 @@ class DestinoYRecepcionTest {
         assertThatThrownBy(() -> transporte.elegirDestino(palta.getId(), transportista, "mercado2"))
             .isInstanceOf(DatoInvalidoException.class)
             .hasMessage("Mercado Avícola del Callao no necesita PALTA");
+    }
+
+
+    @Test
+    void elDestinoRegistraLaRecepcionAyLaMedicionQuedaGuardadaConLaHoraDelSistema() {
+
+        // Dado
+        Producto palta = paltaEnDestino();
+
+        // Cuando
+        recepcion.registrarRecepcion(palta.getId(), mercado, new BigDecimal("5"), new BigDecimal("85"));
+
+        // Entonces
+        assertThat(palta.getMediciones())
+            .containsExactly(
+                new Medicion(horaDelDia(14, 0), new BigDecimal("5"), new BigDecimal("85"), mercado)
+            );
+    }
+
+
+    /** Palta aceptada, con destino mercado1, que viajó de 08:00 a 14:00 y está EN_DESTINO. */
+    private Producto paltaEnDestino() {
+
+        Producto palta = paltaAceptadaPorElTransportista();
+
+        transporte.elegirDestino(palta.getId(), transportista, "mercado1");
+
+        reloj.ajustarA(horaDelDia(8, 0));
+
+        servicio.cambiarEstado(palta.getId(), EstadoProducto.EN_TRANSITO, transportista);
+
+        reloj.ajustarA(horaDelDia(14, 0));
+
+        servicio.cambiarEstado(palta.getId(), EstadoProducto.EN_DESTINO, transportista);
+
+        return palta;
     }
 
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
+import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
@@ -201,6 +202,11 @@ public class Producto {
 
     public void asignarDestino(PuntoDeRecepcion destino) {
         this.destino = destino;
+    }
+
+
+    public List<Medicion> getMediciones() {
+        return List.of();
     }
 
 
