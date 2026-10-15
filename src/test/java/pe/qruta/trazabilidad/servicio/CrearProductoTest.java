@@ -125,6 +125,19 @@ class CrearProductoTest {
     }
 
 
+    @Test
+    void unProductorAgricolaIntentaCrearUnPolloYSeRechaza() {
+
+        // Dado
+        Productor productorAgricola = productorDeTipo(TipoProductor.AGRICOLA);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.crearProducto(datosDePollo(), productorAgricola))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Un productor AGRICOLA no puede crear productos de categoría PECUARIO");
+    }
+
+
     private Productor productorDeTipo(TipoProductor tipoProductor) {
 
         return new Productor(
