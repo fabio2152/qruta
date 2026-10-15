@@ -54,6 +54,10 @@ public class SesionService {
     }
 
 
+    public void cerrar(String token) {
+    }
+
+
     private record Sesion(
             Usuario usuario,
             LocalDateTime emitida

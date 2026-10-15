@@ -47,6 +47,26 @@ class SesionServiceTest {
     }
 
 
+    @Test
+    void alCerrarSesionElTokenDejaDeSerValido() {
+
+        // Dado
+        SesionService sesiones =
+            new SesionService(new RelojAjustable(horaDelDia(8, 0)));
+
+        String token =
+            sesiones.iniciar(new Usuario("productor1", "clave123", Rol.PRODUCTOR));
+
+        // Cuando
+        sesiones.cerrar(token);
+
+        // Entonces
+        assertThatThrownBy(() -> sesiones.validar(token))
+            .isInstanceOf(SesionInvalidaException.class)
+            .hasMessage("Debe iniciar sesión");
+    }
+
+
     private LocalDateTime horaDelDia(
             int hora,
             int minuto
