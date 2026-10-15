@@ -50,6 +50,10 @@ public class Producto {
 
     private final List<Medicion> mediciones = new ArrayList<>();
 
+    private EstadoProducto estadoAntesDelBloqueo;
+
+    private String motivoBloqueo;
+
     private Long version;
 
 
@@ -207,6 +211,24 @@ public class Producto {
 
     public void asignarDestino(PuntoDeRecepcion destino) {
         this.destino = destino;
+    }
+
+
+    /** Lo saca de la secuencia normal y recuerda la etapa que tenía, para poder desbloquearlo (6.6). */
+    public void bloquear(String motivo) {
+        estadoAntesDelBloqueo = estado;
+        motivoBloqueo = motivo;
+        estado = EstadoProducto.BLOQUEADO;
+    }
+
+
+    public EstadoProducto getEstadoAntesDelBloqueo() {
+        return estadoAntesDelBloqueo;
+    }
+
+
+    public String getMotivoBloqueo() {
+        return motivoBloqueo;
     }
 
 

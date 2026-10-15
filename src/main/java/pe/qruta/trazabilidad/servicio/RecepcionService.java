@@ -10,6 +10,7 @@ import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.dominio.evaluacion.NivelRiesgo;
+import pe.qruta.trazabilidad.dominio.producto.CategoriaProducto;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 
@@ -52,8 +53,6 @@ public class RecepcionService {
 
         producto.registrarRecepcion(medicion);
 
-        productos.guardar(producto);
-
         long horasDesdeLaProduccion =
             Duration.between(producto.getFechaProduccion(), medicion.fechaHora()).toHours();
 
@@ -70,8 +69,23 @@ public class RecepcionService {
             vidaUtilRestante -= (tipo.getFactorDeterioro() - 1) * horasDeTransporte;
         }
 
+        boolean ruptura =
+            temperatura.compareTo(tipo.getTemperaturaMaxima().add(new BigDecimal("3"))) > 0
+                || temperatura.compareTo(tipo.getTemperaturaMinima().subtract(new BigDecimal("3"))) < 0;
+
+        NivelRiesgo riesgo =
+            ruptura && tipo.getCategoria() == CategoriaProducto.PECUARIO
+                ? NivelRiesgo.CRITICO
+                : NivelRiesgo.BAJO;
+
+        if (riesgo == NivelRiesgo.CRITICO) {
+            producto.bloquear("Evaluación crítica");
+        }
+
+        productos.guardar(producto);
+
         return new Evaluacion(
-            medicion.fechaHora(), temperatura, vidaUtilRestante, false, NivelRiesgo.BAJO, true
+            medicion.fechaHora(), temperatura, vidaUtilRestante, ruptura, riesgo, riesgo != NivelRiesgo.CRITICO
         );
     }
 }
