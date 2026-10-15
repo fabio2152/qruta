@@ -79,6 +79,8 @@ public class RecepcionService {
             riesgo = tipo.getCategoria() == CategoriaProducto.PECUARIO
                 ? NivelRiesgo.CRITICO
                 : NivelRiesgo.ALTO;
+        } else if (vidaUtilRestante * 100 <= tipo.getVidaUtilBaseHoras() * 20L) {
+            riesgo = NivelRiesgo.MEDIO;
         }
 
         if (riesgo == NivelRiesgo.CRITICO) {
