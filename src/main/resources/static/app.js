@@ -28,6 +28,10 @@ const VISTAS = {
     REGULADOR: {
         titulo: "Todos los productos",
         descripcion: "Aprueba cuentas y revisa todos los productos con su historial."
+    },
+    ADMINISTRADOR: {
+        titulo: "Todos los productos y recorridos",
+        descripcion: "Gestiona la plataforma: crea reguladores y aprueba mercados y centros de acopio. El control sanitario es del regulador."
     }
 };
 
@@ -133,7 +137,9 @@ async function mostrarPanel() {
 
     $("panel-crear").hidden = tipo !== "PRODUCTOR";
     $("panel-transportista").hidden = tipo !== "TRANSPORTISTA";
-    $("panel-usuarios").hidden = tipo !== "REGULADOR";
+    $("panel-usuarios").hidden = tipo !== "REGULADOR" && tipo !== "ADMINISTRADOR";
+    $("barra-regulador").hidden = tipo !== "REGULADOR";
+    $("panel-admin").hidden = tipo !== "ADMINISTRADOR";
     $("panel-punto").hidden = !esPuntoDeRecepcion(tipo);
 
     await actualizar();
@@ -145,7 +151,8 @@ async function actualizar() {
 
     try {
         if (tipo === "TRANSPORTISTA") await cargarTransportista();
-        if (tipo === "REGULADOR") await cargarUsuarios();
+        if (tipo === "REGULADOR" || tipo === "ADMINISTRADOR") await cargarUsuarios();
+        if (tipo === "ADMINISTRADOR") await cargarResumen();
         if (esPuntoDeRecepcion(tipo)) await cargarPuntoDeRecepcion();
         await cargarProductos();
     } catch (error) {
@@ -238,12 +245,27 @@ async function cargarUsuarios() {
                 </div>
                 ${u.estadoCuenta === "PENDIENTE"
                     ? `<button class="boton boton--primario boton--pequeno" data-aprobar="${u.nombreUsuario}">Aprobar</button>`
-                    : u.estadoCuenta === "ACTIVA" && (u.tipoCuenta === "PRODUCTOR" || u.tipoCuenta === "TRANSPORTISTA")
+                    : tipoCuenta() === "REGULADOR" && u.estadoCuenta === "ACTIVA" && (u.tipoCuenta === "PRODUCTOR" || u.tipoCuenta === "TRANSPORTISTA")
                         ? `<span class="accion-en-linea"><span class="insignia insignia--ACTIVA">ACTIVA</span>
                            <button class="boton boton--fantasma boton--pequeno" data-suspender="${u.nombreUsuario}">Suspender</button></span>`
                         : `<span class="insignia insignia--${u.estadoCuenta}">${u.estadoCuenta}</span>`}
             </li>`)
         .join("");
+}
+
+
+async function cargarResumen() {
+
+    const resumen = await api("GET", "/api/admin/resumen");
+
+    const lista = (titulo, valores) => `
+        <p class="resumen__titulo">${titulo}</p>
+        <ul class="lista-usuarios">${Object.entries(valores)
+            .map(([clave, cantidad]) => `<li><span>${clave.replaceAll("_", " ")}</span><strong>${cantidad}</strong></li>`)
+            .join("") || `<li class="texto-suave">Sin datos</li>`}</ul>`;
+
+    $("resumen").innerHTML =
+        lista("Usuarios por rol", resumen.usuariosPorRol) + lista("Productos por etapa", resumen.productosPorEtapa);
 }
 
 
@@ -662,6 +684,23 @@ $("formulario-necesidades").addEventListener("submit", (evento) => {
 });
 
 $("cerrar-qr").addEventListener("click", () => $("dialogo-qr").close());
+
+$("formulario-regulador").addEventListener("submit", (evento) => {
+
+    evento.preventDefault();
+
+    ejecutar(async () => {
+        await api("POST", "/api/reguladores", {
+            nombreUsuario: $("regulador-usuario").value.trim(),
+            nombreCompleto: $("regulador-nombre").value.trim(),
+            correo: $("regulador-correo").value.trim(),
+            contrasena: $("regulador-contrasena").value,
+            institucion: $("regulador-institucion").value.trim(),
+            codigoInstitucional: $("regulador-codigo").value.trim()
+        });
+        $("formulario-regulador").reset();
+    }, "Regulador creado: su cuenta queda ACTIVA");
+});
 
 /** El CSV exige la sesión, así que se descarga con fetch y el token, no con un enlace directo. */
 $("boton-csv").addEventListener("click", async () => {

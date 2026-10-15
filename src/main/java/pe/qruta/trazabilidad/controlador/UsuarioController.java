@@ -35,22 +35,23 @@ public class UsuarioController {
     }
 
 
-    /** Solo el regulador: lista productores e intermediarios con el estado de su cuenta. */
+    /** El regulador ve productores e intermediarios; el administrador ve a todos (RE-40). */
     @GetMapping
     public List<UsuarioRespuesta> listar(
             @RequestAttribute(InterceptorDeSesion.USUARIO) Usuario usuario
     ) {
 
-        if (usuario.getRol() != Rol.REGULADOR) {
+        if (usuario.getRol() != Rol.REGULADOR && usuario.getRol() != Rol.ADMINISTRADOR) {
             throw new OperacionNoAutorizadaException(
-                "Solo el regulador puede ver los usuarios del sistema"
+                "Solo el regulador y el administrador pueden ver los usuarios del sistema"
             );
         }
 
         return usuarios
                 .listarTodos()
                 .stream()
-                .filter(otro -> otro.getRol() != Rol.REGULADOR)
+                .filter(otro -> usuario.getRol() == Rol.ADMINISTRADOR || otro.getRol() != Rol.REGULADOR)
+                .filter(otro -> !otro.equals(usuario))
                 .map(UsuarioRespuesta::desde)
                 .toList();
     }

@@ -19,7 +19,8 @@ El registro de cada ciclo se encuentra en [docs/bitacora-tdd.md](docs/bitacora-t
 ## Cómo aplicamos TDD
 
 Cada comportamiento se construyó con el ciclo **RED → GREEN → REFACTOR**: primero se escribió una sola prueba y se comprobó que fallaba (RED), luego se escribió el código mínimo para que pasara (GREEN) y, con todas las pruebas del ciclo en verde, se mejoró el diseño sin cambiar el comportamiento (REFACTOR).
-En total son **87 pruebas automatizadas en 16 ciclos** (1 a 13, más el 8b, 9b y 10b): un commit `test` (RED) y uno `feat` (GREEN) por prueba, y un commit `refactor` por ciclo.
+En total son **94 pruebas automatizadas en 18 ciclos** (1 a 14, más el 8b, 9b, 10b y 12b). Cada prueba tiene su commit `test` (RED) y su commit `feat` (GREEN), salvo T73, que es una prueba de confirmación: pasó sin código nuevo. Cada ciclo cierra con un commit `refactor`.
+El estado del avance del sábado está en [docs/estado-avance-sabado.md](docs/estado-avance-sabado.md).
 La fase 2 (desde el ciclo 8) sigue la [especificación de la fase 2](docs/especificacion-fase2-qruta.md) y el [plan de desarrollo](docs/plan-desarrollo-fase2.md).
 Cada fase guarda la salida de `./mvnw test` en [docs/evidencias/](https://github.com/fabio2152/qruta/tree/main/docs/evidencias) (50 archivos `.txt`).
 El detalle de cada prueba (qué falló, qué código mínimo se escribió y qué se refactorizó) está en la [bitácora TDD](https://github.com/fabio2152/qruta/blob/main/docs/bitacora-tdd.md).
@@ -151,7 +152,8 @@ Se cargan al iniciar la aplicación si todavía no existen. Todas están ACTIVAS
 | `transportista1`, `transportista2` | Transportista | Ver publicaciones mientras está LIBRE, aceptar una y avanzar sus etapas |
 | `mercado1` | Mercado (Mercado Mayorista de Lima) | Destino de pollo, palta y banano: registra la recepción con la temperatura |
 | `acopio1` | Centro de acopio (Huancayo) | Destino de palta y banano |
-| `regulador1` | Regulador (SENASA) | Aprobar productores y transportistas; ver todos los productos e historiales |
+| `regulador1` | Regulador (SENASA, código SENASA-LIM-0001) | Aprobar productores y transportistas, bloquear y desbloquear, suspender, ver historiales y descargar el CSV |
+| `admin1` | Administrador | Crear reguladores, aprobar mercados y centros de acopio, y ver el resumen. No tiene poder sanitario (D-07) |
 | `intermediario1`, `intermediario2` | Intermediario de la fase 1 | Asignación directa de la fase 1 (D-04) |
 
 ### Guion de la demostración (avance actual)
@@ -195,6 +197,8 @@ Salvo el registro, el login y la consulta pública, todas las peticiones exigen 
 | `POST` | `/api/productos/{id}/desbloquear` | El regulador desbloquea: vuelve a la etapa que tenía (`{"motivo": "..."}`) |
 | `POST` | `/api/usuarios/{nombreUsuario}/suspender` | El regulador suspende una cuenta (no a un transportista OCUPADO) |
 | `GET` | `/api/reportes/salubridad.csv` | Reporte sanitario en CSV (solo el regulador) |
+| `POST` | `/api/reguladores` | El administrador crea un regulador con código institucional |
+| `GET` | `/api/admin/resumen` | Usuarios por rol y productos por etapa (solo el administrador) |
 | `GET` | `/api/publico/productos/{codigo}` | **Consulta pública sin sesión**: la ficha que ve el consumidor (página `consulta.html?codigo=...`) |
 | `GET` | `/api/productos/{id}/historial` | Historial de cambios del producto |
 
@@ -250,7 +254,8 @@ qruta/
 │                              # RegistroServiceTest (T22–T28, T30, T31, T76–T79), SesionServiceTest (T32, T80),
 │                              # CrearProductoTest (T33–T37, T81–T84), PublicacionYAceptacionTest (T38–T43),
 │                              # DestinoYRecepcionTest (T44–T53, T85–T89), EvaluacionTest (T54–T59, T75),
-│                              # RegulacionTest (T60–T66, T90), ConsultaPublicaTest (T67–T70, T91)
+│                              # RegulacionTest (T60–T66, T90, T92–T94), ConsultaPublicaTest (T67–T70, T91),
+│                              # AdministracionTest (T71–T74)
 ├── docker-compose.yml         # PostgreSQL 17
 ├── pom.xml
 ├── mvnw / mvnw.cmd

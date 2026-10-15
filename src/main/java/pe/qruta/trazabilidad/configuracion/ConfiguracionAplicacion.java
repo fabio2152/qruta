@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
+import pe.qruta.trazabilidad.servicio.AdministracionService;
 import pe.qruta.trazabilidad.servicio.ConsultaPublicaService;
 import pe.qruta.trazabilidad.servicio.LoginService;
 import pe.qruta.trazabilidad.servicio.ProductoService;
@@ -103,6 +104,16 @@ public class ConfiguracionAplicacion {
             Clock relojDelSistema
     ) {
         return new ConsultaPublicaService(productoRepositorio, relojDelSistema);
+    }
+
+
+    @Bean
+    public AdministracionService administracionService(
+            UsuarioRepositorio usuarioRepositorio,
+            ProductoRepositorio productoRepositorio,
+            CifradorDeContrasenas cifrador
+    ) {
+        return new AdministracionService(usuarioRepositorio, productoRepositorio, cifrador);
     }
 
 

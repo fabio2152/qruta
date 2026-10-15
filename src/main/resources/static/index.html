@@ -64,6 +64,7 @@
                         <button type="button" class="chip" data-usuario="mercado1">mercado1</button>
                         <button type="button" class="chip" data-usuario="acopio1">acopio1</button>
                         <button type="button" class="chip" data-usuario="regulador1">regulador1</button>
+                        <button type="button" class="chip" data-usuario="admin1">admin1</button>
                     </div>
                 </div>
             </div>
@@ -210,9 +211,26 @@
                     </form>
                 </div>
 
+                <!-- Administrador: resumen y reguladores (CU-04, CU-16) -->
+                <div id="panel-admin" class="tarjeta" hidden>
+                    <h2>Resumen de la plataforma</h2>
+                    <div id="resumen" class="resumen"></div>
+
+                    <h2>Crear regulador</h2>
+                    <form id="formulario-regulador" class="formulario">
+                        <label>Nombre de usuario <input id="regulador-usuario" required></label>
+                        <label>Nombre completo <input id="regulador-nombre" required></label>
+                        <label>Correo <input id="regulador-correo" type="email" required></label>
+                        <label>Contraseña <input id="regulador-contrasena" type="password" minlength="8" required></label>
+                        <label>Institución <input id="regulador-institucion" value="SENASA" required></label>
+                        <label>Código institucional <input id="regulador-codigo" placeholder="Ej. SENASA-LIM-0042" required></label>
+                        <button class="boton boton--primario boton--pequeno" type="submit">Crear regulador</button>
+                    </form>
+                </div>
+
                 <!-- Regulador: cuentas (CU-03) -->
                 <div id="panel-usuarios" class="tarjeta" hidden>
-                    <div class="barra-regulador">
+                    <div id="barra-regulador" class="barra-regulador">
                         <button id="boton-csv" class="boton boton--primario boton--pequeno" type="button">Descargar reporte CSV</button>
                         <a class="boton boton--fantasma boton--pequeno" href="consulta.html" target="_blank" rel="noopener">Consulta pública</a>
                     </div>

@@ -5,6 +5,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Set;
 
 import pe.qruta.trazabilidad.dominio.CambioEstado;
@@ -23,6 +25,7 @@ import pe.qruta.trazabilidad.dominio.producto.ProductoAgro;
 import pe.qruta.trazabilidad.dominio.producto.ProductoPecuario;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
 import pe.qruta.trazabilidad.servicio.FichaPublica;
+import pe.qruta.trazabilidad.servicio.ResumenAdministrador;
 
 
 /**
@@ -291,6 +294,24 @@ final class Dtos {
                 evaluacion.nivelRiesgo().name(),
                 evaluacion.aptoConsumo()
             );
+        }
+    }
+
+
+    record ResumenRespuesta(
+            Map<String, Long> usuariosPorRol,
+            Map<String, Long> productosPorEtapa
+    ) {
+
+        static ResumenRespuesta desde(ResumenAdministrador resumen) {
+
+            Map<String, Long> usuarios = new TreeMap<>();
+            resumen.usuariosPorRol().forEach((rol, cantidad) -> usuarios.put(rol.name(), cantidad));
+
+            Map<String, Long> productos = new TreeMap<>();
+            resumen.productosPorEtapa().forEach((etapa, cantidad) -> productos.put(etapa.name(), cantidad));
+
+            return new ResumenRespuesta(usuarios, productos);
         }
     }
 

@@ -21,6 +21,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.Intermediario;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
+import pe.qruta.trazabilidad.dominio.cuenta.Regulador;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
@@ -40,6 +41,7 @@ public class UsuarioEntidad {
     static final String TRANSPORTISTA = "TRANSPORTISTA";
     static final String MERCADO = "MERCADO";
     static final String CENTRO_DE_ACOPIO = "CENTRO_DE_ACOPIO";
+    static final String REGULADOR = "REGULADOR";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -102,6 +104,12 @@ public class UsuarioEntidad {
     @Column(length = 60)
     private String necesidades;
 
+    @Column(length = 80)
+    private String institucion;
+
+    @Column(length = 40)
+    private String codigoInstitucional;
+
 
     protected UsuarioEntidad() {
     }
@@ -157,6 +165,12 @@ public class UsuarioEntidad {
             this.tipoCuenta = MERCADO;
         }
 
+        if (usuario instanceof Regulador regulador) {
+            this.tipoCuenta = REGULADOR;
+            this.institucion = regulador.getInstitucion();
+            this.codigoInstitucional = regulador.getCodigoInstitucional();
+        }
+
         if (usuario instanceof CentroDeAcopio) {
             this.tipoCuenta = CENTRO_DE_ACOPIO;
         }
@@ -198,6 +212,10 @@ public class UsuarioEntidad {
             case MERCADO -> new Mercado(
                 nombreUsuario, nombreCompleto, correo, contrasena, estadoCuenta,
                 razonSocial, numeroDocumento, telefono, region
+            );
+
+            case REGULADOR -> new Regulador(
+                nombreUsuario, nombreCompleto, correo, contrasena, estadoCuenta, institucion, codigoInstitucional
             );
 
             case CENTRO_DE_ACOPIO -> new CentroDeAcopio(

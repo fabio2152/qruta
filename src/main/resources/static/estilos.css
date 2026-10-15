@@ -241,3 +241,7 @@ code { background: var(--superficie-suave); padding: 0 .3rem; border-radius: 4px
     .datos--ficha { grid-template-columns: 1fr; }
     .veredicto__titulo { font-size: 1.3rem; }
 }
+
+/* ---------- Administrador ---------- */
+.resumen { margin-bottom: 16px; }
+.resumen__titulo { font-size: .8rem; font-weight: 700; color: var(--texto-suave); text-transform: uppercase; letter-spacing: .04em; margin: 8px 0 4px; }

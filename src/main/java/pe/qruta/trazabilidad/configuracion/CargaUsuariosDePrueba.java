@@ -12,6 +12,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
+import pe.qruta.trazabilidad.dominio.cuenta.Regulador;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
@@ -49,7 +50,12 @@ public class CargaUsuariosDePrueba
         String clave = cifrador.cifrar(CONTRASENA);
 
         registrarSiNoExiste(new Usuario(
-            "regulador1", "Inspector SENASA", "regulador1@senasa.gob.pe", clave, Rol.REGULADOR, EstadoCuenta.ACTIVA
+            "admin1", "Administrador de QRuta", "admin1@qruta.pe", clave, Rol.ADMINISTRADOR, EstadoCuenta.ACTIVA
+        ));
+
+        registrarSiNoExiste(new Regulador(
+            "regulador1", "Inspector SENASA", "regulador1@senasa.gob.pe", clave, EstadoCuenta.ACTIVA,
+            "SENASA", "SENASA-LIM-0001"
         ));
 
         registrarSiNoExiste(new Productor(
