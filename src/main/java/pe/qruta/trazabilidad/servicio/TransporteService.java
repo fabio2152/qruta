@@ -1,5 +1,6 @@
 package pe.qruta.trazabilidad.servicio;
 
+import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
@@ -25,5 +26,22 @@ public class TransporteService {
             Long idProducto,
             Transportista transportista
     ) {
+
+        Producto producto =
+            productos
+                .buscarPorId(idProducto)
+                .orElseThrow(
+                    () -> new ProductoNoEncontradoException(
+                        "No existe un producto con id " + idProducto
+                    )
+                );
+
+        producto.asignarIntermediario(transportista);
+
+        transportista.ocupar();
+
+        productos.guardar(producto);
+
+        usuarios.guardar(transportista);
     }
 }

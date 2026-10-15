@@ -33,4 +33,9 @@ public class Transportista extends Intermediario {
     public EstadoCarga getEstadoCarga() {
         return estadoCarga;
     }
+
+
+    public void ocupar() {
+        estadoCarga = EstadoCarga.OCUPADO;
+    }
 }

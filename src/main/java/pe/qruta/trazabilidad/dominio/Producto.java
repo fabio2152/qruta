@@ -153,11 +153,16 @@ public class Producto {
     }
 
 
+    public void asignarIntermediario(Usuario intermediario) {
+        intermediarioAsignado = intermediario;
+    }
+
+
     public boolean esVisiblePara(Usuario usuario) {
 
         return switch (usuario.getRol()) {
             case PRODUCTOR -> productor.equals(usuario);
-            case INTERMEDIARIO -> intermediarioAsignado.equals(usuario);
+            case INTERMEDIARIO -> usuario.equals(intermediarioAsignado);
             case REGULADOR -> true;
         };
     }

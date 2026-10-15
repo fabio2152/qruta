@@ -123,6 +123,7 @@ public class ProductoService {
                 .listarTodos()
                 .stream()
                 .filter(Producto::isPublicado)
+                .filter(producto -> producto.getIntermediarioAsignado() == null)
                 .toList();
     }
 
