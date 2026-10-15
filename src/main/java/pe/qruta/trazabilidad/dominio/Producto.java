@@ -250,7 +250,7 @@ public class Producto {
 
         return switch (usuario.getRol()) {
             case PRODUCTOR -> productor.equals(usuario);
-            case INTERMEDIARIO -> usuario.equals(intermediarioAsignado);
+            case INTERMEDIARIO -> usuario.equals(intermediarioAsignado) || usuario.equals(destino);
             case REGULADOR -> true;
         };
     }
