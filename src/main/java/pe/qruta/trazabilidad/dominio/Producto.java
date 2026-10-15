@@ -225,6 +225,12 @@ public class Producto {
             );
         }
 
+        if (estado != EstadoProducto.EN_ORIGEN || tieneTransportista()) {
+            throw new CambioDeEstadoNoPermitidoException(
+                "Solo se publica un producto EN_ORIGEN y sin transportista"
+            );
+        }
+
         publicado = true;
     }
 
