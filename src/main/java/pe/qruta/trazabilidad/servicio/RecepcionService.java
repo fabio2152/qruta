@@ -5,6 +5,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 import pe.qruta.trazabilidad.dominio.CambioDeEstadoNoPermitidoException;
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
@@ -55,6 +56,13 @@ public class RecepcionService {
         if (producto.getEstado() != EstadoProducto.EN_DESTINO) {
             throw new CambioDeEstadoNoPermitidoException(
                 "Solo se puede registrar la recepción de un producto en EN_DESTINO"
+            );
+        }
+
+        if (temperatura.compareTo(new BigDecimal("-40")) < 0
+                || temperatura.compareTo(new BigDecimal("60")) > 0) {
+            throw new DatoInvalidoException(
+                "Lectura inválida del instrumento: la temperatura debe estar entre -40 °C y 60 °C"
             );
         }
 
