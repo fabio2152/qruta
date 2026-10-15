@@ -219,6 +219,11 @@ public class Producto {
         estadoAntesDelBloqueo = estado;
         motivoBloqueo = motivo;
         estado = EstadoProducto.BLOQUEADO;
+
+        // RE-41: si el destino ya registró la recepción, el traslado terminó y el transportista queda libre.
+        if (!mediciones.isEmpty() && intermediarioAsignado instanceof Transportista transportista) {
+            transportista.liberar();
+        }
     }
 
 
