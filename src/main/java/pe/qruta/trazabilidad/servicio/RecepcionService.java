@@ -10,6 +10,7 @@ import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.dominio.evaluacion.NivelRiesgo;
+import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 
 
@@ -56,8 +57,18 @@ public class RecepcionService {
         long horasDesdeLaProduccion =
             Duration.between(producto.getFechaProduccion(), medicion.fechaHora()).toHours();
 
-        long vidaUtilRestante =
-            producto.getTipoProducto().getVidaUtilBaseHoras() - horasDesdeLaProduccion;
+        TipoProducto tipo = producto.getTipoProducto();
+
+        long vidaUtilRestante = tipo.getVidaUtilBaseHoras() - horasDesdeLaProduccion;
+
+        boolean fueraDeRango =
+            temperatura.compareTo(tipo.getTemperaturaMinima()) < 0
+                || temperatura.compareTo(tipo.getTemperaturaMaxima()) > 0;
+
+        if (fueraDeRango) {
+            long horasDeTransporte = producto.getDuracionTransporte().toHours();
+            vidaUtilRestante -= (tipo.getFactorDeterioro() - 1) * horasDeTransporte;
+        }
 
         return new Evaluacion(
             medicion.fechaHora(), temperatura, vidaUtilRestante, false, NivelRiesgo.BAJO, true
