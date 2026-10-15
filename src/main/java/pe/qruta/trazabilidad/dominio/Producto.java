@@ -9,6 +9,7 @@ import java.util.List;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
+import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
@@ -50,6 +51,8 @@ public class Producto {
     private PuntoDeRecepcion destino;
 
     private final List<Medicion> mediciones = new ArrayList<>();
+
+    private final List<Evaluacion> evaluaciones = new ArrayList<>();
 
     private EstadoProducto estadoAntesDelBloqueo;
 
@@ -312,6 +315,22 @@ public class Producto {
 
     public String getMotivoBloqueo() {
         return motivoBloqueo;
+    }
+
+
+    public void registrarEvaluacion(Evaluacion evaluacion) {
+        evaluaciones.add(evaluacion);
+    }
+
+
+    public List<Evaluacion> getEvaluaciones() {
+        return List.copyOf(evaluaciones);
+    }
+
+
+    /** La evaluación más reciente, o null si el producto todavía no fue recibido. */
+    public Evaluacion getUltimaEvaluacion() {
+        return evaluaciones.isEmpty() ? null : evaluaciones.get(evaluaciones.size() - 1);
     }
 
 
