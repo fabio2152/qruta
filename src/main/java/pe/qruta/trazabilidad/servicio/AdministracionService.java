@@ -1,5 +1,6 @@
 package pe.qruta.trazabilidad.servicio;
 
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
@@ -42,6 +43,12 @@ public class AdministracionService {
             Usuario administrador,
             SolicitudRegistro solicitud
     ) {
+
+        if (solicitud.getCodigoInstitucional() == null || solicitud.getCodigoInstitucional().isBlank()) {
+            throw new DatoInvalidoException(
+                "El código institucional es obligatorio"
+            );
+        }
 
         Regulador regulador = new Regulador(
             solicitud.getNombreUsuario(),
