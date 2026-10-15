@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
 
@@ -21,13 +22,24 @@ public class LoginService {
             String contrasena
     ) {
 
-        return usuarios
+        Usuario usuario =
+            usuarios
                 .buscarPorNombreUsuario(nombreUsuario)
-                .filter(usuario -> usuario.tieneContrasena(contrasena))
+                .filter(encontrado -> encontrado.tieneContrasena(contrasena))
                 .orElseThrow(
                     () -> new CredencialesInvalidasException(
                         "Usuario o contraseña incorrectos"
                     )
                 );
+
+        if (usuario.getEstadoCuenta() != EstadoCuenta.ACTIVA) {
+            throw new CuentaNoActivaException(
+                usuario.getEstadoCuenta() == EstadoCuenta.PENDIENTE
+                    ? "Su cuenta está pendiente de aprobación"
+                    : "Su cuenta está suspendida"
+            );
+        }
+
+        return usuario;
     }
 }
