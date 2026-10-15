@@ -81,6 +81,20 @@ public class Transportista extends Intermediario {
     }
 
 
+    /** RE-35: no se suspende a un transportista OCUPADO; primero debe terminar su traslado. */
+    @Override
+    public void suspender() {
+
+        if (estadoCarga == EstadoCarga.OCUPADO) {
+            throw new OperacionNoAutorizadaException(
+                "No se puede suspender a un transportista OCUPADO: primero debe terminar su traslado"
+            );
+        }
+
+        super.suspender();
+    }
+
+
     /** RE-28: al entregar el producto vuelve a quedar LIBRE. */
     public void liberar() {
         estadoCarga = EstadoCarga.LIBRE;

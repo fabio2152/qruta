@@ -1,23 +1,17 @@
 package pe.qruta.trazabilidad.servicio;
 
 import java.time.Clock;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
-import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
-import pe.qruta.trazabilidad.dominio.cuenta.EstadoCarga;
-import pe.qruta.trazabilidad.dominio.cuenta.Productor;
-import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
-import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
 
+/** Acciones exclusivas del regulador: bloqueo, desbloqueo, suspensión y reporte sanitario (CU-13, CU-14). */
 public class RegulacionService {
 
     private final ProductoRepositorio productos;
@@ -25,6 +19,8 @@ public class RegulacionService {
     private final UsuarioRepositorio usuarios;
 
     private final Clock reloj;
+
+    private final ReporteSanitario reporte = new ReporteSanitario();
 
 
     public RegulacionService(
@@ -44,14 +40,7 @@ public class RegulacionService {
             String motivo
     ) {
 
-        Producto producto =
-            productos
-                .buscarPorId(idProducto)
-                .orElseThrow(
-                    () -> new ProductoNoEncontradoException(
-                        "No existe un producto con id " + idProducto
-                    )
-                );
+        Producto producto = buscarProducto(idProducto);
 
         validarQueEsRegulador(regulador);
 
@@ -67,14 +56,7 @@ public class RegulacionService {
             String motivo
     ) {
 
-        Producto producto =
-            productos
-                .buscarPorId(idProducto)
-                .orElseThrow(
-                    () -> new ProductoNoEncontradoException(
-                        "No existe un producto con id " + idProducto
-                    )
-                );
+        Producto producto = buscarProducto(idProducto);
 
         validarQueEsRegulador(regulador);
 
@@ -84,6 +66,7 @@ public class RegulacionService {
     }
 
 
+    /** RE-35. Si es un transportista OCUPADO, el propio Transportista rechaza la suspensión. */
     public void suspender(
             String nombreUsuario,
             Usuario regulador
@@ -98,13 +81,6 @@ public class RegulacionService {
                     )
                 );
 
-        if (usuario instanceof Transportista transportista
-                && transportista.getEstadoCarga() == EstadoCarga.OCUPADO) {
-            throw new OperacionNoAutorizadaException(
-                "No se puede suspender a un transportista OCUPADO: primero debe terminar su traslado"
-            );
-        }
-
         usuario.suspender();
 
         usuarios.guardar(usuario);
@@ -112,66 +88,19 @@ public class RegulacionService {
 
 
     public String reporteSanitarioCsv(Usuario regulador) {
-
-        StringBuilder csv = new StringBuilder(
-            "codigo,tipo,productor,region_origen,etapa,transportista,destino,duracion_transporte_horas,"
-                + "temperatura_recepcion,vida_util_restante_horas,ruptura,nivel_riesgo,apto,bloqueado\n"
-        );
-
-        for (Producto producto : productos.listarTodos()) {
-
-            Evaluacion evaluacion = producto.getUltimaEvaluacion();
-
-            String razonSocial = producto.getProductor().getNombreUsuario();
-            String region = "";
-
-            if (producto.getProductor() instanceof Productor productor) {
-                razonSocial = productor.getRazonSocial();
-                region = productor.getRegion();
-            }
-
-            List<String> celdas = List.of(
-                texto(producto.getCodigo()),
-                producto.getTipoProducto() == null ? "" : producto.getTipoProducto().name(),
-                razonSocial,
-                texto(region),
-                producto.getEstado().name(),
-                producto.getIntermediarioAsignado() == null ? "" : producto.getIntermediarioAsignado().getNombreUsuario(),
-                producto.getDestino() == null ? "" : producto.getDestino().getRazonSocial(),
-                producto.getHoraLlegada() == null ? "" : String.valueOf(producto.getDuracionTransporte().toHours()),
-                producto.getMediciones().isEmpty() ? "" : producto.getMediciones().get(0).temperatura().toPlainString(),
-                evaluacion == null ? "" : String.valueOf(evaluacion.vidaUtilRestanteHoras()),
-                evaluacion == null ? "" : siNo(evaluacion.rupturaCadenaFrio()),
-                evaluacion == null ? "" : evaluacion.nivelRiesgo().name(),
-                evaluacion == null ? "" : siNo(evaluacion.aptoConsumo()),
-                siNo(producto.getEstado() == EstadoProducto.BLOQUEADO)
-            );
-
-            csv.append(celdas.stream().map(this::celda).collect(Collectors.joining(","))).append("\n");
-        }
-
-        return csv.toString();
+        return reporte.generar(productos.listarTodos());
     }
 
 
-    private String texto(String valor) {
-        return valor == null ? "" : valor;
-    }
+    private Producto buscarProducto(Long idProducto) {
 
-
-    private String siNo(boolean valor) {
-        return valor ? "SI" : "NO";
-    }
-
-
-    /** Un texto con comas o comillas va entre comillas, como manda el formato CSV. */
-    private String celda(String valor) {
-
-        if (valor.contains(",") || valor.contains("\"")) {
-            return "\"" + valor.replace("\"", "\"\"") + "\"";
-        }
-
-        return valor;
+        return productos
+                .buscarPorId(idProducto)
+                .orElseThrow(
+                    () -> new ProductoNoEncontradoException(
+                        "No existe un producto con id " + idProducto
+                    )
+                );
     }
 
 
