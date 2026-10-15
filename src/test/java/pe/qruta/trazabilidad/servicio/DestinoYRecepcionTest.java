@@ -284,6 +284,28 @@ class DestinoYRecepcionTest {
     }
 
 
+    @Test
+    void elegirComoDestinoUnMercadoConLaCuentaPendienteSeRechaza() {
+
+        // Dado
+        Mercado mercadoPendiente = new Mercado(
+            "mercado3", "Rosa Vega Paz", "mercado3@correo.pe", "clave123", EstadoCuenta.PENDIENTE,
+            "Mercado Modelo de Chiclayo", "20587654321", "074223344", "Lambayeque"
+        );
+
+        mercadoPendiente.configurarNecesidades(Set.of(TipoProducto.PALTA));
+
+        usuarios.guardar(mercadoPendiente);
+
+        Producto palta = paltaAceptadaPorElTransportista();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> transporte.elegirDestino(palta.getId(), transportista, "mercado3"))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("Mercado Modelo de Chiclayo no tiene la cuenta activa");
+    }
+
+
     /** Palta aceptada, con destino mercado1, que viajó de 08:00 a 14:00 y está EN_DESTINO. */
     private Producto paltaEnDestino() {
 
