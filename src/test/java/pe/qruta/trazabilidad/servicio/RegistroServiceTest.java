@@ -6,9 +6,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import pe.qruta.trazabilidad.configuracion.CifradorBCrypt;
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoCuenta;
@@ -68,6 +70,28 @@ class RegistroServiceTest {
         assertThatThrownBy(() -> registro.registrar(solicitud))
             .isInstanceOf(DatoInvalidoException.class)
             .hasMessage("La contraseña debe tener al menos 8 caracteres");
+    }
+
+
+    @Test
+    void laContrasenaSeGuardaCifradaYSePuedeVerificar() {
+
+        // Dado
+        CifradorDeContrasenas cifrador = new CifradorBCrypt();
+
+        RegistroService registroConCifrado =
+            new RegistroService(usuarios, cifrador);
+
+        // Cuando
+        Usuario registrado =
+            registroConCifrado.registrar(solicitudDeProductor());
+
+        // Entonces
+        assertThat(registrado.getContrasena())
+            .isNotEqualTo("clave123");
+
+        assertThat(cifrador.coincide("clave123", registrado.getContrasena()))
+            .isTrue();
     }
 
 

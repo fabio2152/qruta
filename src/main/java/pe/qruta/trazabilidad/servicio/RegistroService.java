@@ -2,6 +2,7 @@ package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
@@ -14,6 +15,14 @@ public class RegistroService {
 
     public RegistroService(
             UsuarioRepositorio usuarios
+    ) {
+        this.usuarios = usuarios;
+    }
+
+
+    public RegistroService(
+            UsuarioRepositorio usuarios,
+            CifradorDeContrasenas cifrador
     ) {
         this.usuarios = usuarios;
     }
