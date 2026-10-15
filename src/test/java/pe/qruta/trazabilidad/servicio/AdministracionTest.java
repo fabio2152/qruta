@@ -15,6 +15,8 @@ import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Regulador;
+import pe.qruta.trazabilidad.dominio.cuenta.TipoCuenta;
+import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorioEnMemoria;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorioEnMemoria;
 
@@ -81,6 +83,35 @@ class AdministracionTest {
         assertThatThrownBy(() -> administracion.crearRegulador(administrador, solicitud))
             .isInstanceOf(DatoInvalidoException.class)
             .hasMessage("El código institucional es obligatorio");
+    }
+
+
+    @Test
+    void elAdministradorApruebaUnMercado() {
+
+        // Dado
+        RegistroService registro = new RegistroService(usuarios);
+
+        SolicitudRegistro solicitud = new SolicitudRegistro();
+
+        solicitud.setTipoCuenta(TipoCuenta.MERCADO);
+        solicitud.setNombreUsuario("mercado9");
+        solicitud.setNombreCompleto("Carmen Rojas Villa");
+        solicitud.setCorreo("mercado.santa.anita@correo.pe");
+        solicitud.setContrasena("clave123");
+        solicitud.setTipoDocumento(TipoDocumento.RUC);
+        solicitud.setNumeroDocumento("20509876543");
+        solicitud.setRazonSocial("Mercado Mayorista Santa Anita");
+        solicitud.setRegion("Lima");
+
+        registro.registrar(solicitud);
+
+        // Cuando
+        registro.aprobar("mercado9", administrador);
+
+        // Entonces
+        assertThat(usuarios.buscarPorNombreUsuario("mercado9").orElseThrow().getEstadoCuenta())
+            .isEqualTo(EstadoCuenta.ACTIVA);
     }
 
 
