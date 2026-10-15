@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.configuracion.CifradorBCrypt;
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
@@ -139,6 +140,21 @@ class RegistroServiceTest {
         assertThatThrownBy(() -> registro.registrar(solicitud))
             .isInstanceOf(DatoInvalidoException.class)
             .hasMessage("El RUC debe tener exactamente 11 dígitos");
+    }
+
+
+    @Test
+    void unRegistroPublicoConRolDeReguladorSeRechaza() {
+
+        // Dado
+        SolicitudRegistro solicitud = solicitudDeProductor();
+
+        solicitud.setTipoCuenta(TipoCuenta.REGULADOR);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.registrar(solicitud))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("El registro público no está disponible para reguladores");
     }
 
 
