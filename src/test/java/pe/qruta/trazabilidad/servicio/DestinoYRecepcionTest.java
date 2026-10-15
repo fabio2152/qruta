@@ -321,6 +321,23 @@ class DestinoYRecepcionTest {
     }
 
 
+    @Test
+    void registrarLaRecepcionPorSegundaVezSeRechaza() {
+
+        // Dado
+        Producto palta = paltaEnDestino();
+
+        recepcion.registrarRecepcion(palta.getId(), mercado, new BigDecimal("6"), new BigDecimal("85"));
+
+        // Cuando / Entonces
+        assertThatThrownBy(() ->
+            recepcion.registrarRecepcion(palta.getId(), mercado, new BigDecimal("5"), new BigDecimal("85"))
+        )
+            .isInstanceOf(CambioDeEstadoNoPermitidoException.class)
+            .hasMessage("La recepción del producto ya fue registrada");
+    }
+
+
     /** Palta aceptada, con destino mercado1, que viajó de 08:00 a 14:00 y está EN_DESTINO. */
     private Producto paltaEnDestino() {
 
