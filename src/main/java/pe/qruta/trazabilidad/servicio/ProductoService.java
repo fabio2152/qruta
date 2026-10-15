@@ -72,13 +72,27 @@ public class ProductoService {
             Usuario productor
     ) {
 
+        CategoriaProducto categoria = datos.getTipoProducto().getCategoria();
+
+        validarQuienCrea(productor, categoria);
+
+        validarFechaYVidaUtil(datos);
+
+        validarCertificados(datos, categoria);
+    }
+
+
+    /** RE-02 y RE-19: solo un productor, y solo de su categoría. */
+    private void validarQuienCrea(
+            Usuario productor,
+            CategoriaProducto categoria
+    ) {
+
         if (productor.getRol() != Rol.PRODUCTOR) {
             throw new OperacionNoAutorizadaException(
                 "Solo un productor puede crear productos"
             );
         }
-
-        CategoriaProducto categoria = datos.getTipoProducto().getCategoria();
 
         if (productor instanceof Productor conTipo
                 && !conTipo.getTipoProductor().puedeProducir(categoria)) {
@@ -87,6 +101,11 @@ public class ProductoService {
                     + " no puede crear productos de categoría " + categoria
             );
         }
+    }
+
+
+    /** RE-19: la producción no es futura y la vida útil base todavía no se agotó. */
+    private void validarFechaYVidaUtil(DatosProducto datos) {
 
         if (datos.getFechaProduccion().isAfter(LocalDateTime.now(reloj))) {
             throw new DatoInvalidoException(
@@ -102,6 +121,14 @@ public class ProductoService {
                 "La vida útil del producto ya se agotó"
             );
         }
+    }
+
+
+    /** RE-19: los pecuarios exigen certificado SENASA; los agrícolas, certificado fitosanitario y calidad de 1 a 3. */
+    private void validarCertificados(
+            DatosProducto datos,
+            CategoriaProducto categoria
+    ) {
 
         if (categoria == CategoriaProducto.PECUARIO
                 && estaVacio(datos.getCertificadoSanitarioSenasa())) {
