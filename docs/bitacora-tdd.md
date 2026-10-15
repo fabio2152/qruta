@@ -64,6 +64,16 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T82 | 9b | Error | RE-19 | Un pollo sin certificado sanitario SENASA se rechaza *(prueba agregada)* | [`047bfda`](https://github.com/fabio2152/qruta/commit/047bfda) | [`9484623`](https://github.com/fabio2152/qruta/commit/9484623) | ✅ |
 | T83 | 9b | Límite | RE-19 | Una palta con calidad 4 se rechaza *(prueba agregada)* | [`fe20cda`](https://github.com/fabio2152/qruta/commit/fe20cda) | [`d585d8d`](https://github.com/fabio2152/qruta/commit/d585d8d) | ✅ |
 | T84 | 9b | Error | RE-19 | Una palta sin certificado fitosanitario se rechaza *(prueba agregada)* | [`974d047`](https://github.com/fabio2152/qruta/commit/974d047) | [`8fc9a81`](https://github.com/fabio2152/qruta/commit/8fc9a81) | ✅ |
+| T44 | 10 | Normal | RE-24, RE-25 | El transportista asignado elige como destino un mercado que necesita palta | [`8f40d4a`](https://github.com/fabio2152/qruta/commit/8f40d4a) | [`a2ae9ab`](https://github.com/fabio2152/qruta/commit/a2ae9ab) | ✅ |
+| T45 | 10 | Error | RE-24 | Elegir como destino a otro transportista se rechaza | [`1d45b8d`](https://github.com/fabio2152/qruta/commit/1d45b8d) | [`9f0086a`](https://github.com/fabio2152/qruta/commit/9f0086a) | ✅ |
+| T46 | 10 | Error | RE-25 | Elegir un mercado que no necesita ese tipo de producto se rechaza | [`7e73ee5`](https://github.com/fabio2152/qruta/commit/7e73ee5) | [`c113a19`](https://github.com/fabio2152/qruta/commit/c113a19) | ✅ |
+| T47 | 10 | Normal | RE-26 | El destino registra la recepción a 5 °C: la medición queda con la hora del sistema | [`115dcbd`](https://github.com/fabio2152/qruta/commit/115dcbd) | [`a2fe7aa`](https://github.com/fabio2152/qruta/commit/a2fe7aa) | ✅ |
+| T48 | 10 | Error | RE-26 | Un mercado que no es el destino intenta registrar la recepción y se rechaza | [`a329304`](https://github.com/fabio2152/qruta/commit/a329304) | [`122a9a1`](https://github.com/fabio2152/qruta/commit/122a9a1) | ✅ |
+| T49 | 10 | Error | RE-26 | Registrar la recepción de un producto EN_TRANSITO se rechaza | [`cc94875`](https://github.com/fabio2152/qruta/commit/cc94875) | [`d9376b6`](https://github.com/fabio2152/qruta/commit/d9376b6) | ✅ |
+| T50 | 10 | Error | RE-26 | Una recepción con 85 °C se rechaza por lectura inválida | [`a329e4f`](https://github.com/fabio2152/qruta/commit/a329e4f) | [`b953ccd`](https://github.com/fabio2152/qruta/commit/b953ccd) | ✅ |
+| T51 | 10 | Error | RE-27 | Un producto con destino no puede pasar a ENTREGADO sin recepción | [`bd2e37e`](https://github.com/fabio2152/qruta/commit/bd2e37e) | [`a571ee3`](https://github.com/fabio2152/qruta/commit/a571ee3) | ✅ |
+| T52 | 10 | Normal | RE-28 | Al pasar a ENTREGADO se guarda la hora de entrega y el transportista queda LIBRE | [`89d75ca`](https://github.com/fabio2152/qruta/commit/89d75ca) | [`27177aa`](https://github.com/fabio2152/qruta/commit/27177aa) | ✅ |
+| T53 | 10 | Normal | RE-10 | El mercado ve los productos cuyo destino es él | [`62390cd`](https://github.com/fabio2152/qruta/commit/62390cd) | [`7e89707`](https://github.com/fabio2152/qruta/commit/7e89707) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -78,6 +88,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 8b | Cuentas: pruebas agregadas por reglas sin cobertura | [`28182da`](https://github.com/fabio2152/qruta/commit/28182da) | ✅ Completo |
 | 9 | Creación, publicación y aceptación | [`3114843`](https://github.com/fabio2152/qruta/commit/3114843) | ✅ Completo |
 | 9b | Certificados y calidad: pruebas agregadas | [`2f32ec0`](https://github.com/fabio2152/qruta/commit/2f32ec0) | ✅ Completo |
+| 10 | Destino y recepción | [`73849a7`](https://github.com/fabio2152/qruta/commit/73849a7) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1288,6 +1299,50 @@ transportista.cargar(producto);
 - `validarCertificados` (RE-19).
 
 Resultado: `Tests run: 52, Failures: 0, Errors: 0`. Commit [`2f32ec0`](https://github.com/fabio2152/qruta/commit/2f32ec0) · [ciclo-9b-refactor.txt](evidencias/ciclo-9b-refactor.txt)
+
+---
+
+## Ciclo 10 – Destino y recepción
+
+**Fecha:** 2026-10-15
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-10, RE-24, RE-25, RE-26, RE-27, RE-28
+**Tipo de casos:** Normales (T44, T47, T52, T53) y de error (T45, T46, T48, T49, T50, T51)
+
+**Motivación:** el transportista elige a qué mercado o centro de acopio lleva el producto, y ese destino deja constancia de cómo llegó (temperatura y humedad). Sin esa medición no hay evaluación (ciclo 11).
+
+Las pruebas están en `DestinoYRecepcionTest`. Usan `RelojAjustable`, un `Clock` de prueba compartido, para que el transporte vaya de 08:00 a 14:00 del 01/09/2026 y la entrega sea a las 16:00.
+
+| Prueba | 🔴 RED: qué faltaba | 🟢 GREEN: código mínimo |
+|---|---|---|
+| T44 | `getDestino()` devolvía `null` (`expected: Mercado but was: null`) | `Producto.asignarDestino`. `TransporteService.elegirDestino` busca al usuario y lo asigna |
+| T45 | Lanzaba `ClassCastException` en vez de un rechazo claro | Si el destino no es `PuntoDeRecepcion`, se lanza `DatoInvalidoException` |
+| T46 | Se aceptaba un mercado que no necesitaba palta | `PuntoDeRecepcion` guarda sus necesidades (`EnumSet<TipoProducto>`) y responde `necesita(tipo)` |
+| T47 | `getMediciones()` estaba vacío | `Medicion(fechaHora, temperatura, humedad, registradaPor)` con `BigDecimal`. `RecepcionService` la registra con `LocalDateTime.now(reloj)` |
+| T48 | Cualquier mercado registraba | Se compara con `producto.getDestino()` |
+| T49 | Se registraba estando EN_TRANSITO | Se exige el estado EN_DESTINO |
+| T50 | Se aceptaban 85 °C | Rango del instrumento de -40 °C a 60 °C |
+| T51 | Se pasaba a ENTREGADO sin recepción | En `Producto.cambiarEstado`: si hay destino y no hay medición, se rechaza. T05 sigue en verde porque ese producto no tiene destino (D-04) |
+| T52 | `getHoraEntrega()` devolvía `null` | `registrarHora` guarda `horaEntrega` y llama a `Transportista.liberar()` |
+| T53 | El mercado no veía nada | `esVisiblePara`: un INTERMEDIARIO ve lo que tiene asignado **o** lo que tiene como destino |
+
+Las evidencias de cada fase están en `evidencias/ciclo-10-TXX-{red,green}.txt`.
+
+### 🔵 REFACTOR del ciclo 10
+
+La especificación sugería separar la recepción en `RecepcionService`. Eso ya se hizo desde T47, así que el refactor llevó las reglas al dominio:
+- **`Medicion` valida el rango del instrumento** en su constructor compacto, con constantes con nombre. No puede existir una medición imposible.
+- **`Producto.registrarRecepcion(medicion)`** valida que la registre el destino y que el producto esté EN_DESTINO. `RecepcionService` queda en tres pasos: buscar, crear la medición y registrar.
+- `TransporteService` tenía la búsqueda del producto repetida; queda en `buscarProducto`. Un destino inexistente ahora responde con un mensaje claro.
+- Se corrigió una errata en el nombre del método de prueba de T47.
+
+Resultado: `Tests run: 62, Failures: 0, Errors: 0`. Commit [`73849a7`](https://github.com/fabio2152/qruta/commit/73849a7) · [ciclo-10-refactor.txt](evidencias/ciclo-10-refactor.txt)
+
+### Decisiones de diseño del ciclo 10
+
+- **Temperaturas con `BigDecimal`**, para que 7,1 − 4 sea exactamente 3,1 al comparar en el ciclo 11.
+- **Quién pasa a ENTREGADO:** el transportista, con `cambiarEstado` (decisión A del 14/10). RE-27 lo condiciona a que el destino haya registrado la recepción.
+- **Reglas de RE-24 a RE-26 sin prueba en la especificación:** que solo el transportista asignado elija el destino, que el destino esté ACTIVO, la humedad entre 0 y 100 % y una sola recepción. Quedan anotadas como pendientes.
 
 ---
 
