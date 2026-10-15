@@ -2,9 +2,11 @@ package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
+import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
+import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
@@ -67,8 +69,22 @@ public class RegistroService {
             );
         }
 
-        Productor productor =
-            new Productor(
+        Usuario nuevo;
+
+        if (solicitud.getTipoCuenta() == TipoCuenta.MERCADO) {
+            nuevo = new Mercado(
+                solicitud.getNombreUsuario(),
+                solicitud.getNombreCompleto(),
+                solicitud.getCorreo(),
+                cifrador.cifrar(solicitud.getContrasena()),
+                EstadoCuenta.PENDIENTE,
+                solicitud.getRazonSocial(),
+                solicitud.getNumeroDocumento(),
+                solicitud.getTelefono(),
+                solicitud.getRegion()
+            );
+        } else {
+            nuevo = new Productor(
                 solicitud.getNombreUsuario(),
                 solicitud.getNombreCompleto(),
                 solicitud.getCorreo(),
@@ -81,10 +97,11 @@ public class RegistroService {
                 solicitud.getTipoProductor(),
                 solicitud.getRegion()
             );
+        }
 
-        usuarios.guardar(productor);
+        usuarios.guardar(nuevo);
 
-        return productor;
+        return nuevo;
     }
 
 
@@ -101,6 +118,12 @@ public class RegistroService {
                         "No existe el usuario " + nombreUsuario
                     )
                 );
+
+        if (usuario instanceof Mercado && aprobador.getRol() == Rol.REGULADOR) {
+            throw new OperacionNoAutorizadaException(
+                "Las cuentas de mercados y centros de acopio las aprueba el administrador"
+            );
+        }
 
         usuario.activar();
 
