@@ -148,6 +148,11 @@ public class Producto {
     }
 
 
+    public void publicar() {
+        publicado = true;
+    }
+
+
     public boolean esVisiblePara(Usuario usuario) {
 
         return switch (usuario.getRol()) {

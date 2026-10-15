@@ -101,11 +101,23 @@ public class ProductoService {
             Long idProducto,
             Usuario productor
     ) {
+
+        Producto producto = buscarProductoExistente(idProducto);
+
+        producto.publicar();
+
+        repositorio.guardar(producto);
     }
 
 
+    /** Publicaciones disponibles para los transportistas, en un listado propio (D-06). */
     public List<Producto> listarPublicaciones(Usuario transportista) {
-        return List.of();
+
+        return repositorio
+                .listarTodos()
+                .stream()
+                .filter(Producto::isPublicado)
+                .toList();
     }
 
 
