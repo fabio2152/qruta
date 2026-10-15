@@ -187,6 +187,42 @@ class RegistroServiceTest {
     }
 
 
+    @Test
+    void elReguladorIntentaAprobarUnMercadoYSeRechaza() {
+
+        // Dado
+        registro.registrar(solicitudDeMercado());
+
+        Usuario regulador =
+            new Usuario("regulador1", "clave123", Rol.REGULADOR);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.aprobar("mercado9", regulador))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Las cuentas de mercados y centros de acopio las aprueba el administrador");
+    }
+
+
+    /** Solicitud válida de un mercado, con RUC de 11 dígitos. */
+    private SolicitudRegistro solicitudDeMercado() {
+
+        SolicitudRegistro solicitud = new SolicitudRegistro();
+
+        solicitud.setTipoCuenta(TipoCuenta.MERCADO);
+        solicitud.setNombreUsuario("mercado9");
+        solicitud.setNombreCompleto("Carmen Rojas Villa");
+        solicitud.setCorreo("mercado.santa.anita@correo.pe");
+        solicitud.setContrasena("clave123");
+        solicitud.setTipoDocumento(TipoDocumento.RUC);
+        solicitud.setNumeroDocumento("20509876543");
+        solicitud.setRazonSocial("Mercado Mayorista Santa Anita");
+        solicitud.setTelefono("014567890");
+        solicitud.setRegion("Lima");
+
+        return solicitud;
+    }
+
+
     /** Solicitud válida de un transportista, con RUC de 11 dígitos. */
     private SolicitudRegistro solicitudDeTransportista() {
 
