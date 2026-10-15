@@ -41,7 +41,11 @@ public class ConsultaPublicaService {
                 .stream()
                 .filter(encontrado -> codigo.equals(encontrado.getCodigo()))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(
+                    () -> new ProductoNoEncontradoException(
+                        "No existe un producto con el código " + codigo
+                    )
+                );
 
         String productor = producto.getProductor().getNombreUsuario();
         String region = null;
