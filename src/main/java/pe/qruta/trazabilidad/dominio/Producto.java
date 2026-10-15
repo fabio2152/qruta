@@ -207,6 +207,11 @@ public class Producto {
     }
 
 
+    public LocalDateTime getHoraEntrega() {
+        return null;
+    }
+
+
     public List<Medicion> getMediciones() {
         return List.copyOf(mediciones);
     }

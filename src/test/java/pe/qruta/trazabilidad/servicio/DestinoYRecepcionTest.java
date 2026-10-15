@@ -16,6 +16,7 @@ import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCarga;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
@@ -212,6 +213,28 @@ class DestinoYRecepcionTest {
         )
             .isInstanceOf(CambioDeEstadoNoPermitidoException.class)
             .hasMessage("El destino aún no registró la recepción del producto");
+    }
+
+
+    @Test
+    void alPasarAEntregadoSeGuardaLaHoraDeEntregaYElTransportistaVuelveAQuedarLibre() {
+
+        // Dado
+        Producto palta = paltaEnDestino();
+
+        recepcion.registrarRecepcion(palta.getId(), mercado, new BigDecimal("6"), new BigDecimal("85"));
+
+        reloj.ajustarA(horaDelDia(16, 0));
+
+        // Cuando
+        servicio.cambiarEstado(palta.getId(), EstadoProducto.ENTREGADO, transportista);
+
+        // Entonces
+        assertThat(palta.getHoraEntrega())
+            .isEqualTo(horaDelDia(16, 0));
+
+        assertThat(transportista.getEstadoCarga())
+            .isEqualTo(EstadoCarga.LIBRE);
     }
 
 
