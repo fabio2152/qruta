@@ -2,10 +2,13 @@ package pe.qruta.trazabilidad.servicio;
 
 import java.time.Clock;
 
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCarga;
+import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
@@ -80,6 +83,22 @@ public class RegulacionService {
             String nombreUsuario,
             Usuario regulador
     ) {
+
+        Usuario usuario =
+            usuarios
+                .buscarPorNombreUsuario(nombreUsuario)
+                .orElseThrow(
+                    () -> new DatoInvalidoException(
+                        "No existe el usuario " + nombreUsuario
+                    )
+                );
+
+        if (usuario instanceof Transportista transportista
+                && transportista.getEstadoCarga() == EstadoCarga.OCUPADO) {
+            throw new OperacionNoAutorizadaException(
+                "No se puede suspender a un transportista OCUPADO: primero debe terminar su traslado"
+            );
+        }
     }
 
 
