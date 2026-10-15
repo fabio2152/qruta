@@ -6,6 +6,7 @@ import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
@@ -85,6 +86,12 @@ public class TransporteService {
         if (!(destino instanceof PuntoDeRecepcion puntoDeRecepcion)) {
             throw new DatoInvalidoException(
                 "El destino debe ser un mercado o un centro de acopio"
+            );
+        }
+
+        if (puntoDeRecepcion.getEstadoCuenta() != EstadoCuenta.ACTIVA) {
+            throw new DatoInvalidoException(
+                puntoDeRecepcion.getRazonSocial() + " no tiene la cuenta activa"
             );
         }
 
