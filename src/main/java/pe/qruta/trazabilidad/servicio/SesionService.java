@@ -55,6 +55,7 @@ public class SesionService {
 
 
     public void cerrar(String token) {
+        sesiones.remove(token);
     }
 
 
