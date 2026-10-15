@@ -1,0 +1,66 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< pe.qruta:qruta-trazabilidad >---------------------
+[INFO] Building qruta-trazabilidad 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.15:prepare-agent (prepare-agent) @ qruta-trazabilidad ---
+[INFO] argLine set to "-javaagent:C:\\Users\\USUARIO\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.15\\org.jacoco.agent-0.8.15-runtime.jar=destfile=C:\\PROYECTOS\\Diseño de Software\\PROYECTO\\qruta\\target\\jacoco.exec"
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ qruta-trazabilidad ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ qruta-trazabilidad ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 74 source files with javac [debug parameters release 21] to target\classes
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ qruta-trazabilidad ---
+[INFO] skip non existing resourceDirectory C:\PROYECTOS\Diseño de Software\PROYECTO\qruta\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ qruta-trazabilidad ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 11 source files with javac [debug parameters release 21] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ qruta-trazabilidad ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running pe.qruta.trazabilidad.dominio.ProductoTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.699 s -- in pe.qruta.trazabilidad.dominio.ProductoTest
+[INFO] Running pe.qruta.trazabilidad.servicio.CrearProductoTest
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.211 s -- in pe.qruta.trazabilidad.servicio.CrearProductoTest
+[INFO] Running pe.qruta.trazabilidad.servicio.DestinoYRecepcionTest
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.123 s -- in pe.qruta.trazabilidad.servicio.DestinoYRecepcionTest
+[INFO] Running pe.qruta.trazabilidad.servicio.EvaluacionTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.036 s -- in pe.qruta.trazabilidad.servicio.EvaluacionTest
+[INFO] Running pe.qruta.trazabilidad.servicio.LoginServiceTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.022 s -- in pe.qruta.trazabilidad.servicio.LoginServiceTest
+[INFO] Running pe.qruta.trazabilidad.servicio.ProductoServiceTest
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s -- in pe.qruta.trazabilidad.servicio.ProductoServiceTest
+[INFO] Running pe.qruta.trazabilidad.servicio.PublicacionYAceptacionTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in pe.qruta.trazabilidad.servicio.PublicacionYAceptacionTest
+[INFO] Running pe.qruta.trazabilidad.servicio.RegistroServiceTest
+[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.052 s -- in pe.qruta.trazabilidad.servicio.RegistroServiceTest
+[INFO] Running pe.qruta.trazabilidad.servicio.RegulacionTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in pe.qruta.trazabilidad.servicio.RegulacionTest
+[INFO] Running pe.qruta.trazabilidad.servicio.SesionServiceTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s -- in pe.qruta.trazabilidad.servicio.SesionServiceTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 76, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jacoco:0.8.15:report (report) @ qruta-trazabilidad ---
+[INFO] Loading execution data file C:\PROYECTOS\Diseño de Software\PROYECTO\qruta\target\jacoco.exec
+[INFO] Analyzed bundle 'qruta-trazabilidad' with 83 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  16.087 s
+[INFO] Finished at: 2026-10-14T23:40:47-05:00
+[INFO] ------------------------------------------------------------------------

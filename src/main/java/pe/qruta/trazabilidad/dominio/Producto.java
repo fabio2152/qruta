@@ -267,6 +267,13 @@ public class Producto {
             Usuario quienBloquea,
             Clock reloj
     ) {
+
+        if (motivo == null || motivo.isBlank()) {
+            throw new DatoInvalidoException(
+                "El motivo del bloqueo es obligatorio"
+            );
+        }
+
         historial.add(
             new CambioEstado(estado, EstadoProducto.BLOQUEADO, LocalDateTime.now(reloj), quienBloquea, motivo)
         );
