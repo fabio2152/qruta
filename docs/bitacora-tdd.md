@@ -74,6 +74,13 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T51 | 10 | Error | RE-27 | Un producto con destino no puede pasar a ENTREGADO sin recepción | [`bd2e37e`](https://github.com/fabio2152/qruta/commit/bd2e37e) | [`a571ee3`](https://github.com/fabio2152/qruta/commit/a571ee3) | ✅ |
 | T52 | 10 | Normal | RE-28 | Al pasar a ENTREGADO se guarda la hora de entrega y el transportista queda LIBRE | [`89d75ca`](https://github.com/fabio2152/qruta/commit/89d75ca) | [`27177aa`](https://github.com/fabio2152/qruta/commit/27177aa) | ✅ |
 | T53 | 10 | Normal | RE-10 | El mercado ve los productos cuyo destino es él | [`62390cd`](https://github.com/fabio2152/qruta/commit/62390cd) | [`7e89707`](https://github.com/fabio2152/qruta/commit/7e89707) | ✅ |
+| T54 | 11 | Normal | RE-29, RE-31 | Pollo a 3 °C: 144 h de vida útil, riesgo BAJO, apto | [`ce4e0e5`](https://github.com/fabio2152/qruta/commit/ce4e0e5) | [`cd053ea`](https://github.com/fabio2152/qruta/commit/cd053ea) | ✅ |
+| T55 | 11 | Límite | RE-29, RE-30 | Pollo a 7,0 °C (3 °C sobre el máximo): sin ruptura, transporte penalizado, 126 h | [`5901e84`](https://github.com/fabio2152/qruta/commit/5901e84) | [`9bf49f4`](https://github.com/fabio2152/qruta/commit/9bf49f4) | ✅ |
+| T56 | 11 | Límite | RE-30 a RE-32 | Pollo a 7,1 °C: ruptura, CRITICO, no apto y BLOQUEADO automáticamente | [`88117c5`](https://github.com/fabio2152/qruta/commit/88117c5) | [`41a70f8`](https://github.com/fabio2152/qruta/commit/41a70f8) | ✅ |
+| T57 | 11 | Normal | RE-31 | Palta a 10,5 °C: ruptura, ALTO, apta y no se bloquea | [`13b0cb8`](https://github.com/fabio2152/qruta/commit/13b0cb8) | [`58c45cf`](https://github.com/fabio2152/qruta/commit/58c45cf) | ✅ |
+| T58 | 11 | Normal | RE-31 | Banano con 66 h restantes (≤ 20 %): riesgo MEDIO | [`86f69ef`](https://github.com/fabio2152/qruta/commit/86f69ef) | [`bd9b473`](https://github.com/fabio2152/qruta/commit/bd9b473) | ✅ |
+| T59 | 11 | Límite | RE-29, RE-31, RE-32 | Pollo recibido 168 h después: vida útil 0, CRITICO y bloqueado | [`19c3f75`](https://github.com/fabio2152/qruta/commit/19c3f75) | [`c2162b4`](https://github.com/fabio2152/qruta/commit/c2162b4) | ✅ |
+| T75 | 11 | Normal | RE-41 | Después del bloqueo automático, el transportista vuelve a quedar LIBRE *(requisito nuevo)* | [`2ac6bd7`](https://github.com/fabio2152/qruta/commit/2ac6bd7) | [`e2a2cf3`](https://github.com/fabio2152/qruta/commit/e2a2cf3) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -89,6 +96,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 9 | Creación, publicación y aceptación | [`3114843`](https://github.com/fabio2152/qruta/commit/3114843) | ✅ Completo |
 | 9b | Certificados y calidad: pruebas agregadas | [`2f32ec0`](https://github.com/fabio2152/qruta/commit/2f32ec0) | ✅ Completo |
 | 10 | Destino y recepción | [`73849a7`](https://github.com/fabio2152/qruta/commit/73849a7) | ✅ Completo |
+| 11 | Evaluación | [`7cca61a`](https://github.com/fabio2152/qruta/commit/7cca61a) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1343,6 +1351,58 @@ Resultado: `Tests run: 62, Failures: 0, Errors: 0`. Commit [`73849a7`](https://g
 - **Temperaturas con `BigDecimal`**, para que 7,1 − 4 sea exactamente 3,1 al comparar en el ciclo 11.
 - **Quién pasa a ENTREGADO:** el transportista, con `cambiarEstado` (decisión A del 14/10). RE-27 lo condiciona a que el destino haya registrado la recepción.
 - **Reglas de RE-24 a RE-26 sin prueba en la especificación:** que solo el transportista asignado elija el destino, que el destino esté ACTIVO, la humedad entre 0 y 100 % y una sola recepción. Quedan anotadas como pendientes.
+
+---
+
+## Ciclo 11 – Evaluación
+
+**Fecha:** 2026-10-15
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-29, RE-30, RE-31, RE-32 y RE-41 (requisito nuevo)
+**Tipo de casos:** Normales (T54, T57, T58, T75) y límite (T55, T56, T59)
+
+**Motivación:** es el núcleo del problema. Con la medición de la recepción, la plataforma decide si el producto sigue siendo apto. Si el riesgo es CRITICO, lo bloquea sin esperar a nadie. Es la "inteligencia artificial" de esta versión: un motor de reglas determinístico (D-09).
+
+**Requisito nuevo (cambio acordado el 14/10/2026):** RE-41 dice que, si el producto se bloquea después de su recepción, su transportista vuelve a LIBRE. Se cubre con T75. Ninguna prueba existente cambió.
+
+Todas las pruebas están en `EvaluacionTest`. El escenario base de la especificación: pollo producido el 31/08/2026 a las 14:00, transporte de 08:00 a 14:00 del 01/09 (6 h) y recepción a las 14:00 (24 h después de la producción). Cada prueba compara la `Evaluacion` completa, que es un record: fecha, temperatura, vida útil restante, ruptura, riesgo y aptitud. Así un RED muestra exactamente qué campo difiere.
+
+| Prueba | 🔴 RED: lo que mostró la comparación | 🟢 GREEN: código mínimo |
+|---|---|---|
+| T54 | `but was: null` | Vida restante = vida base − horas desde la producción, con riesgo BAJO |
+| T55 | `vidaUtilRestanteHoras=144` en lugar de 126 | `TipoProducto` gana el rango y el factor de deterioro (sección 6.3). Si está fuera de rango, se resta (factor − 1) × horas de transporte |
+| T56 | `rupturaCadenaFrio=false, nivelRiesgo=BAJO` | Ruptura si supera el máximo en más de 3 °C o queda por debajo del mínimo en más de 3 °C, comparando con `BigDecimal` (7,1 > 7 y 7,0 no). Ruptura en un pecuario es CRITICO. `Producto.bloquear("Evaluación crítica")` guarda la etapa anterior y el motivo. Se agrega `EstadoProducto.BLOQUEADO`, fuera de la secuencia |
+| T57 | `nivelRiesgo=BAJO` en lugar de ALTO | Ruptura en un agrícola es ALTO, apto y no se bloquea |
+| T58 | `nivelRiesgo=BAJO` en lugar de MEDIO | Sin ruptura y con `restante × 100 ≤ base × 20` (aritmética entera, sin redondeos), el riesgo es MEDIO |
+| T59 | `nivelRiesgo=MEDIO` en lugar de CRITICO | `Math.max(0, restante)` (RE-29). Con vida restante 0, CRITICO |
+| T75 | `expected: LIBRE but was: OCUPADO` | En `Producto.bloquear`: si ya hay recepción registrada, se llama a `Transportista.liberar()` |
+
+Las evidencias de cada fase están en `evidencias/ciclo-11-TXX-{red,green}.txt`.
+
+### 🔵 REFACTOR del ciclo 11
+
+**Qué se mejoró y por qué**, como sugiere la especificación:
+- El cálculo había crecido dentro de `RecepcionService`. Pasó a `dominio/evaluacion/EvaluadorDeProducto`, en Java puro, con un método por regla: `vidaUtilRestante` (RE-29), `hayRuptura` (RE-30) y `nivelDeRiesgo` (RE-31).
+- Los números mágicos pasaron a constantes con nombre: `MARGEN_DE_RUPTURA = 3` y `PORCENTAJE_DE_VIDA_UTIL_MEDIO = 20`.
+- `RecepcionService` queda en cinco pasos: buscar, crear la medición, registrar la recepción, evaluar y, si la evaluación es CRITICA, bloquear.
+
+**Código después** (`RecepcionService.registrarRecepcion`):
+
+```java
+producto.registrarRecepcion(medicion);
+Evaluacion evaluacion = evaluador.evaluar(producto, medicion);
+if (evaluacion.nivelRiesgo() == NivelRiesgo.CRITICO) {
+    producto.bloquear(MOTIVO_EVALUACION_CRITICA);
+}
+```
+
+Resultado: `Tests run: 69, Failures: 0, Errors: 0`. Commit [`7cca61a`](https://github.com/fabio2152/qruta/commit/7cca61a) · [ciclo-11-refactor.txt](evidencias/ciclo-11-refactor.txt)
+
+### Decisiones de diseño del ciclo 11
+
+- **`BigDecimal` para las temperaturas.** Con `double`, 7,1 − 4 da 3,0999…; con `BigDecimal` los límites de T55 (7,0 °C) y T56 (7,1 °C) son exactos.
+- **El bloqueo automático todavía no deja registro en el historial.** RE-34 lo exige para todo bloqueo; lo cubre T60 en el ciclo 12, junto con el bloqueo del regulador.
+- **Cobertura del dominio y los servicios:** 616 de 651 líneas (94,6 %).
 
 ---
 
