@@ -190,6 +190,21 @@ class CrearProductoTest {
     }
 
 
+    @Test
+    void unaPaltaSinCertificadoFitosanitarioSeRechaza() {
+
+        // Dado
+        DatosProducto datos = datosDePalta();
+
+        datos.setCertificadoFitosanitario(null);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.crearProducto(datos, productor))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("Los productos agrícolas requieren certificado fitosanitario");
+    }
+
+
     private Productor productorDeTipo(TipoProductor tipoProductor) {
 
         return new Productor(
