@@ -105,6 +105,23 @@ class EvaluacionTest {
     }
 
 
+    @Test
+    void unPolloRecibidoASieteGradosNoTieneRupturaPeroSuTransporteSePenaliza() {
+
+        // Dado
+        // el pollo del escenario base, recibido exactamente 3 °C sobre el máximo de su rango (0 °C a 4 °C)
+
+        // Cuando
+        Evaluacion evaluacion = recibirPolloDelEscenarioBase("7.0");
+
+        // Entonces: 168 − 24 − (4 − 1) × 6 = 126 horas
+        assertThat(evaluacion)
+            .isEqualTo(new Evaluacion(
+                horaDelDia(14, 0), new BigDecimal("7.0"), 126, false, NivelRiesgo.BAJO, true
+            ));
+    }
+
+
     private Evaluacion recibirPolloDelEscenarioBase(String temperatura) {
         return recibir(datosDePollo(LocalDateTime.of(2026, 8, 31, 14, 0)), horaDelDia(8, 0), horaDelDia(14, 0), temperatura);
     }
