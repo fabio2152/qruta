@@ -116,6 +116,13 @@ public class ProductoService {
                 "La calidad debe estar entre 1 y 3"
             );
         }
+
+        if (categoria == CategoriaProducto.AGRICOLA
+                && estaVacio(datos.getCertificadoFitosanitario())) {
+            throw new DatoInvalidoException(
+                "Los productos agrícolas requieren certificado fitosanitario"
+            );
+        }
     }
 
 
