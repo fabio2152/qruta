@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.ZoneId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
@@ -80,6 +82,21 @@ class PublicacionYAceptacionTest {
         // Entonces
         assertThat(servicio.listarPublicaciones(transportista))
             .containsExactly(palta);
+    }
+
+
+    @Test
+    void unProductorIntentaPublicarElProductoDeOtroProductorYSeRechaza() {
+
+        // Dado
+        Producto palta = servicio.crearProducto(datosDePalta(), productor);
+
+        Productor otroProductor = productor("productor2", "rosa.quispe@correo.pe");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.publicar(palta.getId(), otroProductor))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Solo el productor que creó el producto puede publicarlo");
     }
 
 
