@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorioEnMemoria;
 
 
@@ -64,5 +65,35 @@ class LoginServiceTest {
         )
             .isInstanceOf(CredencialesInvalidasException.class)
             .hasMessage("Usuario o contraseña incorrectos");
+    }
+
+
+    @Test
+    void unaCuentaPendienteNoPuedeIniciarSesion() {
+
+        // Dado
+        UsuarioRepositorioEnMemoria usuarios =
+            new UsuarioRepositorioEnMemoria();
+
+        usuarios.guardar(
+            new Usuario(
+                "productor9",
+                "Rosa Quispe Mamani",
+                "rosa.quispe@correo.pe",
+                "clave123",
+                Rol.PRODUCTOR,
+                EstadoCuenta.PENDIENTE
+            )
+        );
+
+        LoginService loginConCuentaPendiente =
+            new LoginService(usuarios);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() ->
+            loginConCuentaPendiente.iniciarSesion("productor9", "clave123")
+        )
+            .isInstanceOf(CuentaNoActivaException.class)
+            .hasMessage("Su cuenta está pendiente de aprobación");
     }
 }
