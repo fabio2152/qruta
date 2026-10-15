@@ -132,6 +132,27 @@ class PublicacionYAceptacionTest {
     }
 
 
+    @Test
+    void unTransportistaOcupadoIntentaAceptarOtroProductoYSeRechaza() {
+
+        // Dado
+        Producto palta = servicio.crearProducto(datosDePalta(), productor);
+
+        Producto otraPalta = servicio.crearProducto(datosDePalta(), productor);
+
+        servicio.publicar(palta.getId(), productor);
+
+        servicio.publicar(otraPalta.getId(), productor);
+
+        transporte.aceptar(palta.getId(), transportista);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> transporte.aceptar(otraPalta.getId(), transportista))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Un transportista OCUPADO no puede aceptar otro producto");
+    }
+
+
     private Productor productor(
             String nombreUsuario,
             String correo
