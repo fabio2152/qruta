@@ -21,6 +21,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.evaluacion.NivelRiesgo;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
+import pe.qruta.trazabilidad.dominio.producto.EstadoMaduracion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorioEnMemoria;
@@ -142,6 +143,26 @@ class EvaluacionTest {
     }
 
 
+    @Test
+    void unaPaltaRecibidaADiezComaCincoTieneRupturaRiesgoAltoEsAptaYNoSeBloquea() {
+
+        // Dado
+        DatosProducto palta = datosDePalta(LocalDateTime.of(2026, 8, 30, 8, 0));
+
+        // Cuando
+        Evaluacion evaluacion = recibir(palta, horaDelDia(8, 0), horaDelDia(14, 0), "10.5");
+
+        // Entonces: 504 − 54 − (2 − 1) × 6 = 444 horas
+        assertThat(evaluacion)
+            .isEqualTo(new Evaluacion(
+                horaDelDia(14, 0), new BigDecimal("10.5"), 444, true, NivelRiesgo.ALTO, true
+            ));
+
+        assertThat(recibido.getEstado())
+            .isEqualTo(EstadoProducto.EN_DESTINO);
+    }
+
+
     private Evaluacion recibirPolloDelEscenarioBase(String temperatura) {
         return recibir(datosDePollo(LocalDateTime.of(2026, 8, 31, 14, 0)), horaDelDia(8, 0), horaDelDia(14, 0), temperatura);
     }
@@ -197,6 +218,34 @@ class EvaluacionTest {
         datos.setEspecie("Gallus gallus domesticus");
         datos.setCodigoPlanta("PL-0457");
         datos.setCertificadoSanitarioSenasa("SENASA-2026-0815");
+
+        return datos;
+    }
+
+
+    private DatosProducto datosDePalta(LocalDateTime fechaProduccion) {
+        return datosAgricolas("Palta Hass", TipoProducto.PALTA, "Hass", fechaProduccion);
+    }
+
+
+    private DatosProducto datosAgricolas(
+            String nombre,
+            TipoProducto tipo,
+            String variedad,
+            LocalDateTime fechaProduccion
+    ) {
+
+        DatosProducto datos = new DatosProducto();
+
+        datos.setNombre(nombre);
+        datos.setTipoProducto(tipo);
+        datos.setTipoProduccion(TipoProduccion.ORGANICO);
+        datos.setLote("L-002");
+        datos.setFechaProduccion(fechaProduccion);
+        datos.setVariedad(variedad);
+        datos.setEstadoMaduracion(EstadoMaduracion.VERDE);
+        datos.setCalidad(1);
+        datos.setCertificadoFitosanitario("SENASA-FITO-2026-0311");
 
         return datos;
     }
