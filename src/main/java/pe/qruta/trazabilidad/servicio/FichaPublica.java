@@ -23,6 +23,7 @@ public record FichaPublica(
         EstadoProducto etapa,
         List<String> certificados,
         String veredicto,
-        String motivo
+        String motivo,
+        Long horasEnElMercado
 ) {
 }

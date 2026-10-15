@@ -2,6 +2,7 @@ package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -151,6 +152,43 @@ class ConsultaPublicaTest {
 
         assertThat(ficha.motivo())
             .isEqualTo("Sospecha de contaminación");
+    }
+
+
+    @Test
+    void unProductoEntregadoALasDiezYConsultadoALasDieciseisLlevaSeisHorasEnElMercado() {
+
+        // Dado
+        Producto pollo = servicio.crearProducto(datosDePollo(), productor);
+
+        servicio.publicar(pollo.getId(), productor);
+
+        transporte.aceptar(pollo.getId(), transportista);
+
+        transporte.elegirDestino(pollo.getId(), transportista, "mercado1");
+
+        reloj.ajustarA(horaDelDia(8, 0));
+
+        servicio.cambiarEstado(pollo.getId(), EstadoProducto.EN_TRANSITO, transportista);
+
+        reloj.ajustarA(horaDelDia(9, 0));
+
+        servicio.cambiarEstado(pollo.getId(), EstadoProducto.EN_DESTINO, transportista);
+
+        recepcion.registrarRecepcion(pollo.getId(), mercado, new BigDecimal("3"), new BigDecimal("80"));
+
+        reloj.ajustarA(horaDelDia(10, 0));
+
+        servicio.cambiarEstado(pollo.getId(), EstadoProducto.ENTREGADO, transportista);
+
+        reloj.ajustarA(horaDelDia(16, 0));
+
+        // Cuando
+        FichaPublica ficha = consulta.consultar(pollo.getCodigo());
+
+        // Entonces
+        assertThat(ficha.horasEnElMercado())
+            .isEqualTo(6L);
     }
 
 

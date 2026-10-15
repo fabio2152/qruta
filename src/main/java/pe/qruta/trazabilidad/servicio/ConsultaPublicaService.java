@@ -74,7 +74,8 @@ public class ConsultaPublicaService {
             producto.getEstado(),
             certificados,
             esApto(producto) ? "APTO PARA CONSUMO" : "NO APTO PARA CONSUMO",
-            producto.getMotivoBloqueo()
+            producto.getMotivoBloqueo(),
+            null
         );
     }
 
