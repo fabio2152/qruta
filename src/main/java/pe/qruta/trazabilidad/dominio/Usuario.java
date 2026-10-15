@@ -11,6 +11,12 @@ public class Usuario {
 
     private final Rol rol;
 
+    private final String nombreCompleto;
+
+    private final String correo;
+
+    private EstadoCuenta estadoCuenta;
+
 
     public Usuario(
             String nombreUsuario,
@@ -20,14 +26,30 @@ public class Usuario {
     }
 
 
+    /** Cuenta creada por el sistema (datos iniciales y pruebas): nace ACTIVA. */
     public Usuario(
             String nombreUsuario,
             String contrasena,
             Rol rol
     ) {
+        this(nombreUsuario, null, null, contrasena, rol, EstadoCuenta.ACTIVA);
+    }
+
+
+    public Usuario(
+            String nombreUsuario,
+            String nombreCompleto,
+            String correo,
+            String contrasena,
+            Rol rol,
+            EstadoCuenta estadoCuenta
+    ) {
         this.nombreUsuario = nombreUsuario;
+        this.nombreCompleto = nombreCompleto;
+        this.correo = correo;
         this.contrasena = contrasena;
         this.rol = rol;
+        this.estadoCuenta = estadoCuenta;
     }
 
 
@@ -46,8 +68,18 @@ public class Usuario {
     }
 
 
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
+
+
+    public String getCorreo() {
+        return correo;
+    }
+
+
     public EstadoCuenta getEstadoCuenta() {
-        return null;
+        return estadoCuenta;
     }
 
 
