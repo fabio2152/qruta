@@ -414,6 +414,12 @@ public class Producto {
             EstadoProducto nuevoEstado
     ) {
 
+        if (estado == EstadoProducto.BLOQUEADO) {
+            throw new CambioDeEstadoNoPermitidoException(
+                "El producto está bloqueado y no puede cambiar de etapa"
+            );
+        }
+
         if (estado.esFinal()) {
             throw new CambioDeEstadoNoPermitidoException(
                 "El producto ya fue entregado y no puede cambiar de estado"
