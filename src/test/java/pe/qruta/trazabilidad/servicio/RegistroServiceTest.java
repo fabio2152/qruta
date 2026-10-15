@@ -218,6 +218,23 @@ class RegistroServiceTest {
     }
 
 
+    @Test
+    void unRegistroConUnCorreoYaRegistradoSeRechaza() {
+
+        // Dado
+        registro.registrar(solicitudDeProductor());
+
+        SolicitudRegistro otraSolicitud = solicitudDeTransportista();
+
+        otraSolicitud.setCorreo("rosa.quispe@correo.pe");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.registrar(otraSolicitud))
+            .isInstanceOf(UsuarioYaExisteException.class)
+            .hasMessage("El correo rosa.quispe@correo.pe ya está registrado");
+    }
+
+
     /** Solicitud válida de un mercado, con RUC de 11 dígitos. */
     private SolicitudRegistro solicitudDeMercado() {
 
