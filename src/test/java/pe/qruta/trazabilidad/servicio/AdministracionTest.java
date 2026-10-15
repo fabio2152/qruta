@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.ZoneId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
@@ -64,6 +66,21 @@ class AdministracionTest {
         assertThat(((Regulador) creado).getCodigoInstitucional()).isEqualTo("SENASA-LIM-0042");
 
         assertThat(usuarios.buscarPorNombreUsuario("regulador2")).contains(creado);
+    }
+
+
+    @Test
+    void crearUnReguladorSinCodigoInstitucionalSeRechaza() {
+
+        // Dado
+        SolicitudRegistro solicitud = solicitudDeRegulador();
+
+        solicitud.setCodigoInstitucional(" ");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> administracion.crearRegulador(administrador, solicitud))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("El código institucional es obligatorio");
     }
 
 
