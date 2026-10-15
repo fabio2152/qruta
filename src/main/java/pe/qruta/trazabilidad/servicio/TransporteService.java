@@ -1,6 +1,8 @@
 package pe.qruta.trazabilidad.servicio;
 
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCarga;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
@@ -35,6 +37,12 @@ public class TransporteService {
                         "No existe un producto con id " + idProducto
                     )
                 );
+
+        if (transportista.getEstadoCarga() == EstadoCarga.OCUPADO) {
+            throw new OperacionNoAutorizadaException(
+                "Un transportista OCUPADO no puede aceptar otro producto"
+            );
+        }
 
         producto.asignarIntermediario(transportista);
 
