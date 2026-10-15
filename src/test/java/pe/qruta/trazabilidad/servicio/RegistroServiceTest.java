@@ -95,6 +95,23 @@ class RegistroServiceTest {
     }
 
 
+    @Test
+    void unRegistroConUnNombreDeUsuarioYaExistenteSeRechaza() {
+
+        // Dado
+        registro.registrar(solicitudDeProductor());
+
+        SolicitudRegistro otraSolicitud = solicitudDeProductor();
+
+        otraSolicitud.setCorreo("otro.correo@correo.pe");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.registrar(otraSolicitud))
+            .isInstanceOf(UsuarioYaExisteException.class)
+            .hasMessage("El nombre de usuario productor9 ya está registrado");
+    }
+
+
     /** Solicitud válida de un productor; la contraseña "clave123" tiene exactamente 8 caracteres. */
     private SolicitudRegistro solicitudDeProductor() {
 
