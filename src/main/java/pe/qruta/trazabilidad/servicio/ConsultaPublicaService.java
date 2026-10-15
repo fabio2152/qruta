@@ -1,6 +1,8 @@
 package pe.qruta.trazabilidad.servicio;
 
 import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +77,9 @@ public class ConsultaPublicaService {
             certificados,
             esApto(producto) ? "APTO PARA CONSUMO" : "NO APTO PARA CONSUMO",
             producto.getMotivoBloqueo(),
-            null
+            producto.getHoraEntrega() == null
+                ? null
+                : Duration.between(producto.getHoraEntrega(), LocalDateTime.now(reloj)).toHours()
         );
     }
 
