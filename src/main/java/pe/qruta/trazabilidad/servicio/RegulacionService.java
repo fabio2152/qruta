@@ -106,6 +106,11 @@ public class RegulacionService {
     }
 
 
+    public String reporteSanitarioCsv(Usuario regulador) {
+        return "";
+    }
+
+
     /** RE-33, RE-34 y RE-40: el control sanitario es exclusivo del regulador. */
     private void validarQueEsRegulador(Usuario usuario) {
 

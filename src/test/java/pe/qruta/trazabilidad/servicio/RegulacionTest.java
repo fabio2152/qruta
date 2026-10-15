@@ -3,6 +3,7 @@ package pe.qruta.trazabilidad.servicio;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
+import pe.qruta.trazabilidad.dominio.producto.EstadoMaduracion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorioEnMemoria;
@@ -231,6 +233,35 @@ class RegulacionTest {
     }
 
 
+    @Test
+    void elReporteCsvTieneUnaFilaPorProductoConLasColumnasDeRe36() {
+
+        // Dado: un pollo recibido a 7,1 °C (bloqueado) y una palta todavía EN_ORIGEN
+        Producto pollo = polloEnTransito();
+
+        reloj.ajustarA(horaDelDia(14, 0));
+
+        servicio.cambiarEstado(pollo.getId(), EstadoProducto.EN_DESTINO, transportista);
+
+        recepcion.registrarRecepcion(pollo.getId(), mercado, new BigDecimal("7.1"), new BigDecimal("80"));
+
+        Producto palta = servicio.crearProducto(datosDePalta(), productor);
+
+        // Cuando
+        String csv = regulacion.reporteSanitarioCsv(regulador);
+
+        // Entonces
+        assertThat(csv)
+            .isEqualTo(
+                "codigo,tipo,productor,region_origen,etapa,transportista,destino,duracion_transporte_horas,"
+                    + "temperatura_recepcion,vida_util_restante_horas,ruptura,nivel_riesgo,apto,bloqueado\n"
+                    + pollo.getCodigo() + ",POLLO,Granja Mamani,Cusco,BLOQUEADO,transportista1,"
+                    + "Mercado Mayorista de Lima,6,7.1,126,SI,CRITICO,NO,SI\n"
+                    + palta.getCodigo() + ",PALTA,Granja Mamani,Cusco,EN_ORIGEN,,,,,,,,,NO\n"
+            );
+    }
+
+
     /** Pollo aceptado por transportista1, con destino mercado1, que salió a las 08:00. */
     private Producto polloEnTransito() {
 
@@ -271,6 +302,25 @@ class RegulacionTest {
         datos.setEspecie("Gallus gallus domesticus");
         datos.setCodigoPlanta("PL-0457");
         datos.setCertificadoSanitarioSenasa("SENASA-2026-0815");
+
+        return datos;
+    }
+
+
+    /** Palta Hass producida el 30/08/2026 a las 08:00. */
+    private DatosProducto datosDePalta() {
+
+        DatosProducto datos = new DatosProducto();
+
+        datos.setNombre("Palta Hass");
+        datos.setTipoProducto(TipoProducto.PALTA);
+        datos.setTipoProduccion(TipoProduccion.ORGANICO);
+        datos.setLote("L-002");
+        datos.setFechaProduccion(LocalDateTime.of(2026, 8, 30, 8, 0));
+        datos.setVariedad("Hass");
+        datos.setEstadoMaduracion(EstadoMaduracion.VERDE);
+        datos.setCalidad(1);
+        datos.setCertificadoFitosanitario("SENASA-FITO-2026-0311");
 
         return datos;
     }
