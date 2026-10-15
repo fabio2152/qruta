@@ -271,6 +271,19 @@ class DestinoYRecepcionTest {
     }
 
 
+    @Test
+    void elegirElDestinoDeUnProductoQueYaEstaEnDestinoSeRechaza() {
+
+        // Dado
+        Producto palta = paltaEnDestino();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> transporte.elegirDestino(palta.getId(), transportista, "mercado1"))
+            .isInstanceOf(CambioDeEstadoNoPermitidoException.class)
+            .hasMessage("El destino solo se elige mientras el producto está EN_ORIGEN o EN_TRANSITO");
+    }
+
+
     /** Palta aceptada, con destino mercado1, que viajó de 08:00 a 14:00 y está EN_DESTINO. */
     private Producto paltaEnDestino() {
 
