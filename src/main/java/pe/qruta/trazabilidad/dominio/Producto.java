@@ -308,6 +308,12 @@ public class Producto {
                 "No se puede pasar de " + estado + " a " + nuevoEstado
             );
         }
+
+        if (nuevoEstado == EstadoProducto.ENTREGADO && destino != null && mediciones.isEmpty()) {
+            throw new CambioDeEstadoNoPermitidoException(
+                "El destino aún no registró la recepción del producto"
+            );
+        }
     }
 
 
