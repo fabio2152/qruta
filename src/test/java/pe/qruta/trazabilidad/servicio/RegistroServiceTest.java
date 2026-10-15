@@ -12,12 +12,15 @@ import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.CentroDeAcopio;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCarga;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
+import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorioEnMemoria;
 
 
@@ -232,6 +235,48 @@ class RegistroServiceTest {
         assertThatThrownBy(() -> registro.registrar(otraSolicitud))
             .isInstanceOf(UsuarioYaExisteException.class)
             .hasMessage("El correo rosa.quispe@correo.pe ya está registrado");
+    }
+
+
+    @Test
+    void unTransportistaYUnCentroDeAcopioSeRegistranConSuPropiaClase() {
+
+        // Dado
+        // las solicitudes válidas de un transportista y de un centro de acopio
+
+        // Cuando
+        Usuario transportista = registro.registrar(solicitudDeTransportista());
+
+        Usuario acopio = registro.registrar(solicitudDeCentroDeAcopio());
+
+        // Entonces
+        assertThat(transportista).isInstanceOf(Transportista.class);
+
+        assertThat(((Transportista) transportista).getEstadoCarga())
+            .isEqualTo(EstadoCarga.LIBRE);
+
+        assertThat(transportista.getEstadoCuenta())
+            .isEqualTo(EstadoCuenta.PENDIENTE);
+
+        assertThat(acopio).isInstanceOf(CentroDeAcopio.class);
+
+        assertThat(acopio.getRol())
+            .isEqualTo(Rol.INTERMEDIARIO);
+    }
+
+
+    /** Solicitud válida de un centro de acopio, con RUC de 11 dígitos. */
+    private SolicitudRegistro solicitudDeCentroDeAcopio() {
+
+        SolicitudRegistro solicitud = solicitudDeMercado();
+
+        solicitud.setTipoCuenta(TipoCuenta.CENTRO_DE_ACOPIO);
+        solicitud.setNombreUsuario("acopio9");
+        solicitud.setCorreo("acopio.huancayo@correo.pe");
+        solicitud.setRazonSocial("Centro de Acopio Huancayo");
+        solicitud.setRegion("Junín");
+
+        return solicitud;
     }
 
 
