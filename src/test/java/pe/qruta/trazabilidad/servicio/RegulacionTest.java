@@ -15,6 +15,7 @@ import pe.qruta.trazabilidad.dominio.CambioDeEstadoNoPermitidoException;
 import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
@@ -180,6 +181,21 @@ class RegulacionTest {
                 regulador,
                 "Análisis de laboratorio negativo"
             ));
+    }
+
+
+    @Test
+    void elAdministradorIntentaBloquearUnProductoYSeRechaza() {
+
+        // Dado
+        Producto pollo = polloEnTransito();
+
+        Usuario administrador = new Usuario("admin1", "clave123", Rol.ADMINISTRADOR);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> regulacion.bloquear(pollo.getId(), administrador, "Prueba"))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Solo el regulador puede bloquear o desbloquear productos");
     }
 
 
