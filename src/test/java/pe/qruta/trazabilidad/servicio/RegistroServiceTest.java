@@ -265,6 +265,22 @@ class RegistroServiceTest {
     }
 
 
+    @Test
+    void unProductorIntentaAprobarAUnTransportistaYSeRechaza() {
+
+        // Dado
+        registro.registrar(solicitudDeTransportista());
+
+        Usuario productor =
+            new Usuario("productor1", "clave123", Rol.PRODUCTOR);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.aprobar("transportista9", productor))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Solo el regulador aprueba productores y transportistas");
+    }
+
+
     /** Solicitud válida de un centro de acopio, con RUC de 11 dígitos. */
     private SolicitudRegistro solicitudDeCentroDeAcopio() {
 
