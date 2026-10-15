@@ -5,7 +5,10 @@ public enum EstadoProducto {
     EN_ORIGEN,
     EN_TRANSITO,
     EN_DESTINO,
-    ENTREGADO;
+    ENTREGADO,
+
+    /** Fuera de la secuencia normal: solo se llega con bloquear y solo se sale con desbloquear (6.6). */
+    BLOQUEADO;
 
 
     public EstadoProducto siguiente() {
@@ -14,7 +17,7 @@ public enum EstadoProducto {
             case EN_ORIGEN -> EN_TRANSITO;
             case EN_TRANSITO -> EN_DESTINO;
             case EN_DESTINO -> ENTREGADO;
-            case ENTREGADO -> null;
+            case ENTREGADO, BLOQUEADO -> null;
         };
     }
 

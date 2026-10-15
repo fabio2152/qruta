@@ -122,6 +122,26 @@ class EvaluacionTest {
     }
 
 
+    @Test
+    void unPolloRecibidoASieteComaUnoTieneRupturaEsCriticoNoEsAptoYQuedaBloqueado() {
+
+        // Dado
+        // el pollo del escenario base, recibido 3,1 °C sobre el máximo de su rango
+
+        // Cuando
+        Evaluacion evaluacion = recibirPolloDelEscenarioBase("7.1");
+
+        // Entonces
+        assertThat(evaluacion)
+            .isEqualTo(new Evaluacion(
+                horaDelDia(14, 0), new BigDecimal("7.1"), 126, true, NivelRiesgo.CRITICO, false
+            ));
+
+        assertThat(recibido.getEstado())
+            .isEqualTo(EstadoProducto.BLOQUEADO);
+    }
+
+
     private Evaluacion recibirPolloDelEscenarioBase(String temperatura) {
         return recibir(datosDePollo(LocalDateTime.of(2026, 8, 31, 14, 0)), horaDelDia(8, 0), horaDelDia(14, 0), temperatura);
     }
