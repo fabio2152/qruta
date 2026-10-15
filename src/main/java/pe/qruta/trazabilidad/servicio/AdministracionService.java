@@ -1,8 +1,12 @@
 package pe.qruta.trazabilidad.servicio;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
+import pe.qruta.trazabilidad.dominio.EstadoProducto;
+import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
@@ -69,6 +73,15 @@ public class AdministracionService {
 
 
     public ResumenAdministrador resumen(Usuario administrador) {
-        return new ResumenAdministrador(Map.of(), Map.of());
+
+        Map<Rol, Long> usuariosPorRol =
+            usuarios.listarTodos().stream()
+                .collect(Collectors.groupingBy(Usuario::getRol, Collectors.counting()));
+
+        Map<EstadoProducto, Long> productosPorEtapa =
+            productos.listarTodos().stream()
+                .collect(Collectors.groupingBy(Producto::getEstado, Collectors.counting()));
+
+        return new ResumenAdministrador(usuariosPorRol, productosPorEtapa);
     }
 }
