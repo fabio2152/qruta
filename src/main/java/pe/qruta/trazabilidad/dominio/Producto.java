@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
+import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
+import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
+
 
 public class Producto {
 
@@ -15,7 +19,7 @@ public class Producto {
 
     private final Usuario productor;
 
-    private final Usuario intermediarioAsignado;
+    private Usuario intermediarioAsignado;
 
     private EstadoProducto estado = EstadoProducto.EN_ORIGEN;
 
@@ -25,7 +29,20 @@ public class Producto {
 
     private final List<CambioEstado> historial = new ArrayList<>();
 
+    private String codigo;
 
+    private TipoProducto tipoProducto;
+
+    private TipoProduccion tipoProduccion;
+
+    private String lote;
+
+    private LocalDateTime fechaProduccion;
+
+    private boolean publicado;
+
+
+    /** Asignación directa: un productor con transportista propio (D-04, fase 1). */
     public Producto(
             String nombre,
             Usuario productor,
@@ -34,6 +51,21 @@ public class Producto {
         this.nombre = nombre;
         this.productor = productor;
         this.intermediarioAsignado = intermediarioAsignado;
+    }
+
+
+    /** Flujo de la plataforma: nace sin transportista, sin publicar y con su código QR (RE-18). */
+    protected Producto(
+            String codigo,
+            Usuario productor,
+            DatosProducto datos
+    ) {
+        this(datos.getNombre(), productor, (Usuario) null);
+        this.codigo = codigo;
+        this.tipoProducto = datos.getTipoProducto();
+        this.tipoProduccion = datos.getTipoProduccion();
+        this.lote = datos.getLote();
+        this.fechaProduccion = datos.getFechaProduccion();
     }
 
 
@@ -87,12 +119,32 @@ public class Producto {
 
 
     public String getCodigo() {
-        return null;
+        return codigo;
+    }
+
+
+    public TipoProducto getTipoProducto() {
+        return tipoProducto;
+    }
+
+
+    public TipoProduccion getTipoProduccion() {
+        return tipoProduccion;
+    }
+
+
+    public String getLote() {
+        return lote;
+    }
+
+
+    public LocalDateTime getFechaProduccion() {
+        return fechaProduccion;
     }
 
 
     public boolean isPublicado() {
-        return false;
+        return publicado;
     }
 
 
