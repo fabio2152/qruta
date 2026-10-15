@@ -19,11 +19,11 @@ const VISTAS = {
     },
     MERCADO: {
         titulo: "Productos con destino a este mercado",
-        descripcion: "Aquí verás los productos que te elijan como destino."
+        descripcion: "Cuando un producto llegue (EN_DESTINO), registra su temperatura: la plataforma lo evalúa y, si es crítico, lo bloquea."
     },
     CENTRO_DE_ACOPIO: {
         titulo: "Productos con destino a este centro",
-        descripcion: "Aquí verás los productos que te elijan como destino."
+        descripcion: "Cuando un producto llegue (EN_DESTINO), registra su temperatura: la plataforma lo evalúa y, si es crítico, lo bloquea."
     },
     REGULADOR: {
         titulo: "Todos los productos",
@@ -32,6 +32,10 @@ const VISTAS = {
 };
 
 let sesion = null;   // { token, usuario }
+
+let destinosPorTipo = {};   // tipo de producto -> destinos que lo necesitan (para el transportista)
+
+const esPuntoDeRecepcion = (tipo) => tipo === "MERCADO" || tipo === "CENTRO_DE_ACOPIO";
 
 const $ = (id) => document.getElementById(id);
 
@@ -130,6 +134,7 @@ async function mostrarPanel() {
     $("panel-crear").hidden = tipo !== "PRODUCTOR";
     $("panel-transportista").hidden = tipo !== "TRANSPORTISTA";
     $("panel-usuarios").hidden = tipo !== "REGULADOR";
+    $("panel-punto").hidden = !esPuntoDeRecepcion(tipo);
 
     await actualizar();
 }
@@ -141,6 +146,7 @@ async function actualizar() {
     try {
         if (tipo === "TRANSPORTISTA") await cargarTransportista();
         if (tipo === "REGULADOR") await cargarUsuarios();
+        if (esPuntoDeRecepcion(tipo)) await cargarPuntoDeRecepcion();
         await cargarProductos();
     } catch (error) {
         avisar(error.message, "error");
@@ -151,7 +157,45 @@ async function actualizar() {
 // ---------- Datos ----------
 
 async function cargarProductos() {
-    pintarProductos(await api("GET", "/api/productos"));
+
+    const productos = await api("GET", "/api/productos");
+
+    if (tipoCuenta() === "TRANSPORTISTA") {
+        await cargarDestinos(productos);
+    }
+
+    pintarProductos(productos);
+}
+
+/** El transportista solo puede elegir destinos activos que necesiten el tipo de su producto (RE-25). */
+async function cargarDestinos(productos) {
+
+    destinosPorTipo = {};
+
+    const tipos = [...new Set(productos.filter(puedeElegirDestino).map(p => p.tipoProducto))];
+
+    for (const tipo of tipos) {
+        destinosPorTipo[tipo] = await api("GET", "/api/destinos?tipo=" + tipo);
+    }
+}
+
+function puedeElegirDestino(p) {
+    return p.intermediario === sesion.usuario.nombreUsuario
+        && p.tipoProducto
+        && !p.destino
+        && (p.estado === "EN_ORIGEN" || p.estado === "EN_TRANSITO");
+}
+
+async function cargarPuntoDeRecepcion() {
+
+    sesion.usuario = await api("GET", "/api/usuarios/yo");
+    guardarSesion();
+
+    const necesidades = sesion.usuario.necesidades || [];
+
+    document.querySelectorAll("#formulario-necesidades input[type=checkbox]").forEach(casilla => {
+        casilla.checked = necesidades.includes(casilla.value);
+    });
 }
 
 async function cargarTransportista() {
@@ -162,6 +206,7 @@ async function cargarTransportista() {
     const libre = sesion.usuario.estadoCarga === "LIBRE";
 
     $("estado-carga").textContent = sesion.usuario.estadoCarga;
+    $("ubicacion").value = sesion.usuario.ubicacionActual || "";
     $("estado-carga").className = "estado-carga estado-carga--" + sesion.usuario.estadoCarga;
 
     const publicaciones = await api("GET", "/api/publicaciones");
@@ -223,8 +268,27 @@ function pintarProducto(p) {
     const esMio = p.intermediario === sesion.usuario.nombreUsuario;
     const esDelProductor = tipoCuenta() === "PRODUCTOR";
     const enOrigenSinTransportista = p.estado === "EN_ORIGEN" && !p.intermediario;
+    const soyElDestino = p.destino === sesion.usuario.nombreUsuario;
 
     const acciones = [];
+
+    if (puedeElegirDestino(p)) {
+        const opciones = (destinosPorTipo[p.tipoProducto] || [])
+            .map(d => `<option value="${d.nombreUsuario}">${escapar(d.razonSocial)} (${escapar(d.region || "")})</option>`)
+            .join("");
+        acciones.push(opciones
+            ? `<span class="accion-en-linea"><select id="destino-${p.id}">${opciones}</select>
+               <button class="boton boton--primario boton--pequeno" data-elegir-destino="${p.id}">Elegir destino</button></span>`
+            : `<span class="texto-suave">No hay destinos activos que necesiten ${p.tipoProducto}.</span>`);
+    }
+
+    if (soyElDestino && p.estado === "EN_DESTINO" && !p.recepcionRegistrada) {
+        acciones.push(`<span class="accion-en-linea">
+            <input id="temperatura-${p.id}" type="number" step="0.1" placeholder="°C">
+            <input id="humedad-${p.id}" type="number" step="1" min="0" max="100" placeholder="% humedad">
+            <button class="boton boton--primario boton--pequeno" data-recepcion="${p.id}">Registrar recepción</button>
+        </span>`);
+    }
 
     if (esMio && p.siguienteEstado) {
         acciones.push(`<button class="boton boton--primario boton--pequeno" data-avanzar="${p.id}" data-estado="${p.siguienteEstado}">Pasar a ${p.siguienteEstado}</button>`);
@@ -234,6 +298,10 @@ function pintarProducto(p) {
         acciones.push(p.publicado
             ? `<button class="boton boton--fantasma boton--pequeno" data-retirar="${p.id}">Retirar publicación</button>`
             : `<button class="boton boton--primario boton--pequeno" data-publicar="${p.id}">Publicar</button>`);
+    }
+
+    if (p.codigo) {
+        acciones.push(`<button class="boton boton--fantasma boton--pequeno" data-qr="${p.codigo}" data-nombre="${escapar(p.nombre)}">Ver QR</button>`);
     }
 
     acciones.push(`<button class="boton boton--fantasma boton--pequeno" data-historial="${p.id}" data-nombre="${escapar(p.nombre)}">Ver historial</button>`);
@@ -247,11 +315,13 @@ function pintarProducto(p) {
             <div>
                 <p class="producto__nombre">${escapar(p.nombre)} <span class="producto__id">#${p.id}</span></p>
                 ${detalle ? `<p class="producto__actores">${detalle}</p>` : ""}
-                <p class="producto__actores">Productor: ${p.productor} · Transportista: ${p.intermediario || "sin asignar"}</p>
+                <p class="producto__actores">Productor: ${p.productor} · Transportista: ${p.intermediario || "sin asignar"}${p.destinoRazonSocial ? " · Destino: " + escapar(p.destinoRazonSocial) : ""}</p>
                 ${p.codigo ? `<p class="producto__actores">Código QR: <code>${p.codigo}</code>${p.publicado && !p.intermediario ? ` <span class="insignia">PUBLICADO</span>` : ""}</p>` : ""}
             </div>
             <span class="estado estado--${p.estado}">${p.estado}</span>
         </div>
+
+        ${p.estado === "BLOQUEADO" ? `<p class="alerta-bloqueo">Bloqueado: ${escapar(p.motivoBloqueo || "sin motivo")}</p>` : ""}
 
         <div class="etapas">${etapas}</div>
 
@@ -260,6 +330,12 @@ function pintarProducto(p) {
             <div class="dato"><dt>Llegada</dt><dd>${p.horaLlegada || "—"}</dd></div>
             <div class="dato dato--destacado"><dt>Duración</dt><dd>${p.duracionTransporte || "—"}</dd></div>
         </dl>
+
+        ${p.recepcionRegistrada || p.horaEntrega ? `<dl class="datos">
+            <div class="dato"><dt>Recepción</dt><dd>${p.recepcionRegistrada ? p.temperaturaRecepcion + " °C" : "—"}</dd></div>
+            <div class="dato"><dt>Entrega</dt><dd>${p.horaEntrega || "—"}</dd></div>
+            <div class="dato"><dt>Destino</dt><dd>${escapar(p.destinoRazonSocial || "—")}</dd></div>
+        </dl>` : ""}
 
         <div class="producto__acciones">${acciones.join("")}</div>
     </article>`;
@@ -304,6 +380,31 @@ async function verHistorial(id, nombre) {
     } catch (error) {
         avisar(error.message, "error");
     }
+}
+
+
+function verQr(codigo, nombre) {
+
+    const enlace = `${window.location.origin}/consulta.html?codigo=${encodeURIComponent(codigo)}`;
+
+    $("titulo-qr").textContent = `QR · ${nombre} (${codigo})`;
+    $("contenido-qr").innerHTML = "";
+    $("enlace-qr").href = enlace;
+    $("enlace-qr").textContent = enlace;
+
+    if (window.QRCode) {
+        new QRCode($("contenido-qr"), { text: enlace, width: 220, height: 220 });
+    } else {
+        $("contenido-qr").textContent = "No se pudo cargar la librería del QR (sin conexión a internet). Usa el enlace.";
+    }
+
+    $("dialogo-qr").showModal();
+}
+
+function textoEvaluacion(e) {
+    return `${e.aptoConsumo ? "APTO" : "NO APTO PARA CONSUMO"} · riesgo ${e.nivelRiesgo}`
+        + ` · vida útil restante ${e.vidaUtilRestanteHoras} h`
+        + (e.rupturaCadenaFrio ? " · ruptura de la cadena de frío" : "");
 }
 
 
@@ -473,7 +574,65 @@ $("lista-productos").addEventListener("click", (evento) => {
     }
 
     if (historial) verHistorial(historial.dataset.historial, historial.dataset.nombre);
+
+    const destino = evento.target.closest("[data-elegir-destino]");
+    const recepcion = evento.target.closest("[data-recepcion]");
+    const qr = evento.target.closest("[data-qr]");
+
+    if (destino) {
+        const id = destino.dataset.elegirDestino;
+        ejecutar(
+            () => api("PUT", `/api/productos/${id}/destino`, { destino: $("destino-" + id).value }),
+            "Destino elegido"
+        );
+    }
+
+    if (recepcion) {
+        const id = recepcion.dataset.recepcion;
+        registrarRecepcion(id, $("temperatura-" + id).value, $("humedad-" + id).value);
+    }
+
+    if (qr) verQr(qr.dataset.qr, qr.dataset.nombre);
 });
+
+async function registrarRecepcion(id, temperatura, humedad) {
+
+    if (temperatura === "") {
+        avisar("Ingresa la temperatura medida", "error");
+        return;
+    }
+
+    try {
+        const evaluacion = await api("POST", `/api/productos/${id}/recepcion`, {
+            temperatura: Number(temperatura),
+            humedad: humedad === "" ? null : Number(humedad)
+        });
+
+        avisar(textoEvaluacion(evaluacion), evaluacion.aptoConsumo ? "exito" : "error");
+        await actualizar();
+    } catch (error) {
+        avisar(error.message, "error");
+    }
+}
+
+$("formulario-ubicacion").addEventListener("submit", (evento) => {
+    evento.preventDefault();
+    ejecutar(
+        () => api("PUT", "/api/transportistas/yo/ubicacion", { ubicacion: $("ubicacion").value.trim() }),
+        "Ubicación publicada"
+    );
+});
+
+$("formulario-necesidades").addEventListener("submit", (evento) => {
+
+    evento.preventDefault();
+
+    const necesidades = [...document.querySelectorAll("#formulario-necesidades input:checked")].map(c => c.value);
+
+    ejecutar(() => api("PUT", "/api/destinos/yo", { necesidades }), "Necesidades guardadas");
+});
+
+$("cerrar-qr").addEventListener("click", () => $("dialogo-qr").close());
 
 $("lista-publicaciones").addEventListener("click", (evento) => {
 

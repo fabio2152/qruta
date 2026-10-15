@@ -24,6 +24,7 @@ import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.EstadoMaduracion;
 import pe.qruta.trazabilidad.dominio.producto.ProductoAgro;
@@ -67,6 +68,9 @@ public class ProductoEntidad {
     @ManyToOne
     private UsuarioEntidad intermediarioAsignado;
 
+    @ManyToOne
+    private UsuarioEntidad destino;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private EstadoProducto estado;
@@ -75,7 +79,16 @@ public class ProductoEntidad {
 
     private LocalDateTime horaLlegada;
 
+    private LocalDateTime horaEntrega;
+
     private boolean publicado;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private EstadoProducto estadoAntesDelBloqueo;
+
+    @Column(length = 200)
+    private String motivoBloqueo;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
@@ -115,6 +128,11 @@ public class ProductoEntidad {
     @JoinColumn(name = "producto_id")
     @OrderBy("id")
     private List<CambioEstadoEntidad> historial = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "producto_id")
+    @OrderBy("id")
+    private List<MedicionEntidad> mediciones = new ArrayList<>();
 
 
     protected ProductoEntidad() {
@@ -167,16 +185,26 @@ public class ProductoEntidad {
     }
 
 
+    public List<MedicionEntidad> getMediciones() {
+        return mediciones;
+    }
+
+
     /** Copia el estado actual del producto de dominio en la entidad. */
     public void actualizarDesde(
             Producto producto,
-            UsuarioEntidad intermediario
+            UsuarioEntidad intermediario,
+            UsuarioEntidad destino
     ) {
         this.intermediarioAsignado = intermediario;
+        this.destino = destino;
         this.estado = producto.getEstado();
         this.horaInicioTransporte = producto.getHoraInicioTransporte();
         this.horaLlegada = producto.getHoraLlegada();
+        this.horaEntrega = producto.getHoraEntrega();
         this.publicado = producto.isPublicado();
+        this.estadoAntesDelBloqueo = producto.getEstadoAntesDelBloqueo();
+        this.motivoBloqueo = producto.getMotivoBloqueo();
     }
 
 
@@ -198,6 +226,14 @@ public class ProductoEntidad {
 
         producto.restaurar(
             id, intermediario, estado, horaInicioTransporte, horaLlegada, cambios, publicado, version
+        );
+
+        producto.restaurarRecorrido(
+            destino == null ? null : (PuntoDeRecepcion) destino.aDominio(),
+            horaEntrega,
+            estadoAntesDelBloqueo,
+            motivoBloqueo,
+            mediciones.stream().map(MedicionEntidad::aDominio).toList()
         );
 
         return producto;

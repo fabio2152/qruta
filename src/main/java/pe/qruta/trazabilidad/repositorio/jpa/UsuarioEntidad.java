@@ -1,5 +1,8 @@
 package pe.qruta.trazabilidad.repositorio.jpa;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,9 +20,11 @@ import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Intermediario;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
+import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
+import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
 
 
 /**
@@ -90,6 +95,13 @@ public class UsuarioEntidad {
     @Column(length = 10)
     private EstadoCarga estadoCarga;
 
+    @Column(length = 120)
+    private String ubicacionActual;
+
+    /** Tipos de producto que necesita el punto de recepción, separados por comas (por ejemplo "POLLO,PALTA"). */
+    @Column(length = 60)
+    private String necesidades;
+
 
     protected UsuarioEntidad() {
     }
@@ -133,6 +145,12 @@ public class UsuarioEntidad {
             this.tipoCuenta = TRANSPORTISTA;
             this.placaVehiculo = transportista.getPlacaVehiculo();
             this.estadoCarga = transportista.getEstadoCarga();
+            this.ubicacionActual = transportista.getUbicacionActual();
+        }
+
+        if (usuario instanceof PuntoDeRecepcion punto) {
+            this.necesidades =
+                punto.getNecesidades().stream().map(Enum::name).sorted().collect(Collectors.joining(","));
         }
 
         if (usuario instanceof Mercado) {
@@ -146,6 +164,24 @@ public class UsuarioEntidad {
 
 
     public Usuario aDominio() {
+
+        Usuario usuario = crearSegunTipo();
+
+        if (usuario instanceof Transportista transportista) {
+            transportista.actualizarUbicacion(ubicacionActual);
+        }
+
+        if (usuario instanceof PuntoDeRecepcion punto && necesidades != null && !necesidades.isBlank()) {
+            punto.configurarNecesidades(
+                Arrays.stream(necesidades.split(",")).map(TipoProducto::valueOf).collect(Collectors.toSet())
+            );
+        }
+
+        return usuario;
+    }
+
+
+    private Usuario crearSegunTipo() {
 
         return switch (tipoCuenta) {
 

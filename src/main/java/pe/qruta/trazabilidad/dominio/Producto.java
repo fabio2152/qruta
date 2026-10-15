@@ -130,6 +130,23 @@ public class Producto {
     }
 
 
+    /** Complementa restaurar(...) con el recorrido guardado: destino, entrega, bloqueo y mediciones. */
+    public void restaurarRecorrido(
+            PuntoDeRecepcion destino,
+            LocalDateTime horaEntrega,
+            EstadoProducto estadoAntesDelBloqueo,
+            String motivoBloqueo,
+            List<Medicion> mediciones
+    ) {
+        this.destino = destino;
+        this.horaEntrega = horaEntrega;
+        this.estadoAntesDelBloqueo = estadoAntesDelBloqueo;
+        this.motivoBloqueo = motivoBloqueo;
+        this.mediciones.clear();
+        this.mediciones.addAll(mediciones);
+    }
+
+
     /** Versión leída de la base de datos: permite detectar dos aceptaciones simultáneas (D-13). */
     public Long getVersion() {
         return version;

@@ -16,6 +16,7 @@
     --EN_TRANSITO: #2563eb;
     --EN_DESTINO: #7c3aed;
     --ENTREGADO: #1f6f4a;
+    --BLOQUEADO: #b42318;
 
     --radio: 12px;
     --sombra: 0 1px 2px rgba(16, 24, 20, .06), 0 4px 16px rgba(16, 24, 20, .05);
@@ -196,3 +197,20 @@ code { background: var(--superficie-suave); padding: 0 .3rem; border-radius: 4px
 
 .insignia--PENDIENTE { background: #fff4e5; color: #9a5b00; }
 .insignia--SUSPENDIDA { background: var(--error-claro); color: var(--error); }
+
+/* ---------- Día 2: destino, recepción, bloqueo y QR ---------- */
+.punto--BLOQUEADO { background: var(--BLOQUEADO); }
+.estado--BLOQUEADO { background: var(--BLOQUEADO); }
+
+.alerta-bloqueo { background: var(--error-claro); color: var(--error); border: 1px solid #f5c2bd; border-radius: 8px; padding: 8px 12px; margin: 12px 0 0; font-size: .9rem; font-weight: 600; }
+
+.formulario--en-linea { margin: 0 0 16px; }
+.casilla { display: flex !important; align-items: center; gap: 8px; font-weight: 500 !important; }
+.casilla input { width: 18px; height: 18px; }
+
+.accion-en-linea { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.accion-en-linea select, .accion-en-linea input { font: inherit; padding: .35rem .5rem; border: 1px solid var(--borde); border-radius: 8px; }
+.accion-en-linea input { width: 110px; }
+
+.qr { display: grid; place-items: center; padding: 12px; background: #fff; }
+.qr img, .qr canvas { max-width: 100%; }

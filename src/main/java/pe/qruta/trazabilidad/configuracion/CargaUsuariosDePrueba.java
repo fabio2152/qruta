@@ -1,5 +1,7 @@
 package pe.qruta.trazabilidad.configuracion;
 
+import java.util.Set;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
+import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
 
@@ -64,15 +67,19 @@ public class CargaUsuariosDePrueba
             "Frío Express EIRL", "20607654321", "987123456", "Lima", "DEF-456"
         ));
 
-        registrarSiNoExiste(new Mercado(
+        Mercado mercado = new Mercado(
             "mercado1", "Carmen Rojas Villa", "mercado1@qruta.pe", clave, EstadoCuenta.ACTIVA,
             "Mercado Mayorista de Lima", "20509876543", "014567890", "Lima"
-        ));
+        );
+        mercado.configurarNecesidades(Set.of(TipoProducto.POLLO, TipoProducto.PALTA, TipoProducto.BANANO));
+        registrarSiNoExiste(mercado);
 
-        registrarSiNoExiste(new CentroDeAcopio(
+        CentroDeAcopio acopio = new CentroDeAcopio(
             "acopio1", "Pedro Salazar Cruz", "acopio1@qruta.pe", clave, EstadoCuenta.ACTIVA,
             "Centro de Acopio Huancayo", "20512345678", "064223344", "Junín"
-        ));
+        );
+        acopio.configurarNecesidades(Set.of(TipoProducto.PALTA, TipoProducto.BANANO));
+        registrarSiNoExiste(acopio);
 
         // Usuarios de la demostración de la fase 1 (asignación directa, D-04).
         registrarSiNoExiste(new Usuario(

@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
+import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 
 
@@ -53,12 +55,38 @@ public class ProductoRepositorioJpa
             throw new ObjectOptimisticLockingFailureException(ProductoEntidad.class, producto.getId());
         }
 
-        entidad.actualizarDesde(
-            producto,
+        UsuarioEntidad intermediario =
             producto.getIntermediarioAsignado() == null
                 ? null
-                : usuarioEntidad(producto.getIntermediarioAsignado().getNombreUsuario())
+                : usuarioEntidad(producto.getIntermediarioAsignado().getNombreUsuario());
+
+        // El producto puede haber cambiado el estado de carga de su transportista (RE-28, RE-41).
+        if (producto.getIntermediarioAsignado() instanceof Transportista transportista) {
+            intermediario.actualizarDesde(transportista);
+        }
+
+        entidad.actualizarDesde(
+            producto,
+            intermediario,
+            producto.getDestino() == null
+                ? null
+                : usuarioEntidad(producto.getDestino().getNombreUsuario())
         );
+
+        // Las mediciones, igual que el historial, solo crecen.
+        List<Medicion> mediciones = producto.getMediciones();
+
+        for (int i = entidad.getMediciones().size(); i < mediciones.size(); i++) {
+
+            Medicion medicion = mediciones.get(i);
+
+            entidad.getMediciones().add(
+                new MedicionEntidad(
+                    medicion,
+                    usuarioEntidad(medicion.registradaPor().getNombreUsuario())
+                )
+            );
+        }
 
         // El historial solo crece: se agregan los cambios que todavía no están guardados.
         List<CambioEstado> historial = producto.getHistorial();

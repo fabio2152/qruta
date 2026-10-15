@@ -149,20 +149,21 @@ Se cargan al iniciar la aplicación si todavía no existen. Todas están ACTIVAS
 |---|---|---|
 | `productor1` | Productor agropecuario (Cusco) | Crear pollo, palta o banano y publicarlos |
 | `transportista1`, `transportista2` | Transportista | Ver publicaciones mientras está LIBRE, aceptar una y avanzar sus etapas |
-| `mercado1` | Mercado (Mercado Mayorista de Lima) | Punto de destino (recepción en el ciclo 10) |
-| `acopio1` | Centro de acopio (Huancayo) | Punto de destino (recepción en el ciclo 10) |
+| `mercado1` | Mercado (Mercado Mayorista de Lima) | Destino de pollo, palta y banano: registra la recepción con la temperatura |
+| `acopio1` | Centro de acopio (Huancayo) | Destino de palta y banano |
 | `regulador1` | Regulador (SENASA) | Aprobar productores y transportistas; ver todos los productos e historiales |
 | `intermediario1`, `intermediario2` | Intermediario de la fase 1 | Asignación directa de la fase 1 (D-04) |
 
 ### Guion de la demostración (avance actual)
 
-1. En **Registrarse**, crear un transportista nuevo. Al intentar ingresar: *"Su cuenta está pendiente de aprobación"*.
-2. Ingresar como `regulador1` y pulsar **Aprobar** sobre la cuenta nueva. Ahora el transportista ya puede ingresar.
-3. Ingresar como `productor1`, crear un pollo (con su certificado SENASA) y pulsar **Publicar**. El producto muestra su código QR.
-4. Ingresar con el transportista nuevo: la publicación aparece en **Publicaciones disponibles**. Al pulsar **Aceptar** pasa a OCUPADO.
-5. Ingresar como `transportista2`: la publicación ya no aparece.
-6. Con el transportista nuevo, pulsar **Pasar a EN_TRANSITO** y luego **Pasar a EN_DESTINO**: se registran las horas y la duración.
-7. Como `regulador1`, pulsar **Ver historial**.
+1. **Registro:** en **Registrarse**, crear un transportista nuevo. Al intentar ingresar: *"Su cuenta está pendiente de aprobación"*.
+2. **Aprobación:** ingresar como `regulador1` y pulsar **Aprobar**. Ahora el transportista ya puede ingresar.
+3. **Producción:** ingresar como `productor1`, crear un pollo con su certificado SENASA y pulsar **Publicar**. Con **Ver QR** aparece su código.
+4. **Aceptación:** con el transportista, pulsar **Aceptar**: pasa a OCUPADO. `transportista2` ya no ve la publicación.
+5. **Destino:** elegir *Mercado Mayorista de Lima* y pulsar **Pasar a EN_TRANSITO** y luego **Pasar a EN_DESTINO**.
+6. **Recepción:** ingresar como `mercado1` y registrar **7.1** °C. La evaluación da *NO APTO PARA CONSUMO · riesgo CRITICO* y el lote queda **BLOQUEADO**. El transportista vuelve a LIBRE (RE-41).
+7. **Consumidor:** escanear el QR (ciclo 13, en construcción).
+8. **Contraste:** repetir con una palta recibida a **6** °C: queda APTA. El transportista pasa el producto a ENTREGADO.
 
 ### API REST
 
@@ -183,6 +184,11 @@ Salvo el registro, el login y la consulta pública, todas las peticiones exigen 
 | `GET` | `/api/publicaciones` | Publicaciones disponibles (transportista LIBRE) |
 | `POST` | `/api/productos/{id}/aceptar` | El transportista acepta el producto |
 | `PUT` | `/api/productos/{id}/estado` | Cambiar la etapa (`{"estado": "EN_TRANSITO"}`) |
+| `GET` | `/api/destinos?tipo=PALTA` | Mercados y centros de acopio activos que necesitan ese tipo |
+| `PUT` | `/api/productos/{id}/destino` | El transportista elige el destino (`{"destino": "mercado1"}`) |
+| `PUT` | `/api/transportistas/yo/ubicacion` | El transportista publica su ubicación (`{"ubicacion": "..."}`) |
+| `PUT` | `/api/destinos/yo` | El punto de recepción configura sus necesidades (`{"necesidades": ["POLLO"]}`) |
+| `POST` | `/api/productos/{id}/recepcion` | El destino registra la recepción (`{"temperatura": 7.1, "humedad": 80}`) y recibe la evaluación |
 | `GET` | `/api/productos/{id}/historial` | Historial de cambios del producto |
 
 Los errores responden `{"mensaje": "..."}` con estos códigos:

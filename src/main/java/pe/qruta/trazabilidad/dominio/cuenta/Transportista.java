@@ -10,6 +10,8 @@ public class Transportista extends Intermediario {
 
     private EstadoCarga estadoCarga = EstadoCarga.LIBRE;
 
+    private String ubicacionActual;
+
 
     public Transportista(
             String nombreUsuario,
@@ -54,6 +56,17 @@ public class Transportista extends Intermediario {
 
     public EstadoCarga getEstadoCarga() {
         return estadoCarga;
+    }
+
+
+    public String getUbicacionActual() {
+        return ubicacionActual;
+    }
+
+
+    /** RF-08: el transportista publica dónde está (texto libre; el GPS queda para la fase futura). */
+    public void actualizarUbicacion(String ubicacion) {
+        this.ubicacionActual = ubicacion;
     }
 
 

@@ -11,6 +11,7 @@ import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 import pe.qruta.trazabilidad.servicio.LoginService;
 import pe.qruta.trazabilidad.servicio.ProductoService;
+import pe.qruta.trazabilidad.servicio.RecepcionService;
 import pe.qruta.trazabilidad.servicio.RegistroService;
 import pe.qruta.trazabilidad.servicio.SesionService;
 import pe.qruta.trazabilidad.servicio.TransporteService;
@@ -72,6 +73,15 @@ public class ConfiguracionAplicacion {
             Clock relojDelSistema
     ) {
         return new SesionService(relojDelSistema);
+    }
+
+
+    @Bean
+    public RecepcionService recepcionService(
+            ProductoRepositorio productoRepositorio,
+            Clock relojDelSistema
+    ) {
+        return new RecepcionService(productoRepositorio, relojDelSistema);
     }
 
 

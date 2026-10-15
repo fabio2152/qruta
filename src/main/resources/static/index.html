@@ -186,9 +186,28 @@
                 <div id="panel-transportista" class="tarjeta" hidden>
                     <h2>Mi estado de carga</h2>
                     <p><span id="estado-carga" class="estado-carga"></span></p>
+                    <form id="formulario-ubicacion" class="formulario formulario--en-linea">
+                        <label>
+                            Mi ubicación actual
+                            <input id="ubicacion" placeholder="Ej. Panamericana Sur km 40">
+                        </label>
+                        <button class="boton boton--fantasma boton--pequeno" type="submit">Publicar ubicación</button>
+                    </form>
                     <h2>Publicaciones disponibles</h2>
                     <p class="texto-suave">Solo las ves mientras estás LIBRE. Al aceptar una, pasas a OCUPADO.</p>
                     <ul id="lista-publicaciones" class="lista-publicaciones"></ul>
+                </div>
+
+                <!-- Mercado o centro de acopio: necesidades (CU-07) -->
+                <div id="panel-punto" class="tarjeta" hidden>
+                    <h2>Productos que necesito</h2>
+                    <p class="texto-suave">Solo te podrán elegir como destino para estos productos.</p>
+                    <form id="formulario-necesidades" class="formulario">
+                        <label class="casilla"><input type="checkbox" value="POLLO"> Pollo</label>
+                        <label class="casilla"><input type="checkbox" value="PALTA"> Palta</label>
+                        <label class="casilla"><input type="checkbox" value="BANANO"> Banano</label>
+                        <button class="boton boton--primario boton--pequeno" type="submit">Guardar</button>
+                    </form>
                 </div>
 
                 <!-- Regulador: cuentas (CU-03) -->
@@ -204,7 +223,8 @@
                         <li><span class="punto punto--EN_ORIGEN"></span>EN_ORIGEN</li>
                         <li><span class="punto punto--EN_TRANSITO"></span>EN_TRANSITO · guarda hora de inicio</li>
                         <li><span class="punto punto--EN_DESTINO"></span>EN_DESTINO · guarda hora de llegada</li>
-                        <li><span class="punto punto--ENTREGADO"></span>ENTREGADO · etapa final</li>
+                        <li><span class="punto punto--ENTREGADO"></span>ENTREGADO · guarda hora de entrega</li>
+                        <li><span class="punto punto--BLOQUEADO"></span>BLOQUEADO · fuera de la secuencia (regulador o evaluación crítica)</li>
                     </ol>
                 </div>
             </aside>
@@ -228,7 +248,20 @@
     <div id="contenido-historial"></div>
 </dialog>
 
+<!-- Código QR del producto -->
+<dialog id="dialogo-qr" class="dialogo">
+    <div class="dialogo__encabezado">
+        <h2 id="titulo-qr">Código QR</h2>
+        <button id="cerrar-qr" class="boton boton--fantasma" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <div id="contenido-qr" class="qr"></div>
+    <p class="texto-suave">El consumidor lo escanea con su celular para ver si el producto es apto para el consumo.</p>
+    <p><a id="enlace-qr" target="_blank" rel="noopener"></a></p>
+</dialog>
+
 <div id="avisos" class="avisos" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script src="app.js"></script>
 </body>
