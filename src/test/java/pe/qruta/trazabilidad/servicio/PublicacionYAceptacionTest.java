@@ -153,6 +153,23 @@ class PublicacionYAceptacionTest {
     }
 
 
+    @Test
+    void unSegundoTransportistaIntentaAceptarUnProductoYaAceptadoYSeRechaza() {
+
+        // Dado
+        Producto palta = servicio.crearProducto(datosDePalta(), productor);
+
+        servicio.publicar(palta.getId(), productor);
+
+        transporte.aceptar(palta.getId(), transportista);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> transporte.aceptar(palta.getId(), otroTransportista))
+            .isInstanceOf(ProductoNoDisponibleException.class)
+            .hasMessage("El producto ya fue aceptado por otro transportista");
+    }
+
+
     private Productor productor(
             String nombreUsuario,
             String correo
