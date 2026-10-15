@@ -81,6 +81,11 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T58 | 11 | Normal | RE-31 | Banano con 66 h restantes (≤ 20 %): riesgo MEDIO | [`86f69ef`](https://github.com/fabio2152/qruta/commit/86f69ef) | [`bd9b473`](https://github.com/fabio2152/qruta/commit/bd9b473) | ✅ |
 | T59 | 11 | Límite | RE-29, RE-31, RE-32 | Pollo recibido 168 h después: vida útil 0, CRITICO y bloqueado | [`19c3f75`](https://github.com/fabio2152/qruta/commit/19c3f75) | [`c2162b4`](https://github.com/fabio2152/qruta/commit/c2162b4) | ✅ |
 | T75 | 11 | Normal | RE-41 | Después del bloqueo automático, el transportista vuelve a quedar LIBRE *(requisito nuevo)* | [`2ac6bd7`](https://github.com/fabio2152/qruta/commit/2ac6bd7) | [`e2a2cf3`](https://github.com/fabio2152/qruta/commit/e2a2cf3) | ✅ |
+| T85 | 10b | Error | RE-24 | Un transportista no asignado intenta elegir el destino y se rechaza *(prueba agregada)* | [`72788d4`](https://github.com/fabio2152/qruta/commit/72788d4) | [`c6dc80a`](https://github.com/fabio2152/qruta/commit/c6dc80a) | ✅ |
+| T86 | 10b | Error | RE-24 | Elegir el destino de un producto ya EN_DESTINO se rechaza *(prueba agregada)* | [`2d8e746`](https://github.com/fabio2152/qruta/commit/2d8e746) | [`e6c4167`](https://github.com/fabio2152/qruta/commit/e6c4167) | ✅ |
+| T87 | 10b | Error | RE-24 | Elegir como destino un mercado con la cuenta PENDIENTE se rechaza *(prueba agregada)* | [`a04f291`](https://github.com/fabio2152/qruta/commit/a04f291) | [`495c1d5`](https://github.com/fabio2152/qruta/commit/495c1d5) | ✅ |
+| T88 | 10b | Límite | RE-26 | Una recepción con 101 % de humedad se rechaza *(prueba agregada)* | [`f4bfc23`](https://github.com/fabio2152/qruta/commit/f4bfc23) | [`b79f2d4`](https://github.com/fabio2152/qruta/commit/b79f2d4) | ✅ |
+| T89 | 10b | Error | RE-26 | Registrar la recepción por segunda vez se rechaza *(prueba agregada)* | [`0077423`](https://github.com/fabio2152/qruta/commit/0077423) | [`ed165d0`](https://github.com/fabio2152/qruta/commit/ed165d0) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -97,6 +102,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 9b | Certificados y calidad: pruebas agregadas | [`2f32ec0`](https://github.com/fabio2152/qruta/commit/2f32ec0) | ✅ Completo |
 | 10 | Destino y recepción | [`73849a7`](https://github.com/fabio2152/qruta/commit/73849a7) | ✅ Completo |
 | 11 | Evaluación | [`7cca61a`](https://github.com/fabio2152/qruta/commit/7cca61a) | ✅ Completo |
+| 10b | Destino y recepción: pruebas agregadas | [`76fc254`](https://github.com/fabio2152/qruta/commit/76fc254) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1403,6 +1409,33 @@ Resultado: `Tests run: 69, Failures: 0, Errors: 0`. Commit [`7cca61a`](https://g
 - **`BigDecimal` para las temperaturas.** Con `double`, 7,1 − 4 da 3,0999…; con `BigDecimal` los límites de T55 (7,0 °C) y T56 (7,1 °C) son exactos.
 - **El bloqueo automático todavía no deja registro en el historial.** RE-34 lo exige para todo bloqueo; lo cubre T60 en el ciclo 12, junto con el bloqueo del regulador.
 - **Cobertura del dominio y los servicios:** 616 de 651 líneas (94,6 %).
+
+---
+
+## Ciclo 10b – Destino y recepción: pruebas agregadas
+
+**Fecha:** 2026-10-15
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-24, RE-26
+**Tipo de casos:** Error (T85, T86, T87, T89) y límite (T88)
+
+**Motivación (pruebas agregadas):** al cerrar el Día 2 se encontró que partes de RE-24 y RE-26 no tenían prueba, así que no estaban programadas. Cualquier transportista podía elegir el destino de un producto ajeno, incluso con el producto ya EN_DESTINO o con un destino de cuenta pendiente. Además, la humedad no se validaba y la recepción podía registrarse dos veces. El equipo aprobó T85 a T89.
+
+| Prueba | 🔴 RED (`DestinoYRecepcionTest`) | 🟢 GREEN |
+|---|---|---|
+| T85 | `transportista2` elige el destino de la palta de `transportista1`. **Falló:** `Expecting code to raise a throwable` | Si quien elige no es el intermediario asignado, se lanza `OperacionNoAutorizadaException` |
+| T86 | Elegir el destino con la palta EN_DESTINO. **Falló:** no lanzó nada | Solo se permite en EN_ORIGEN o EN_TRANSITO |
+| T87 | Elegir como destino un mercado PENDIENTE que sí necesita palta. **Falló:** no lanzó nada | El destino debe tener la cuenta ACTIVA |
+| T88 | 101 % de humedad. **Falló:** no lanzó nada | `Medicion` valida la humedad entre 0 % y 100 %, si viene informada |
+| T89 | Segunda recepción de la misma palta. **Falló:** no lanzó nada | `Producto.registrarRecepcion` rechaza si ya hay una medición |
+
+Las evidencias de cada fase están en `evidencias/ciclo-10b-TXX-{red,green}.txt`.
+
+### 🔵 REFACTOR del ciclo 10b
+
+Con T85 a T87, `TransporteService.elegirDestino` había acumulado cuatro reglas de RE-24 y RE-25. Pasaron a **`Producto.elegirDestino(quienElige, nuevoDestino)`**, con la misma idea de los ciclos 9 y 10: el producto conoce sus reglas y el servicio solo busca y coordina. El servicio conserva lo que no le corresponde al producto: buscar al destino y comprobar que sea un `PuntoDeRecepcion`. `asignarDestino` desaparece, porque ya no hay forma de asignar un destino sin pasar por las reglas.
+
+Resultado: `Tests run: 74, Failures: 0, Errors: 0`. Commit [`76fc254`](https://github.com/fabio2152/qruta/commit/76fc254) · [ciclo-10b-refactor.txt](evidencias/ciclo-10b-refactor.txt)
 
 ---
 
