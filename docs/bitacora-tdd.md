@@ -61,6 +61,9 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T41 | 9 | Error | RE-22 | Un transportista OCUPADO intenta aceptar otro producto y se rechaza | [`aee46eb`](https://github.com/fabio2152/qruta/commit/aee46eb) | [`a023c23`](https://github.com/fabio2152/qruta/commit/a023c23) | ✅ |
 | T42 | 9 | Error | RE-23 | Un segundo transportista intenta aceptar un producto ya aceptado y se rechaza | [`25a7652`](https://github.com/fabio2152/qruta/commit/25a7652) | [`19c4432`](https://github.com/fabio2152/qruta/commit/19c4432) | ✅ |
 | T43 | 9 | Error | RE-21 | El productor intenta retirar una publicación ya aceptada y se rechaza | [`5d7f2bc`](https://github.com/fabio2152/qruta/commit/5d7f2bc) | [`074fde9`](https://github.com/fabio2152/qruta/commit/074fde9) | ✅ |
+| T82 | 9b | Error | RE-19 | Un pollo sin certificado sanitario SENASA se rechaza *(prueba agregada)* | [`047bfda`](https://github.com/fabio2152/qruta/commit/047bfda) | [`9484623`](https://github.com/fabio2152/qruta/commit/9484623) | ✅ |
+| T83 | 9b | Límite | RE-19 | Una palta con calidad 4 se rechaza *(prueba agregada)* | [`fe20cda`](https://github.com/fabio2152/qruta/commit/fe20cda) | [`d585d8d`](https://github.com/fabio2152/qruta/commit/d585d8d) | ✅ |
+| T84 | 9b | Error | RE-19 | Una palta sin certificado fitosanitario se rechaza *(prueba agregada)* | [`974d047`](https://github.com/fabio2152/qruta/commit/974d047) | [`8fc9a81`](https://github.com/fabio2152/qruta/commit/8fc9a81) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -74,6 +77,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 8 | Cuentas y sesión | [`404bb0a`](https://github.com/fabio2152/qruta/commit/404bb0a) | ✅ Completo |
 | 8b | Cuentas: pruebas agregadas por reglas sin cobertura | [`28182da`](https://github.com/fabio2152/qruta/commit/28182da) | ✅ Completo |
 | 9 | Creación, publicación y aceptación | [`3114843`](https://github.com/fabio2152/qruta/commit/3114843) | ✅ Completo |
+| 9b | Certificados y calidad: pruebas agregadas | [`2f32ec0`](https://github.com/fabio2152/qruta/commit/2f32ec0) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1258,6 +1262,32 @@ transportista.cargar(producto);
 - **Las dos formas de asignar un transportista conviven (D-04).** El constructor de la fase 1 sigue intacto para T01–T21, y el flujo nuevo es publicar y luego aceptar.
 - **Pendiente para la capa web:** el control de concurrencia con `@Version` (D-13) para dos aceptaciones simultáneas. La regla de negocio ya está probada en T42.
 - **Cobertura del dominio y los servicios:** 481 de 510 líneas (94,3 %).
+
+---
+
+## Ciclo 9b – Certificados y calidad: pruebas agregadas
+
+**Fecha:** 2026-10-15
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-19
+**Tipo de casos:** Error (T82, T84) y límite (T83)
+
+**Motivación (pruebas agregadas):** RE-19 exige certificado SENASA para los pecuarios, y certificado fitosanitario y calidad de 1 a 3 para los agrícolas. Ninguna prueba de la especificación lo cubría, así que un producto podía crearse sin certificado. El equipo aprobó T82 y T83. T84 se agregó para cubrir la tercera parte de la regla, el certificado fitosanitario.
+
+| Prueba | 🔴 RED (`CrearProductoTest`) | 🟢 GREEN |
+|---|---|---|
+| T82 | Pollo con certificado vacío. **Falló:** `Expecting code to raise a throwable` · [red](evidencias/ciclo-9b-T82-red.txt) | Si la categoría es PECUARIO y el certificado SENASA está vacío, se lanza `DatoInvalidoException` · [green](evidencias/ciclo-9b-T82-green.txt) |
+| T83 | Palta con calidad 4. **Falló:** `Expecting code to raise a throwable` · [red](evidencias/ciclo-9b-T83-red.txt) | Si la categoría es AGRICOLA, la calidad debe estar entre 1 y 3. T81 (calidad 1) sigue en verde · [green](evidencias/ciclo-9b-T83-green.txt) |
+| T84 | Palta sin certificado fitosanitario. **Falló:** `Expecting code to raise a throwable` · [red](evidencias/ciclo-9b-T84-red.txt) | Si la categoría es AGRICOLA y el certificado fitosanitario está vacío, se rechaza · [green](evidencias/ciclo-9b-T84-green.txt) |
+
+### 🔵 REFACTOR del ciclo 9b
+
+`validarNuevoProducto` había llegado a siete reglas. Quedó en tres métodos, cada uno con la regla que cumple:
+- `validarQuienCrea` (RE-02 y la categoría del productor);
+- `validarFechaYVidaUtil` (RE-19);
+- `validarCertificados` (RE-19).
+
+Resultado: `Tests run: 52, Failures: 0, Errors: 0`. Commit [`2f32ec0`](https://github.com/fabio2152/qruta/commit/2f32ec0) · [ciclo-9b-refactor.txt](evidencias/ciclo-9b-refactor.txt)
 
 ---
 
