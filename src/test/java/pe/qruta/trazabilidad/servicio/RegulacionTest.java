@@ -199,6 +199,19 @@ class RegulacionTest {
     }
 
 
+    @Test
+    void elReguladorIntentaSuspenderAUnTransportistaOcupadoYSeRechaza() {
+
+        // Dado
+        polloEnTransito();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> regulacion.suspender("transportista1", regulador))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("No se puede suspender a un transportista OCUPADO: primero debe terminar su traslado");
+    }
+
+
     /** Pollo aceptado por transportista1, con destino mercado1, que salió a las 08:00. */
     private Producto polloEnTransito() {
 

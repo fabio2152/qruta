@@ -76,6 +76,13 @@ public class RegulacionService {
     }
 
 
+    public void suspender(
+            String nombreUsuario,
+            Usuario regulador
+    ) {
+    }
+
+
     /** RE-33, RE-34 y RE-40: el control sanitario es exclusivo del regulador. */
     private void validarQueEsRegulador(Usuario usuario) {
 
