@@ -2,7 +2,9 @@ package pe.qruta.trazabilidad.servicio;
 
 import java.time.Clock;
 
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
@@ -43,6 +45,8 @@ public class RegulacionService {
                     )
                 );
 
+        validarQueEsRegulador(regulador);
+
         producto.bloquear(motivo, regulador, reloj);
 
         productos.guardar(producto);
@@ -64,8 +68,21 @@ public class RegulacionService {
                     )
                 );
 
+        validarQueEsRegulador(regulador);
+
         producto.desbloquear(motivo, regulador, reloj);
 
         productos.guardar(producto);
+    }
+
+
+    /** RE-33, RE-34 y RE-40: el control sanitario es exclusivo del regulador. */
+    private void validarQueEsRegulador(Usuario usuario) {
+
+        if (usuario.getRol() != Rol.REGULADOR) {
+            throw new OperacionNoAutorizadaException(
+                "Solo el regulador puede bloquear o desbloquear productos"
+            );
+        }
     }
 }
