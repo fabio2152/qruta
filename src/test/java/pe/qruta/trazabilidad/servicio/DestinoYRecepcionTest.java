@@ -200,6 +200,21 @@ class DestinoYRecepcionTest {
     }
 
 
+    @Test
+    void unProductoConDestinoNoPuedePasarAEntregadoSinRecepcionRegistrada() {
+
+        // Dado
+        Producto palta = paltaEnDestino();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() ->
+            servicio.cambiarEstado(palta.getId(), EstadoProducto.ENTREGADO, transportista)
+        )
+            .isInstanceOf(CambioDeEstadoNoPermitidoException.class)
+            .hasMessage("El destino aún no registró la recepción del producto");
+    }
+
+
     /** Palta aceptada, con destino mercado1, que viajó de 08:00 a 14:00 y está EN_DESTINO. */
     private Producto paltaEnDestino() {
 
