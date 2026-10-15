@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
@@ -12,6 +13,14 @@ public class LoginService {
 
     public LoginService(
             UsuarioRepositorio usuarios
+    ) {
+        this.usuarios = usuarios;
+    }
+
+
+    public LoginService(
+            UsuarioRepositorio usuarios,
+            CifradorDeContrasenas cifrador
     ) {
         this.usuarios = usuarios;
     }

@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -155,6 +156,34 @@ class RegistroServiceTest {
         assertThatThrownBy(() -> registro.registrar(solicitud))
             .isInstanceOf(OperacionNoAutorizadaException.class)
             .hasMessage("El registro público no está disponible para reguladores");
+    }
+
+
+    @Test
+    void elReguladorApruebaAlProductorYYaPuedeIniciarSesion() {
+
+        // Dado
+        CifradorDeContrasenas cifrador = new CifradorBCrypt();
+
+        RegistroService registroConCifrado =
+            new RegistroService(usuarios, cifrador);
+
+        registroConCifrado.registrar(solicitudDeProductor());
+
+        Usuario regulador =
+            new Usuario("regulador1", "clave123", Rol.REGULADOR);
+
+        // Cuando
+        registroConCifrado.aprobar("productor9", regulador);
+
+        // Entonces
+        assertThat(usuarios.buscarPorNombreUsuario("productor9").orElseThrow().getEstadoCuenta())
+            .isEqualTo(EstadoCuenta.ACTIVA);
+
+        LoginService login = new LoginService(usuarios, cifrador);
+
+        assertThatCode(() -> login.iniciarSesion("productor9", "clave123"))
+            .doesNotThrowAnyException();
     }
 
 

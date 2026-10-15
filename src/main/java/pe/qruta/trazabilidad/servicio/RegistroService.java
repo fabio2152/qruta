@@ -86,4 +86,11 @@ public class RegistroService {
 
         return productor;
     }
+
+
+    public void aprobar(
+            String nombreUsuario,
+            Usuario aprobador
+    ) {
+    }
 }
