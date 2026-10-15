@@ -8,6 +8,8 @@ public final class ValidadorDeFormato {
 
     private static final String PATRON_RUC = "\\d{11}";
 
+    private static final String PATRON_DNI = "\\d{8}";
+
 
     private ValidadorDeFormato() {
     }
@@ -20,5 +22,10 @@ public final class ValidadorDeFormato {
 
     public static boolean esRucValido(String ruc) {
         return ruc != null && ruc.matches(PATRON_RUC);
+    }
+
+
+    public static boolean esDniValido(String dni) {
+        return dni != null && dni.matches(PATRON_DNI);
     }
 }

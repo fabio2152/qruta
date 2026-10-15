@@ -78,6 +78,13 @@ public class RegistroService {
             );
         }
 
+        if (solicitud.getTipoDocumento() == TipoDocumento.DNI
+                && !ValidadorDeFormato.esDniValido(solicitud.getNumeroDocumento())) {
+            throw new DatoInvalidoException(
+                "El DNI debe tener exactamente 8 dígitos"
+            );
+        }
+
         if (usuarios.buscarPorNombreUsuario(solicitud.getNombreUsuario()).isPresent()) {
             throw new UsuarioYaExisteException(
                 "El nombre de usuario " + solicitud.getNombreUsuario() + " ya está registrado"
