@@ -59,6 +59,17 @@ public class RegistroService {
             );
         }
 
+        validarDatosDeAcceso(solicitud);
+
+        validarDocumento(solicitud);
+
+        validarQueNoEsteRegistrado(solicitud);
+    }
+
+
+    /** RE-12 y RE-13: contraseña de al menos 8 caracteres y correo con formato válido. */
+    private void validarDatosDeAcceso(SolicitudRegistro solicitud) {
+
         if (solicitud.getContrasena().length() < LARGO_MINIMO_CONTRASENA) {
             throw new DatoInvalidoException(
                 "La contraseña debe tener al menos " + LARGO_MINIMO_CONTRASENA + " caracteres"
@@ -70,6 +81,11 @@ public class RegistroService {
                 "El correo no tiene un formato válido"
             );
         }
+    }
+
+
+    /** RE-14: el RUC tiene exactamente 11 dígitos y el DNI exactamente 8. */
+    private void validarDocumento(SolicitudRegistro solicitud) {
 
         if (solicitud.getTipoDocumento() == TipoDocumento.RUC
                 && !ValidadorDeFormato.esRucValido(solicitud.getNumeroDocumento())) {
@@ -84,6 +100,11 @@ public class RegistroService {
                 "El DNI debe tener exactamente 8 dígitos"
             );
         }
+    }
+
+
+    /** RE-12: el nombre de usuario y el correo son únicos en toda la plataforma. */
+    private void validarQueNoEsteRegistrado(SolicitudRegistro solicitud) {
 
         if (usuarios.buscarPorNombreUsuario(solicitud.getNombreUsuario()).isPresent()) {
             throw new UsuarioYaExisteException(
