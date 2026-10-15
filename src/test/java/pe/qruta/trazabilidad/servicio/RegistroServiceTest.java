@@ -127,6 +127,42 @@ class RegistroServiceTest {
     }
 
 
+    @Test
+    void unTransportistaConUnRucDeDiezDigitosSeRechaza() {
+
+        // Dado
+        SolicitudRegistro solicitud = solicitudDeTransportista();
+
+        solicitud.setNumeroDocumento("2060123456");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.registrar(solicitud))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("El RUC debe tener exactamente 11 dígitos");
+    }
+
+
+    /** Solicitud válida de un transportista, con RUC de 11 dígitos. */
+    private SolicitudRegistro solicitudDeTransportista() {
+
+        SolicitudRegistro solicitud = new SolicitudRegistro();
+
+        solicitud.setTipoCuenta(TipoCuenta.TRANSPORTISTA);
+        solicitud.setNombreUsuario("transportista9");
+        solicitud.setNombreCompleto("Luis Huamán Torres");
+        solicitud.setCorreo("luis.huaman@correo.pe");
+        solicitud.setContrasena("clave123");
+        solicitud.setTipoDocumento(TipoDocumento.RUC);
+        solicitud.setNumeroDocumento("20601234567");
+        solicitud.setRazonSocial("Transportes Andinos SAC");
+        solicitud.setTelefono("987654321");
+        solicitud.setRegion("Lima");
+        solicitud.setPlacaVehiculo("ABC-123");
+
+        return solicitud;
+    }
+
+
     /** Solicitud válida de un productor; la contraseña "clave123" tiene exactamente 8 caracteres. */
     private SolicitudRegistro solicitudDeProductor() {
 
