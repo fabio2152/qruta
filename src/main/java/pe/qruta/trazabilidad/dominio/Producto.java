@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
+import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
@@ -28,6 +29,8 @@ public class Producto {
     private LocalDateTime horaInicioTransporte;
 
     private LocalDateTime horaLlegada;
+
+    private LocalDateTime horaEntrega;
 
     private final List<CambioEstado> historial = new ArrayList<>();
 
@@ -208,7 +211,7 @@ public class Producto {
 
 
     public LocalDateTime getHoraEntrega() {
-        return null;
+        return horaEntrega;
     }
 
 
@@ -333,6 +336,14 @@ public class Producto {
 
         if (nuevoEstado == EstadoProducto.EN_DESTINO) {
             horaLlegada = ahora;
+        }
+
+        if (nuevoEstado == EstadoProducto.ENTREGADO) {
+            horaEntrega = ahora;
+
+            if (intermediarioAsignado instanceof Transportista transportista) {
+                transportista.liberar();
+            }
         }
     }
 

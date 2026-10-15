@@ -68,6 +68,12 @@ public class Transportista extends Intermediario {
     }
 
 
+    /** RE-28: al entregar el producto vuelve a quedar LIBRE. */
+    public void liberar() {
+        estadoCarga = EstadoCarga.LIBRE;
+    }
+
+
     /** Queda asignado como intermediario del producto y pasa a OCUPADO. */
     public void cargar(Producto producto) {
 
