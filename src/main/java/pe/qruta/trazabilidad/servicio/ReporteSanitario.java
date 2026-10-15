@@ -3,7 +3,6 @@ package pe.qruta.trazabilidad.servicio;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
@@ -55,7 +54,7 @@ class ReporteSanitario {
             evaluacion == null ? "" : siNo(evaluacion.rupturaCadenaFrio()),
             evaluacion == null ? "" : evaluacion.nivelRiesgo().name(),
             evaluacion == null ? "" : siNo(evaluacion.aptoConsumo()),
-            siNo(producto.getEstado() == EstadoProducto.BLOQUEADO)
+            siNo(producto.estaBloqueado())
         );
 
         return celdas.stream().map(this::celda).collect(Collectors.joining(","));

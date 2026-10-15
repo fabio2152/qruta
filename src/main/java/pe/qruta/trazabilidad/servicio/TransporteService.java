@@ -1,7 +1,6 @@
 package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
-import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
@@ -36,7 +35,7 @@ public class TransporteService {
 
         transportista.validarQueEstaLibre();
 
-        if (producto.getEstado() == EstadoProducto.BLOQUEADO) {
+        if (producto.estaBloqueado()) {
             throw new ProductoNoDisponibleException(
                 "El producto está bloqueado y no puede aceptarse"
             );

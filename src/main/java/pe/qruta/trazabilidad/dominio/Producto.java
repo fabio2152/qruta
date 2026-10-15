@@ -343,7 +343,7 @@ public class Producto {
 
         Evaluacion ultima = getUltimaEvaluacion();
 
-        return estado != EstadoProducto.BLOQUEADO
+        return !estaBloqueado()
             && (ultima == null || ultima.nivelRiesgo() != NivelRiesgo.CRITICO);
     }
 
@@ -389,6 +389,12 @@ public class Producto {
     }
 
 
+    /** RE-33: un producto bloqueado no admite cambios de etapa, recepción, aceptación ni publicación. */
+    public boolean estaBloqueado() {
+        return estado == EstadoProducto.BLOQUEADO;
+    }
+
+
     public boolean tieneTransportista() {
         return intermediarioAsignado != null;
     }
@@ -396,7 +402,7 @@ public class Producto {
 
     /** Publicado y todavía sin transportista: aparece en las publicaciones disponibles. */
     public boolean estaDisponibleParaTransporte() {
-        return publicado && !tieneTransportista() && estado != EstadoProducto.BLOQUEADO;
+        return publicado && !tieneTransportista() && !estaBloqueado();
     }
 
 
@@ -469,7 +475,7 @@ public class Producto {
             EstadoProducto nuevoEstado
     ) {
 
-        if (estado == EstadoProducto.BLOQUEADO) {
+        if (estaBloqueado()) {
             throw new CambioDeEstadoNoPermitidoException(
                 "El producto está bloqueado y no puede cambiar de etapa"
             );
