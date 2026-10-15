@@ -84,9 +84,12 @@ public class ConsultaPublicaService {
             producto.getHoraEntrega() == null
                 ? null
                 : Duration.between(producto.getHoraEntrega(), LocalDateTime.now(reloj)).toHours(),
-            List.of(),
-            null,
-            null
+            producto.getHistorial()
+                .stream()
+                .map(cambio -> new PasoDelRecorrido(cambio.estadoNuevo(), cambio.fechaHora(), cambio.observacion()))
+                .toList(),
+            producto.getHoraLlegada() == null ? null : producto.getDuracionTransporte().toHours(),
+            producto.getUltimaEvaluacion()
         );
     }
 
