@@ -97,6 +97,18 @@ public class ProductoService {
     }
 
 
+    public void publicar(
+            Long idProducto,
+            Usuario productor
+    ) {
+    }
+
+
+    public List<Producto> listarPublicaciones(Usuario transportista) {
+        return List.of();
+    }
+
+
     /** Código único del producto: es el valor que se guarda en el QR. */
     private String generarCodigo() {
         return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
