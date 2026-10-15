@@ -90,6 +90,18 @@ public class RegistroService {
                 "El nombre de usuario " + solicitud.getNombreUsuario() + " ya está registrado"
             );
         }
+
+        boolean correoRegistrado =
+            usuarios
+                .listarTodos()
+                .stream()
+                .anyMatch(usuario -> solicitud.getCorreo().equalsIgnoreCase(usuario.getCorreo()));
+
+        if (correoRegistrado) {
+            throw new UsuarioYaExisteException(
+                "El correo " + solicitud.getCorreo() + " ya está registrado"
+            );
+        }
     }
 
 
