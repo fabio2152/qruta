@@ -99,6 +99,9 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T69 | 13 | Normal | RE-39 | Entregado a las 10:00 y consultado a las 16:00: 6 h en el mercado | [`514f71b`](https://github.com/fabio2152/qruta/commit/514f71b) | [`61254fc`](https://github.com/fabio2152/qruta/commit/61254fc) | ✅ |
 | T70 | 13 | Error | RE-37 | La consulta de un código inexistente devuelve no encontrado | [`993a34c`](https://github.com/fabio2152/qruta/commit/993a34c) | [`aa944f8`](https://github.com/fabio2152/qruta/commit/aa944f8) | ✅ |
 | T91 | 13 | Normal | RE-37 | La ficha muestra el recorrido con fechas, la duración del transporte y la última evaluación *(prueba agregada)* | [`5e0c631`](https://github.com/fabio2152/qruta/commit/5e0c631) | [`257741c`](https://github.com/fabio2152/qruta/commit/257741c) | ✅ |
+| T92 | 12b | Normal | RE-33 | Un producto bloqueado no aparece en las publicaciones disponibles *(prueba agregada)* | [`0056824`](https://github.com/fabio2152/qruta/commit/0056824) | [`94fe1b7`](https://github.com/fabio2152/qruta/commit/94fe1b7) | ✅ |
+| T93 | 12b | Error | RE-33 | Aceptar un producto bloqueado se rechaza *(prueba agregada)* | [`712a91e`](https://github.com/fabio2152/qruta/commit/712a91e) | [`b2c471e`](https://github.com/fabio2152/qruta/commit/b2c471e) | ✅ |
+| T94 | 12b | Error | RE-33, RE-20 | Publicar un producto bloqueado se rechaza *(prueba agregada)* | [`200b9a5`](https://github.com/fabio2152/qruta/commit/200b9a5) | [`f8b5fdf`](https://github.com/fabio2152/qruta/commit/f8b5fdf) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -118,6 +121,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 10b | Destino y recepción: pruebas agregadas | [`76fc254`](https://github.com/fabio2152/qruta/commit/76fc254) | ✅ Completo |
 | 12 | Regulación | [`57dadf8`](https://github.com/fabio2152/qruta/commit/57dadf8) | ✅ Completo |
 | 13 | Consulta pública por QR | [`f1b63ac`](https://github.com/fabio2152/qruta/commit/f1b63ac) | ✅ Completo |
+| 12b | Bloqueo: pruebas agregadas | [`ce8f96f`](https://github.com/fabio2152/qruta/commit/ce8f96f) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1523,6 +1527,31 @@ La especificación sugería construir la respuesta pública con un objeto propio
 Resultado: `Tests run: 87, Failures: 0, Errors: 0`. Commit [`f1b63ac`](https://github.com/fabio2152/qruta/commit/f1b63ac) · [ciclo-13-refactor.txt](evidencias/ciclo-13-refactor.txt)
 
 **Cobertura del dominio y los servicios:** 764 de 810 líneas (94,3 %).
+
+---
+
+## Ciclo 12b – Bloqueo: pruebas agregadas
+
+**Fecha:** 2026-10-15
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-33, RE-20
+**Tipo de casos:** Normal (T92) y error (T93, T94)
+
+**Motivación (pruebas agregadas):** RE-33 dice que un producto bloqueado no admite aceptación ni publicación. Solo el cambio de etapa (T62) y la recepción (estado distinto de EN_DESTINO) tenían prueba. Si el regulador bloqueaba un producto publicado, seguía apareciendo en las publicaciones y un transportista podía aceptarlo.
+
+| Prueba | 🔴 RED (`RegulacionTest`) | 🟢 GREEN |
+|---|---|---|
+| T92 | `Expecting empty but was: [ProductoPecuario@…]` | `estaDisponibleParaTransporte()` también exige que no esté bloqueado |
+| T93 | Aceptarlo no lanzaba nada (quien todavía tenía la publicación en pantalla podía aceptarla) | `TransporteService.aceptar` rechaza un producto bloqueado con `ProductoNoDisponibleException` (409) |
+| T94 | Publicarlo no lanzaba nada | `Producto.publicar` aplica la regla completa de RE-20: solo EN_ORIGEN y sin transportista. Eso cubre también al producto bloqueado |
+
+Las evidencias de cada fase están en `evidencias/ciclo-12b-TXX-{red,green}.txt`.
+
+### 🔵 REFACTOR del ciclo 12b
+
+La comparación `estado == BLOQUEADO` ya se repetía en cinco lugares: dominio, servicio de transporte y reporte. Se reemplazó por **`Producto.estaBloqueado()`**, que nombra la regla RE-33 y se lee como el requisito.
+
+Resultado: `Tests run: 90, Failures: 0, Errors: 0`. Commit [`ce8f96f`](https://github.com/fabio2152/qruta/commit/ce8f96f) · [ciclo-12b-refactor.txt](evidencias/ciclo-12b-refactor.txt)
 
 ---
 
