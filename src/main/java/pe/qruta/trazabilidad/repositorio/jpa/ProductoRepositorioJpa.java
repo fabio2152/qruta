@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
+import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 
@@ -86,6 +87,12 @@ public class ProductoRepositorioJpa
                     usuarioEntidad(medicion.registradaPor().getNombreUsuario())
                 )
             );
+        }
+
+        List<Evaluacion> evaluaciones = producto.getEvaluaciones();
+
+        for (int i = entidad.getEvaluaciones().size(); i < evaluaciones.size(); i++) {
+            entidad.getEvaluaciones().add(new EvaluacionEntidad(evaluaciones.get(i)));
         }
 
         // El historial solo crece: se agregan los cambios que todavía no están guardados.

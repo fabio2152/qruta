@@ -135,7 +135,7 @@ mvnw.cmd spring-boot:run
 Abrir **http://localhost:8080** en el navegador.
 
 **Para escanear el QR con el celular** (avance del sábado, en local):
-- abrir la aplicación con la IP de la laptop en la red Wi-Fi, por ejemplo `http://192.168.1.20:8080` (la IP se ve con `ipconfig`);
+- abrir la aplicación con la IP de la laptop en la red Wi-Fi, por ejemplo `http://192.168.100.86:8080` (la IP se ve con `ipconfig`, en "Adaptador de LAN inalámbrica Wi-Fi"; cambia según la red);
 - conectar el celular a la misma red;
 - permitir el puerto 8080 en el firewall de Windows.
 
@@ -162,8 +162,10 @@ Se cargan al iniciar la aplicación si todavía no existen. Todas están ACTIVAS
 4. **Aceptación:** con el transportista, pulsar **Aceptar**: pasa a OCUPADO. `transportista2` ya no ve la publicación.
 5. **Destino:** elegir *Mercado Mayorista de Lima* y pulsar **Pasar a EN_TRANSITO** y luego **Pasar a EN_DESTINO**.
 6. **Recepción:** ingresar como `mercado1` y registrar **7.1** °C. La evaluación da *NO APTO PARA CONSUMO · riesgo CRITICO* y el lote queda **BLOQUEADO**. El transportista vuelve a LIBRE (RE-41).
-7. **Consumidor:** escanear el QR (ciclo 13, en construcción).
-8. **Contraste:** repetir con una palta recibida a **6** °C: queda APTA. El transportista pasa el producto a ENTREGADO.
+7. **Consumidor:** con **Ver QR**, escanear el código con el celular, conectado a la misma red Wi-Fi. Aparece **NO APTO PARA CONSUMO**, con el motivo y el recorrido. Si la red no lo permite, se abre el enlace del QR en la laptop.
+8. **Contraste:** repetir con una palta recibida a **6** °C: queda **APTA**. El mismo transportista puede llevarla porque volvió a LIBRE (RE-41), y la pasa a ENTREGADO.
+9. **Control:** como `regulador1`, pulsar **Ver historial** del lote bloqueado (con el motivo) y **Descargar reporte CSV**. El regulador también puede **Bloquear**, **Desbloquear** y **Suspender**.
+10. **Cierre:** `./mvnw test` con todas las pruebas en verde, y la pestaña Actions de GitHub.
 
 ### API REST
 
@@ -189,6 +191,11 @@ Salvo el registro, el login y la consulta pública, todas las peticiones exigen 
 | `PUT` | `/api/transportistas/yo/ubicacion` | El transportista publica su ubicación (`{"ubicacion": "..."}`) |
 | `PUT` | `/api/destinos/yo` | El punto de recepción configura sus necesidades (`{"necesidades": ["POLLO"]}`) |
 | `POST` | `/api/productos/{id}/recepcion` | El destino registra la recepción (`{"temperatura": 7.1, "humedad": 80}`) y recibe la evaluación |
+| `POST` | `/api/productos/{id}/bloquear` | El regulador bloquea (`{"motivo": "..."}`) |
+| `POST` | `/api/productos/{id}/desbloquear` | El regulador desbloquea: vuelve a la etapa que tenía (`{"motivo": "..."}`) |
+| `POST` | `/api/usuarios/{nombreUsuario}/suspender` | El regulador suspende una cuenta (no a un transportista OCUPADO) |
+| `GET` | `/api/reportes/salubridad.csv` | Reporte sanitario en CSV (solo el regulador) |
+| `GET` | `/api/publico/productos/{codigo}` | **Consulta pública sin sesión**: la ficha que ve el consumidor (página `consulta.html?codigo=...`) |
 | `GET` | `/api/productos/{id}/historial` | Historial de cambios del producto |
 
 Los errores responden `{"mensaje": "..."}` con estos códigos:

@@ -141,7 +141,8 @@ public class Producto {
             LocalDateTime horaEntrega,
             EstadoProducto estadoAntesDelBloqueo,
             String motivoBloqueo,
-            List<Medicion> mediciones
+            List<Medicion> mediciones,
+            List<Evaluacion> evaluaciones
     ) {
         this.destino = destino;
         this.horaEntrega = horaEntrega;
@@ -149,6 +150,8 @@ public class Producto {
         this.motivoBloqueo = motivoBloqueo;
         this.mediciones.clear();
         this.mediciones.addAll(mediciones);
+        this.evaluaciones.clear();
+        this.evaluaciones.addAll(evaluaciones);
     }
 
 

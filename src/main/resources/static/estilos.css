@@ -75,6 +75,8 @@ code { background: var(--superficie-suave); padding: 0 .3rem; border-radius: 4px
 .boton--fantasma { background: transparent; border-color: var(--borde); color: var(--texto); }
 .boton--fantasma:hover { background: var(--superficie-suave); }
 .boton--pequeno { padding: .35rem .7rem; font-size: .85rem; }
+.boton--peligro { background: var(--error); color: #fff; }
+.boton--peligro:hover { background: #8f1c13; }
 .boton:disabled { opacity: .5; cursor: not-allowed; }
 
 .insignia {
@@ -214,3 +216,28 @@ code { background: var(--superficie-suave); padding: 0 .3rem; border-radius: 4px
 
 .qr { display: grid; place-items: center; padding: 12px; background: #fff; }
 .qr img, .qr canvas { max-width: 100%; }
+
+/* ---------- Día 3: consulta pública y regulador ---------- */
+.consulta { max-width: 640px; padding-top: 20px; padding-bottom: 40px; display: grid; gap: 16px; }
+.consulta article { display: grid; gap: 16px; }
+.veredicto { border-radius: var(--radio); padding: 22px 20px; text-align: center; color: #fff; box-shadow: var(--sombra); }
+.veredicto--apto { background: var(--primario); }
+.veredicto--no-apto { background: var(--BLOQUEADO); }
+.veredicto__titulo { font-size: 1.6rem; font-weight: 800; letter-spacing: .02em; margin: 0; }
+.veredicto__motivo { margin: 6px 0 0; font-size: 1rem; opacity: .95; }
+.datos--ficha { grid-template-columns: repeat(2, 1fr); }
+.linea-tiempo__bloqueo { border-left-color: var(--BLOQUEADO) !important; }
+.nota-legal { font-size: .8rem; text-align: center; }
+
+.riesgo { font-size: .72rem; font-weight: 700; padding: .15rem .5rem; border-radius: 999px; }
+.riesgo--BAJO { background: var(--primario-claro); color: var(--primario); }
+.riesgo--MEDIO { background: #fff4e5; color: #9a5b00; }
+.riesgo--ALTO { background: #ffe8d6; color: #b54708; }
+.riesgo--CRITICO { background: var(--error-claro); color: var(--error); }
+
+.barra-regulador { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+@media (max-width: 480px) {
+    .datos--ficha { grid-template-columns: 1fr; }
+    .veredicto__titulo { font-size: 1.3rem; }
+}

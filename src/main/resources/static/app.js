@@ -238,7 +238,10 @@ async function cargarUsuarios() {
                 </div>
                 ${u.estadoCuenta === "PENDIENTE"
                     ? `<button class="boton boton--primario boton--pequeno" data-aprobar="${u.nombreUsuario}">Aprobar</button>`
-                    : `<span class="insignia insignia--${u.estadoCuenta}">${u.estadoCuenta}</span>`}
+                    : u.estadoCuenta === "ACTIVA" && (u.tipoCuenta === "PRODUCTOR" || u.tipoCuenta === "TRANSPORTISTA")
+                        ? `<span class="accion-en-linea"><span class="insignia insignia--ACTIVA">ACTIVA</span>
+                           <button class="boton boton--fantasma boton--pequeno" data-suspender="${u.nombreUsuario}">Suspender</button></span>`
+                        : `<span class="insignia insignia--${u.estadoCuenta}">${u.estadoCuenta}</span>`}
             </li>`)
         .join("");
 }
@@ -257,7 +260,7 @@ function pintarProductos(productos) {
 
 function pintarProducto(p) {
 
-    const indiceActual = ETAPAS.indexOf(p.estado);
+    const indiceActual = ETAPAS.indexOf(p.estado === "BLOQUEADO" ? p.estadoAntesDelBloqueo : p.estado);
 
     const etapas = ETAPAS.map((etapa, i) => `
         <div class="etapa ${i <= indiceActual ? "etapa--hecha" : ""} ${i === indiceActual ? "etapa--actual" : ""}">
@@ -300,6 +303,12 @@ function pintarProducto(p) {
             : `<button class="boton boton--primario boton--pequeno" data-publicar="${p.id}">Publicar</button>`);
     }
 
+    if (tipoCuenta() === "REGULADOR") {
+        acciones.push(p.estado === "BLOQUEADO"
+            ? `<button class="boton boton--primario boton--pequeno" data-desbloquear="${p.id}">Desbloquear</button>`
+            : `<button class="boton boton--peligro boton--pequeno" data-bloquear="${p.id}">Bloquear</button>`);
+    }
+
     if (p.codigo) {
         acciones.push(`<button class="boton boton--fantasma boton--pequeno" data-qr="${p.codigo}" data-nombre="${escapar(p.nombre)}">Ver QR</button>`);
     }
@@ -318,7 +327,10 @@ function pintarProducto(p) {
                 <p class="producto__actores">Productor: ${p.productor} · Transportista: ${p.intermediario || "sin asignar"}${p.destinoRazonSocial ? " · Destino: " + escapar(p.destinoRazonSocial) : ""}</p>
                 ${p.codigo ? `<p class="producto__actores">Código QR: <code>${p.codigo}</code>${p.publicado && !p.intermediario ? ` <span class="insignia">PUBLICADO</span>` : ""}</p>` : ""}
             </div>
-            <span class="estado estado--${p.estado}">${p.estado}</span>
+            <span class="accion-en-linea">
+                ${p.nivelRiesgo ? `<span class="riesgo riesgo--${p.nivelRiesgo}">Riesgo ${p.nivelRiesgo}</span>` : ""}
+                <span class="estado estado--${p.estado}">${p.estado}</span>
+            </span>
         </div>
 
         ${p.estado === "BLOQUEADO" ? `<p class="alerta-bloqueo">Bloqueado: ${escapar(p.motivoBloqueo || "sin motivo")}</p>` : ""}
@@ -373,7 +385,7 @@ async function verHistorial(id, nombre) {
             : `<ol class="linea-tiempo">${historial.map(c => `
                 <li>
                     <strong>${c.estadoAnterior} → ${c.estadoNuevo}</strong>
-                    <span>${c.fechaHora} · por ${c.usuario}</span>
+                    <span>${c.fechaHora} · por ${c.usuario}${c.observacion ? " · " + escapar(c.observacion) : ""}</span>
                 </li>`).join("")}</ol>`;
 
         $("dialogo-historial").showModal();
@@ -593,6 +605,23 @@ $("lista-productos").addEventListener("click", (evento) => {
     }
 
     if (qr) verQr(qr.dataset.qr, qr.dataset.nombre);
+
+    const bloquear = evento.target.closest("[data-bloquear]");
+    const desbloquear = evento.target.closest("[data-desbloquear]");
+
+    if (bloquear) {
+        const motivo = prompt("Motivo del bloqueo (obligatorio):");
+        if (motivo !== null) {
+            ejecutar(() => api("POST", `/api/productos/${bloquear.dataset.bloquear}/bloquear`, { motivo }), "Producto bloqueado");
+        }
+    }
+
+    if (desbloquear) {
+        const motivo = prompt("Motivo del desbloqueo:");
+        if (motivo !== null) {
+            ejecutar(() => api("POST", `/api/productos/${desbloquear.dataset.desbloquear}/desbloquear`, { motivo }), "Producto desbloqueado: vuelve a su etapa");
+        }
+    }
 });
 
 async function registrarRecepcion(id, temperatura, humedad) {
@@ -634,6 +663,26 @@ $("formulario-necesidades").addEventListener("submit", (evento) => {
 
 $("cerrar-qr").addEventListener("click", () => $("dialogo-qr").close());
 
+/** El CSV exige la sesión, así que se descarga con fetch y el token, no con un enlace directo. */
+$("boton-csv").addEventListener("click", async () => {
+
+    try {
+        const respuesta = await fetch("/api/reportes/salubridad.csv", {
+            headers: { "Authorization": "Bearer " + sesion.token }
+        });
+
+        if (!respuesta.ok) throw new Error("No se pudo descargar el reporte");
+
+        const enlace = document.createElement("a");
+        enlace.href = URL.createObjectURL(await respuesta.blob());
+        enlace.download = "salubridad.csv";
+        enlace.click();
+        URL.revokeObjectURL(enlace.href);
+    } catch (error) {
+        avisar(error.message, "error");
+    }
+});
+
 $("lista-publicaciones").addEventListener("click", (evento) => {
 
     const aceptar = evento.target.closest("[data-aceptar]");
@@ -649,6 +698,12 @@ $("lista-usuarios").addEventListener("click", (evento) => {
 
     if (aprobar) {
         ejecutar(() => api("POST", `/api/usuarios/${aprobar.dataset.aprobar}/aprobar`), `Cuenta ${aprobar.dataset.aprobar} aprobada`);
+    }
+
+    const suspender = evento.target.closest("[data-suspender]");
+
+    if (suspender && confirm(`¿Suspender la cuenta ${suspender.dataset.suspender}?`)) {
+        ejecutar(() => api("POST", `/api/usuarios/${suspender.dataset.suspender}/suspender`), `Cuenta ${suspender.dataset.suspender} suspendida`);
     }
 });
 

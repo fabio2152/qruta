@@ -38,6 +38,9 @@ public class CambioEstadoEntidad {
     @ManyToOne(optional = false)
     private UsuarioEntidad usuario;
 
+    @Column(length = 200)
+    private String observacion;
+
 
     protected CambioEstadoEntidad() {
     }
@@ -51,6 +54,7 @@ public class CambioEstadoEntidad {
         this.estadoNuevo = cambio.estadoNuevo();
         this.fechaHora = cambio.fechaHora();
         this.usuario = usuario;
+        this.observacion = cambio.observacion();
     }
 
 
@@ -59,7 +63,8 @@ public class CambioEstadoEntidad {
             estadoAnterior,
             estadoNuevo,
             fechaHora,
-            usuario.aDominio()
+            usuario.aDominio(),
+            observacion
         );
     }
 }

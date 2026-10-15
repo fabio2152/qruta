@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>QRuta · Consulta del producto</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<header class="barra">
+    <div class="contenedor barra__contenido">
+        <div class="marca">
+            <span class="marca__icono" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+            </span>
+            <div>
+                <strong>QRuta</strong>
+                <span class="marca__sub">Consulta pública del producto</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="contenedor consulta">
+
+    <!-- Sin código en la dirección: el consumidor puede escribirlo -->
+    <form id="formulario-codigo" class="tarjeta formulario" hidden>
+        <h1>Consultar un producto</h1>
+        <p class="texto-suave">Escribe el código que aparece junto al QR.</p>
+        <label>
+            Código del producto
+            <input id="codigo" placeholder="Ej. 99159A9F" autocomplete="off" required>
+        </label>
+        <button class="boton boton--primario" type="submit">Consultar</button>
+    </form>
+
+    <p id="cargando" class="texto-suave" hidden>Consultando…</p>
+
+    <div id="no-encontrado" class="tarjeta vacio" hidden></div>
+
+    <article id="ficha" hidden>
+
+        <section id="veredicto" class="veredicto">
+            <p class="veredicto__titulo" id="veredicto-texto"></p>
+            <p class="veredicto__motivo" id="veredicto-motivo"></p>
+        </section>
+
+        <section class="tarjeta">
+            <h1 id="ficha-nombre"></h1>
+            <p class="texto-suave" id="ficha-subtitulo"></p>
+
+            <dl class="datos datos--ficha">
+                <div class="dato"><dt>Productor</dt><dd id="ficha-productor"></dd></div>
+                <div class="dato"><dt>Región de origen</dt><dd id="ficha-region"></dd></div>
+                <div class="dato"><dt>Lote</dt><dd id="ficha-lote"></dd></div>
+                <div class="dato"><dt>Producción</dt><dd id="ficha-produccion"></dd></div>
+                <div class="dato"><dt>Etapa actual</dt><dd id="ficha-etapa"></dd></div>
+                <div class="dato"><dt>Transporte</dt><dd id="ficha-transporte"></dd></div>
+                <div class="dato"><dt>En el mercado</dt><dd id="ficha-mercado"></dd></div>
+                <div class="dato"><dt>Certificados</dt><dd id="ficha-certificados"></dd></div>
+            </dl>
+        </section>
+
+        <section class="tarjeta" id="bloque-evaluacion" hidden>
+            <h2>Última evaluación</h2>
+            <dl class="datos datos--ficha">
+                <div class="dato"><dt>Temperatura al llegar</dt><dd id="eval-temperatura"></dd></div>
+                <div class="dato"><dt>Vida útil restante</dt><dd id="eval-vida"></dd></div>
+                <div class="dato"><dt>Cadena de frío</dt><dd id="eval-ruptura"></dd></div>
+                <div class="dato"><dt>Nivel de riesgo</dt><dd id="eval-riesgo"></dd></div>
+            </dl>
+        </section>
+
+        <section class="tarjeta">
+            <h2>Recorrido</h2>
+            <ol id="ficha-recorrido" class="linea-tiempo"></ol>
+        </section>
+
+        <p class="texto-suave nota-legal">
+            La evaluación usa referencias de conservación de un prototipo académico y no reemplaza la inspección sanitaria oficial.
+        </p>
+    </article>
+</main>
+
+<script src="consulta.js"></script>
+</body>
+</html>

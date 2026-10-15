@@ -22,6 +22,7 @@ import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.dominio.producto.ProductoAgro;
 import pe.qruta.trazabilidad.dominio.producto.ProductoPecuario;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
+import pe.qruta.trazabilidad.servicio.FichaPublica;
 
 
 /**
@@ -147,13 +148,19 @@ final class Dtos {
             String horaEntrega,
             boolean recepcionRegistrada,
             String temperaturaRecepcion,
-            String motivoBloqueo
+            String motivoBloqueo,
+            String estadoAntesDelBloqueo,
+            String nivelRiesgo,
+            Long vidaUtilRestanteHoras,
+            boolean aptoConsumo
     ) {
 
         static ProductoRespuesta desde(Producto producto) {
 
             Medicion recepcion =
                 producto.getMediciones().isEmpty() ? null : producto.getMediciones().get(0);
+
+            Evaluacion evaluacion = producto.getUltimaEvaluacion();
 
 
             EstadoProducto siguiente =
@@ -184,7 +191,11 @@ final class Dtos {
                 formatear(producto.getHoraEntrega()),
                 recepcion != null,
                 recepcion == null ? null : recepcion.temperatura().toPlainString(),
-                producto.getMotivoBloqueo()
+                producto.getMotivoBloqueo(),
+                producto.getEstadoAntesDelBloqueo() == null ? null : producto.getEstadoAntesDelBloqueo().name(),
+                evaluacion == null ? null : evaluacion.nivelRiesgo().name(),
+                evaluacion == null ? null : evaluacion.vidaUtilRestanteHoras(),
+                producto.esAptoParaConsumo()
             );
         }
 
@@ -203,7 +214,8 @@ final class Dtos {
             String estadoAnterior,
             String estadoNuevo,
             String fechaHora,
-            String usuario
+            String usuario,
+            String observacion
     ) {
 
         static CambioEstadoRespuesta desde(CambioEstado cambio) {
@@ -211,7 +223,8 @@ final class Dtos {
                 cambio.estadoAnterior().name(),
                 cambio.estadoNuevo().name(),
                 formatear(cambio.fechaHora()),
-                cambio.usuario().getNombreUsuario()
+                cambio.usuario().getNombreUsuario(),
+                cambio.observacion()
             );
         }
     }
@@ -277,6 +290,67 @@ final class Dtos {
                 evaluacion.rupturaCadenaFrio(),
                 evaluacion.nivelRiesgo().name(),
                 evaluacion.aptoConsumo()
+            );
+        }
+    }
+
+
+    record MotivoSolicitud(
+            String motivo
+    ) {
+    }
+
+
+    record PasoRespuesta(
+            String etapa,
+            String fechaHora,
+            String observacion
+    ) {
+    }
+
+
+    /** La ficha pública con fechas legibles. Hereda de FichaPublica la regla de no exponer datos personales. */
+    record FichaPublicaRespuesta(
+            String codigo,
+            String nombre,
+            String tipoProducto,
+            String variedadOEspecie,
+            String productor,
+            String regionDeOrigen,
+            String lote,
+            String fechaProduccion,
+            String etapa,
+            List<String> certificados,
+            String veredicto,
+            boolean apto,
+            String motivo,
+            Long horasEnElMercado,
+            Long duracionTransporteHoras,
+            List<PasoRespuesta> recorrido,
+            EvaluacionRespuesta ultimaEvaluacion
+    ) {
+
+        static FichaPublicaRespuesta desde(FichaPublica ficha) {
+            return new FichaPublicaRespuesta(
+                ficha.codigo(),
+                ficha.nombre(),
+                ficha.tipoProducto() == null ? null : ficha.tipoProducto().name(),
+                ficha.variedadOEspecie(),
+                ficha.productor(),
+                ficha.regionDeOrigen(),
+                ficha.lote(),
+                formatear(ficha.fechaProduccion()),
+                ficha.etapa().name(),
+                ficha.certificados(),
+                ficha.veredicto(),
+                !ficha.veredicto().startsWith("NO"),
+                ficha.motivo(),
+                ficha.horasEnElMercado(),
+                ficha.duracionTransporteHoras(),
+                ficha.recorrido().stream()
+                    .map(paso -> new PasoRespuesta(paso.etapa().name(), formatear(paso.fechaHora()), paso.observacion()))
+                    .toList(),
+                ficha.ultimaEvaluacion() == null ? null : EvaluacionRespuesta.desde(ficha.ultimaEvaluacion())
             );
         }
     }

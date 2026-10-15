@@ -134,6 +134,11 @@ public class ProductoEntidad {
     @OrderBy("id")
     private List<MedicionEntidad> mediciones = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "producto_id")
+    @OrderBy("id")
+    private List<EvaluacionEntidad> evaluaciones = new ArrayList<>();
+
 
     protected ProductoEntidad() {
     }
@@ -190,6 +195,11 @@ public class ProductoEntidad {
     }
 
 
+    public List<EvaluacionEntidad> getEvaluaciones() {
+        return evaluaciones;
+    }
+
+
     /** Copia el estado actual del producto de dominio en la entidad. */
     public void actualizarDesde(
             Producto producto,
@@ -233,7 +243,8 @@ public class ProductoEntidad {
             horaEntrega,
             estadoAntesDelBloqueo,
             motivoBloqueo,
-            mediciones.stream().map(MedicionEntidad::aDominio).toList()
+            mediciones.stream().map(MedicionEntidad::aDominio).toList(),
+            evaluaciones.stream().map(EvaluacionEntidad::aDominio).toList()
         );
 
         return producto;
