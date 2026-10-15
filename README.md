@@ -19,7 +19,7 @@ El registro de cada ciclo se encuentra en [docs/bitacora-tdd.md](docs/bitacora-t
 ## Cómo aplicamos TDD
 
 Cada comportamiento se construyó con el ciclo **RED → GREEN → REFACTOR**: primero se escribió una sola prueba y se comprobó que fallaba (RED), luego se escribió el código mínimo para que pasara (GREEN) y, con todas las pruebas del ciclo en verde, se mejoró el diseño sin cambiar el comportamiento (REFACTOR).
-En total son **69 pruebas automatizadas en 13 ciclos** (1 a 11, más el 8b y el 9b): 69 commits `test` (RED), 69 commits `feat` (GREEN) y 14 commits `refactor`.
+En total son **87 pruebas automatizadas en 16 ciclos** (1 a 13, más el 8b, 9b y 10b): un commit `test` (RED) y uno `feat` (GREEN) por prueba, y un commit `refactor` por ciclo.
 La fase 2 (desde el ciclo 8) sigue la [especificación de la fase 2](docs/especificacion-fase2-qruta.md) y el [plan de desarrollo](docs/plan-desarrollo-fase2.md).
 Cada fase guarda la salida de `./mvnw test` en [docs/evidencias/](https://github.com/fabio2152/qruta/tree/main/docs/evidencias) (50 archivos `.txt`).
 El detalle de cada prueba (qué falló, qué código mínimo se escribió y qué se refactorizó) está en la [bitácora TDD](https://github.com/fabio2152/qruta/blob/main/docs/bitacora-tdd.md).
@@ -237,18 +237,20 @@ qruta/
 │   │   │   ├── cuenta/        # Productor, Transportista, Mercado, CentroDeAcopio, CifradorDeContrasenas, ValidadorDeFormato
 │   │   │   ├── producto/      # ProductoPecuario, ProductoAgro, TipoProducto, DatosProducto
 │   │   │   └── evaluacion/    # Medicion, Evaluacion, NivelRiesgo, EvaluadorDeProducto
-│   │   ├── servicio/          # ProductoService, LoginService, RegistroService, SesionService, TransporteService, RecepcionService
+│   │   ├── servicio/          # ProductoService, LoginService, RegistroService, SesionService, TransporteService,
+│   │   │                      # RecepcionService, RegulacionService, ConsultaPublicaService
 │   │   ├── repositorio/       # Interfaces + implementación en memoria (pruebas)
 │   │   │   └── jpa/           # Entidades y repositorios PostgreSQL (aplicación)
 │   │   ├── controlador/       # API REST
 │   │   └── configuracion/     # Beans de Spring, reloj del sistema y usuarios de prueba
-│   ├── main/resources/static/ # Página web (index.html, app.js, estilos.css)
+│   ├── main/resources/static/ # Web: index.html y app.js (paneles), consulta.html y consulta.js (QR), estilos.css
 │   └── test/java/pe/qruta/trazabilidad/
 │       ├── dominio/           # ProductoTest (T01–T08)
 │       └── servicio/          # ProductoServiceTest (T09–T15, T19, T21), LoginServiceTest (T16, T17, T29),
 │                              # RegistroServiceTest (T22–T28, T30, T31, T76–T79), SesionServiceTest (T32, T80),
 │                              # CrearProductoTest (T33–T37, T81–T84), PublicacionYAceptacionTest (T38–T43),
-│                              # DestinoYRecepcionTest (T44–T53), EvaluacionTest (T54–T59, T75)
+│                              # DestinoYRecepcionTest (T44–T53, T85–T89), EvaluacionTest (T54–T59, T75),
+│                              # RegulacionTest (T60–T66, T90), ConsultaPublicaTest (T67–T70, T91)
 ├── docker-compose.yml         # PostgreSQL 17
 ├── pom.xml
 ├── mvnw / mvnw.cmd

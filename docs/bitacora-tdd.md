@@ -121,11 +121,11 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 
 ## Control de requisitos mínimos
 
-- [x] Al menos 5 pruebas automatizadas (69: 10 del dominio y 59 del servicio).
-- [x] Al menos 3 ciclos RED-GREEN-REFACTOR completos (13: del 1 al 11, más el 8b y el 9b).
-- [x] Casos normales (T01, T02, T03, T09–T13, T15, T16, T22, T24, T30, T33, T38, T40, T44, T47, T52–T54, T57, T58, T75, T76, T80, T81).
-- [x] Casos límite (T05, T23, T27, T32, T36, T55, T56, T59, T78, T83).
-- [x] Casos de error (T04, T06, T07, T08, T14, T17, T25, T26, T28, T29, T31, T34, T35, T37, T39, T41–T43, T45, T46, T48–T51, T77, T79, T82, T84).
+- [x] Al menos 5 pruebas automatizadas (87: 10 del dominio y 77 del servicio).
+- [x] Al menos 3 ciclos RED-GREEN-REFACTOR completos (16: del 1 al 13, más el 8b, 9b y 10b).
+- [x] Casos normales (T01, T02, T03, T09–T13, T15, T16, T22, T24, T30, T33, T38, T40, T44, T47, T52–T54, T57, T58, T60, T63, T66–T69, T75, T76, T80, T81, T90, T91).
+- [x] Casos límite (T05, T23, T27, T32, T36, T55, T56, T59, T78, T83, T88).
+- [x] Casos de error (T04, T06, T07, T08, T14, T17, T25, T26, T28, T29, T31, T34, T35, T37, T39, T41–T43, T45, T46, T48–T51, T61, T62, T64, T65, T70, T77, T79, T82, T84–T87, T89).
 - [x] Ejecución completa de todas las pruebas (`./mvnw test`) en verde al cerrar cada ciclo.
 - [x] Reporte de cobertura JaCoCo (`target/site/jacoco/index.html`): ver [Resultados](#resultados).
 
@@ -1528,7 +1528,12 @@ Resultado: `Tests run: 87, Failures: 0, Errors: 0`. Commit [`f1b63ac`](https://g
 
 ## Resultados
 
-**Ejecución final (`./mvnw test`):** `Tests run: 21, Failures: 0, Errors: 0, Skipped: 0` – BUILD SUCCESS (10 pruebas en `ProductoTest`, 9 en `ProductoServiceTest` y 2 en `LoginServiceTest`).
+**Ejecución al cierre del Día 3 de la fase 2 (`./mvnw test`):** `Tests run: 87, Failures: 0, Errors: 0, Skipped: 0` – BUILD SUCCESS.
+- Las 21 pruebas de la fase 1 siguen intactas: 10 en `ProductoTest`, 9 en `ProductoServiceTest` y 2 en `LoginServiceTest`.
+- Las 66 pruebas de la fase 2 están en `LoginServiceTest` (T29), `RegistroServiceTest`, `SesionServiceTest`, `CrearProductoTest`, `PublicacionYAceptacionTest`, `DestinoYRecepcionTest`, `EvaluacionTest`, `RegulacionTest` y `ConsultaPublicaTest`.
+- Cobertura de líneas del dominio y los servicios: **94,3 %** (764 de 810).
+
+La tabla siguiente corresponde al cierre de la fase 1 y se conserva como registro.
 
 **Cobertura JaCoCo de las clases de dominio y servicio:**
 
