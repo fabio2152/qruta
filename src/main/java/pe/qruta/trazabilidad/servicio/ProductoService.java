@@ -17,6 +17,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.producto.CategoriaProducto;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
+import pe.qruta.trazabilidad.dominio.producto.ProductoAgro;
 import pe.qruta.trazabilidad.dominio.producto.ProductoPecuario;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 
@@ -88,7 +89,9 @@ public class ProductoService {
         }
 
         Producto producto =
-            new ProductoPecuario(generarCodigo(), productor, datos);
+            categoria == CategoriaProducto.PECUARIO
+                ? new ProductoPecuario(generarCodigo(), productor, datos)
+                : new ProductoAgro(generarCodigo(), productor, datos);
 
         return repositorio.guardar(producto);
     }
