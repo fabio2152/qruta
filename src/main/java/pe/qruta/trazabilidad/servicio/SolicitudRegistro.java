@@ -32,6 +32,10 @@ public class SolicitudRegistro {
 
     private String placaVehiculo;
 
+    private String institucion;
+
+    private String codigoInstitucional;
+
 
     public TipoCuenta getTipoCuenta() {
         return tipoCuenta;
@@ -150,5 +154,25 @@ public class SolicitudRegistro {
 
     public void setPlacaVehiculo(String placaVehiculo) {
         this.placaVehiculo = placaVehiculo;
+    }
+
+
+    public String getInstitucion() {
+        return institucion;
+    }
+
+
+    public void setInstitucion(String institucion) {
+        this.institucion = institucion;
+    }
+
+
+    public String getCodigoInstitucional() {
+        return codigoInstitucional;
+    }
+
+
+    public void setCodigoInstitucional(String codigoInstitucional) {
+        this.codigoInstitucional = codigoInstitucional;
     }
 }
