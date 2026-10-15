@@ -69,13 +69,17 @@ public class RecepcionService {
             vidaUtilRestante -= (tipo.getFactorDeterioro() - 1) * horasDeTransporte;
         }
 
+        vidaUtilRestante = Math.max(0, vidaUtilRestante);
+
         boolean ruptura =
             temperatura.compareTo(tipo.getTemperaturaMaxima().add(new BigDecimal("3"))) > 0
                 || temperatura.compareTo(tipo.getTemperaturaMinima().subtract(new BigDecimal("3"))) < 0;
 
         NivelRiesgo riesgo = NivelRiesgo.BAJO;
 
-        if (ruptura) {
+        if (vidaUtilRestante == 0) {
+            riesgo = NivelRiesgo.CRITICO;
+        } else if (ruptura) {
             riesgo = tipo.getCategoria() == CategoriaProducto.PECUARIO
                 ? NivelRiesgo.CRITICO
                 : NivelRiesgo.ALTO;
