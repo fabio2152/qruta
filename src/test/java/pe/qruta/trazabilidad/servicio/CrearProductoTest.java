@@ -21,6 +21,8 @@ import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
+import pe.qruta.trazabilidad.dominio.producto.EstadoMaduracion;
+import pe.qruta.trazabilidad.dominio.producto.ProductoAgro;
 import pe.qruta.trazabilidad.dominio.producto.ProductoPecuario;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
@@ -138,6 +140,26 @@ class CrearProductoTest {
     }
 
 
+    @Test
+    void unProductorCreaUnaPaltaQueQuedaComoProductoAgroConSuVariedadYCalidad() {
+
+        // Dado
+        // un productor agropecuario activo (prepararServicio)
+
+        // Cuando
+        Producto palta = servicio.crearProducto(datosDePalta(), productor);
+
+        // Entonces
+        assertThat(palta).isInstanceOf(ProductoAgro.class);
+
+        ProductoAgro agro = (ProductoAgro) palta;
+
+        assertThat(agro.getVariedad()).isEqualTo("Hass");
+
+        assertThat(agro.getCalidad()).isEqualTo(1);
+    }
+
+
     private Productor productorDeTipo(TipoProductor tipoProductor) {
 
         return new Productor(
@@ -169,6 +191,25 @@ class CrearProductoTest {
         datos.setEspecie("Gallus gallus domesticus");
         datos.setCodigoPlanta("PL-0457");
         datos.setCertificadoSanitarioSenasa("SENASA-2026-0815");
+
+        return datos;
+    }
+
+
+    /** Palta Hass producida el 30/08/2026 a las 08:00, con certificado fitosanitario. */
+    private DatosProducto datosDePalta() {
+
+        DatosProducto datos = new DatosProducto();
+
+        datos.setNombre("Palta Hass");
+        datos.setTipoProducto(TipoProducto.PALTA);
+        datos.setTipoProduccion(TipoProduccion.ORGANICO);
+        datos.setLote("L-002");
+        datos.setFechaProduccion(LocalDateTime.of(2026, 8, 30, 8, 0));
+        datos.setVariedad("Hass");
+        datos.setEstadoMaduracion(EstadoMaduracion.VERDE);
+        datos.setCalidad(1);
+        datos.setCertificadoFitosanitario("SENASA-FITO-2026-0311");
 
         return datos;
     }
