@@ -42,6 +42,8 @@ public class Producto {
 
     private boolean publicado;
 
+    private PuntoDeRecepcion destino;
+
     private Long version;
 
 
@@ -193,7 +195,12 @@ public class Producto {
 
 
     public PuntoDeRecepcion getDestino() {
-        return null;
+        return destino;
+    }
+
+
+    public void asignarDestino(PuntoDeRecepcion destino) {
+        this.destino = destino;
     }
 
 

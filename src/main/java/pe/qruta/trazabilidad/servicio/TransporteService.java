@@ -2,6 +2,7 @@ package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
@@ -59,5 +60,23 @@ public class TransporteService {
             Usuario transportista,
             String nombreUsuarioDestino
     ) {
+
+        Producto producto =
+            productos
+                .buscarPorId(idProducto)
+                .orElseThrow(
+                    () -> new ProductoNoEncontradoException(
+                        "No existe un producto con id " + idProducto
+                    )
+                );
+
+        Usuario destino =
+            usuarios
+                .buscarPorNombreUsuario(nombreUsuarioDestino)
+                .orElseThrow();
+
+        producto.asignarDestino((PuntoDeRecepcion) destino);
+
+        productos.guardar(producto);
     }
 }
