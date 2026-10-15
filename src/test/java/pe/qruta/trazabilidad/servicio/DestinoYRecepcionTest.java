@@ -110,6 +110,19 @@ class DestinoYRecepcionTest {
     }
 
 
+    @Test
+    void elTransportistaEligeUnMercadoQueNoNecesitaEseTipoDeProductoYSeRechaza() {
+
+        // Dado
+        Producto palta = paltaAceptadaPorElTransportista();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> transporte.elegirDestino(palta.getId(), transportista, "mercado2"))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("Mercado Avícola del Callao no necesita PALTA");
+    }
+
+
     /** Palta creada y publicada por el productor y aceptada por transportista1. */
     private Producto paltaAceptadaPorElTransportista() {
 
