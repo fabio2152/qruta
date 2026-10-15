@@ -12,11 +12,13 @@ public class RegistroService {
 
     private final UsuarioRepositorio usuarios;
 
+    private final CifradorDeContrasenas cifrador;
+
 
     public RegistroService(
             UsuarioRepositorio usuarios
     ) {
-        this.usuarios = usuarios;
+        this(usuarios, new CifradorTextoPlano());
     }
 
 
@@ -25,6 +27,7 @@ public class RegistroService {
             CifradorDeContrasenas cifrador
     ) {
         this.usuarios = usuarios;
+        this.cifrador = cifrador;
     }
 
 
@@ -41,7 +44,7 @@ public class RegistroService {
                 solicitud.getNombreUsuario(),
                 solicitud.getNombreCompleto(),
                 solicitud.getCorreo(),
-                solicitud.getContrasena(),
+                cifrador.cifrar(solicitud.getContrasena()),
                 EstadoCuenta.PENDIENTE,
                 solicitud.getRazonSocial(),
                 solicitud.getTipoDocumento(),
