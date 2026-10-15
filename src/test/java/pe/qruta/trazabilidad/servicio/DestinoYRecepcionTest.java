@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import pe.qruta.trazabilidad.RelojAjustable;
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
@@ -144,6 +145,21 @@ class DestinoYRecepcionTest {
             .containsExactly(
                 new Medicion(horaDelDia(14, 0), new BigDecimal("5"), new BigDecimal("85"), mercado)
             );
+    }
+
+
+    @Test
+    void unMercadoQueNoEsElDestinoIntentaRegistrarLaRecepcionYSeRechaza() {
+
+        // Dado
+        Producto palta = paltaEnDestino();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() ->
+            recepcion.registrarRecepcion(palta.getId(), mercadoSoloDePollo, new BigDecimal("5"), new BigDecimal("85"))
+        )
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Solo el destino del producto puede registrar la recepción");
     }
 
 
