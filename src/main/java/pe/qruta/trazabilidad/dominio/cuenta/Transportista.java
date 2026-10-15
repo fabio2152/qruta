@@ -1,5 +1,8 @@
 package pe.qruta.trazabilidad.dominio.cuenta;
 
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
+import pe.qruta.trazabilidad.dominio.Producto;
+
 
 public class Transportista extends Intermediario {
 
@@ -35,7 +38,22 @@ public class Transportista extends Intermediario {
     }
 
 
-    public void ocupar() {
+    /** RE-22: un transportista lleva un solo producto a la vez. */
+    public void validarQueEstaLibre() {
+
+        if (estadoCarga == EstadoCarga.OCUPADO) {
+            throw new OperacionNoAutorizadaException(
+                "Un transportista OCUPADO no puede aceptar otro producto"
+            );
+        }
+    }
+
+
+    /** Queda asignado como intermediario del producto y pasa a OCUPADO. */
+    public void cargar(Producto producto) {
+
+        producto.asignarIntermediario(this);
+
         estadoCarga = EstadoCarga.OCUPADO;
     }
 }

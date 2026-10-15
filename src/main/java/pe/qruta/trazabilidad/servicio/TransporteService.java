@@ -1,13 +1,12 @@
 package pe.qruta.trazabilidad.servicio;
 
-import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
-import pe.qruta.trazabilidad.dominio.cuenta.EstadoCarga;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
 
+/** Acciones del transportista sobre los productos: aceptar (y, en el ciclo 10, elegir destino). */
 public class TransporteService {
 
     private final ProductoRepositorio productos;
@@ -38,21 +37,15 @@ public class TransporteService {
                     )
                 );
 
-        if (transportista.getEstadoCarga() == EstadoCarga.OCUPADO) {
-            throw new OperacionNoAutorizadaException(
-                "Un transportista OCUPADO no puede aceptar otro producto"
-            );
-        }
+        transportista.validarQueEstaLibre();
 
-        if (producto.getIntermediarioAsignado() != null) {
+        if (producto.tieneTransportista()) {
             throw new ProductoNoDisponibleException(
                 "El producto ya fue aceptado por otro transportista"
             );
         }
 
-        producto.asignarIntermediario(transportista);
-
-        transportista.ocupar();
+        transportista.cargar(producto);
 
         productos.guardar(producto);
 

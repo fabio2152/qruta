@@ -148,8 +148,27 @@ public class Producto {
     }
 
 
-    public void publicar() {
+    /** RE-20: solo el productor que creó el producto puede publicarlo. */
+    public void publicar(Usuario quienPublica) {
+
+        if (!quienPublica.equals(productor)) {
+            throw new OperacionNoAutorizadaException(
+                "Solo el productor que creó el producto puede publicarlo"
+            );
+        }
+
         publicado = true;
+    }
+
+
+    public boolean tieneTransportista() {
+        return intermediarioAsignado != null;
+    }
+
+
+    /** Publicado y todavía sin transportista: aparece en las publicaciones disponibles. */
+    public boolean estaDisponibleParaTransporte() {
+        return publicado && !tieneTransportista();
     }
 
 

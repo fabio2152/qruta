@@ -14,7 +14,6 @@ import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
-import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.producto.CategoriaProducto;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.ProductoAgro;
@@ -56,6 +55,23 @@ public class ProductoService {
             Usuario productor
     ) {
 
+        validarNuevoProducto(datos, productor);
+
+        Producto producto =
+            datos.getTipoProducto().getCategoria() == CategoriaProducto.PECUARIO
+                ? new ProductoPecuario(generarCodigo(), productor, datos)
+                : new ProductoAgro(generarCodigo(), productor, datos);
+
+        return repositorio.guardar(producto);
+    }
+
+
+    /** RE-02 y RE-19: quién puede crear el producto y si todavía tiene vida útil. */
+    private void validarNuevoProducto(
+            DatosProducto datos,
+            Usuario productor
+    ) {
+
         if (productor.getRol() != Rol.PRODUCTOR) {
             throw new OperacionNoAutorizadaException(
                 "Solo un productor puede crear productos"
@@ -65,8 +81,7 @@ public class ProductoService {
         CategoriaProducto categoria = datos.getTipoProducto().getCategoria();
 
         if (productor instanceof Productor conTipo
-                && conTipo.getTipoProductor() != TipoProductor.AGROPECUARIO
-                && !conTipo.getTipoProductor().name().equals(categoria.name())) {
+                && !conTipo.getTipoProductor().puedeProducir(categoria)) {
             throw new OperacionNoAutorizadaException(
                 "Un productor " + conTipo.getTipoProductor()
                     + " no puede crear productos de categoría " + categoria
@@ -87,13 +102,6 @@ public class ProductoService {
                 "La vida útil del producto ya se agotó"
             );
         }
-
-        Producto producto =
-            categoria == CategoriaProducto.PECUARIO
-                ? new ProductoPecuario(generarCodigo(), productor, datos)
-                : new ProductoAgro(generarCodigo(), productor, datos);
-
-        return repositorio.guardar(producto);
     }
 
 
@@ -104,13 +112,7 @@ public class ProductoService {
 
         Producto producto = buscarProductoExistente(idProducto);
 
-        if (!productor.equals(producto.getProductor())) {
-            throw new OperacionNoAutorizadaException(
-                "Solo el productor que creó el producto puede publicarlo"
-            );
-        }
-
-        producto.publicar();
+        producto.publicar(productor);
 
         repositorio.guardar(producto);
     }
@@ -123,7 +125,7 @@ public class ProductoService {
 
         Producto producto = buscarProductoExistente(idProducto);
 
-        if (producto.getIntermediarioAsignado() != null) {
+        if (producto.tieneTransportista()) {
             throw new ProductoNoDisponibleException(
                 "No se puede retirar una publicación que ya fue aceptada"
             );
@@ -141,8 +143,7 @@ public class ProductoService {
         return repositorio
                 .listarTodos()
                 .stream()
-                .filter(Producto::isPublicado)
-                .filter(producto -> producto.getIntermediarioAsignado() == null)
+                .filter(Producto::estaDisponibleParaTransporte)
                 .toList();
     }
 
