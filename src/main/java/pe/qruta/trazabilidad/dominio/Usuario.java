@@ -88,11 +88,6 @@ public class Usuario {
     }
 
 
-    public boolean tieneContrasena(String contrasena) {
-        return this.contrasena.equals(contrasena);
-    }
-
-
     @Override
     public boolean equals(Object otro) {
         return otro instanceof Usuario usuario

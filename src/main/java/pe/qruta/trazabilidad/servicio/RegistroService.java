@@ -10,10 +10,13 @@ import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
+import pe.qruta.trazabilidad.dominio.cuenta.ValidadorDeFormato;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
 
 public class RegistroService {
+
+    private static final int LARGO_MINIMO_CONTRASENA = 8;
 
     private final UsuarioRepositorio usuarios;
 
@@ -38,26 +41,38 @@ public class RegistroService {
 
     public Usuario registrar(SolicitudRegistro solicitud) {
 
+        validar(solicitud);
+
+        Usuario nuevo = crearCuenta(solicitud);
+
+        usuarios.guardar(nuevo);
+
+        return nuevo;
+    }
+
+
+    private void validar(SolicitudRegistro solicitud) {
+
         if (solicitud.getTipoCuenta() == TipoCuenta.REGULADOR) {
             throw new OperacionNoAutorizadaException(
                 "El registro público no está disponible para reguladores"
             );
         }
 
-        if (solicitud.getContrasena().length() < 8) {
+        if (solicitud.getContrasena().length() < LARGO_MINIMO_CONTRASENA) {
             throw new DatoInvalidoException(
-                "La contraseña debe tener al menos 8 caracteres"
+                "La contraseña debe tener al menos " + LARGO_MINIMO_CONTRASENA + " caracteres"
             );
         }
 
-        if (!solicitud.getCorreo().matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
+        if (!ValidadorDeFormato.esCorreoValido(solicitud.getCorreo())) {
             throw new DatoInvalidoException(
                 "El correo no tiene un formato válido"
             );
         }
 
         if (solicitud.getTipoDocumento() == TipoDocumento.RUC
-                && !solicitud.getNumeroDocumento().matches("\\d{11}")) {
+                && !ValidadorDeFormato.esRucValido(solicitud.getNumeroDocumento())) {
             throw new DatoInvalidoException(
                 "El RUC debe tener exactamente 11 dígitos"
             );
@@ -68,40 +83,41 @@ public class RegistroService {
                 "El nombre de usuario " + solicitud.getNombreUsuario() + " ya está registrado"
             );
         }
+    }
 
-        Usuario nuevo;
+
+    /** Toda cuenta registrada nace PENDIENTE y con la contraseña cifrada (RE-13, RE-15). */
+    private Usuario crearCuenta(SolicitudRegistro solicitud) {
+
+        String contrasenaCifrada = cifrador.cifrar(solicitud.getContrasena());
 
         if (solicitud.getTipoCuenta() == TipoCuenta.MERCADO) {
-            nuevo = new Mercado(
+            return new Mercado(
                 solicitud.getNombreUsuario(),
                 solicitud.getNombreCompleto(),
                 solicitud.getCorreo(),
-                cifrador.cifrar(solicitud.getContrasena()),
+                contrasenaCifrada,
                 EstadoCuenta.PENDIENTE,
                 solicitud.getRazonSocial(),
                 solicitud.getNumeroDocumento(),
                 solicitud.getTelefono(),
-                solicitud.getRegion()
-            );
-        } else {
-            nuevo = new Productor(
-                solicitud.getNombreUsuario(),
-                solicitud.getNombreCompleto(),
-                solicitud.getCorreo(),
-                cifrador.cifrar(solicitud.getContrasena()),
-                EstadoCuenta.PENDIENTE,
-                solicitud.getRazonSocial(),
-                solicitud.getTipoDocumento(),
-                solicitud.getNumeroDocumento(),
-                solicitud.getTelefono(),
-                solicitud.getTipoProductor(),
                 solicitud.getRegion()
             );
         }
 
-        usuarios.guardar(nuevo);
-
-        return nuevo;
+        return new Productor(
+            solicitud.getNombreUsuario(),
+            solicitud.getNombreCompleto(),
+            solicitud.getCorreo(),
+            contrasenaCifrada,
+            EstadoCuenta.PENDIENTE,
+            solicitud.getRazonSocial(),
+            solicitud.getTipoDocumento(),
+            solicitud.getNumeroDocumento(),
+            solicitud.getTelefono(),
+            solicitud.getTipoProductor(),
+            solicitud.getRegion()
+        );
     }
 
 

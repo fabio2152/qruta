@@ -12,6 +12,8 @@ import pe.qruta.trazabilidad.dominio.Usuario;
 /** Emite y valida los tokens de sesión. Un token vale 8 horas desde que se emite (RE-17). */
 public class SesionService {
 
+    private static final int HORAS_DE_VALIDEZ = 8;
+
     private final Clock reloj;
 
     private final Map<String, Sesion> sesiones = new ConcurrentHashMap<>();
@@ -42,7 +44,7 @@ public class SesionService {
             throw new SesionInvalidaException("Debe iniciar sesión");
         }
 
-        if (!LocalDateTime.now(reloj).isBefore(sesion.emitida().plusHours(8))) {
+        if (!LocalDateTime.now(reloj).isBefore(sesion.emitida().plusHours(HORAS_DE_VALIDEZ))) {
             throw new SesionInvalidaException(
                 "La sesión expiró, inicie sesión nuevamente"
             );
