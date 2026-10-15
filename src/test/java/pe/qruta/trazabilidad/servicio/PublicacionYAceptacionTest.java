@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCarga;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
@@ -40,6 +41,8 @@ class PublicacionYAceptacionTest {
 
     private ProductoService servicio;
 
+    private TransporteService transporte;
+
     private Productor productor;
 
     private Transportista transportista;
@@ -57,6 +60,8 @@ class PublicacionYAceptacionTest {
         usuarios = new UsuarioRepositorioEnMemoria();
 
         servicio = new ProductoService(productos, reloj);
+
+        transporte = new TransporteService(productos, usuarios);
 
         productor = productor("productor1", "juan.mamani@correo.pe");
 
@@ -97,6 +102,33 @@ class PublicacionYAceptacionTest {
         assertThatThrownBy(() -> servicio.publicar(palta.getId(), otroProductor))
             .isInstanceOf(OperacionNoAutorizadaException.class)
             .hasMessage("Solo el productor que creó el producto puede publicarlo");
+    }
+
+
+    @Test
+    void unTransportistaLibreAceptaElProductoQuedaAsignadoPasaAOcupadoYLaPublicacionDesaparece() {
+
+        // Dado
+        Producto palta = servicio.crearProducto(datosDePalta(), productor);
+
+        Producto otraPalta = servicio.crearProducto(datosDePalta(), productor);
+
+        servicio.publicar(palta.getId(), productor);
+
+        servicio.publicar(otraPalta.getId(), productor);
+
+        // Cuando
+        transporte.aceptar(palta.getId(), transportista);
+
+        // Entonces
+        assertThat(transportista.getEstadoCarga())
+            .isEqualTo(EstadoCarga.OCUPADO);
+
+        assertThat(servicio.listarProductos(transportista))
+            .containsExactly(palta);
+
+        assertThat(servicio.listarPublicaciones(otroTransportista))
+            .containsExactly(otraPalta);
     }
 
 
