@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
@@ -42,6 +43,12 @@ public class RecepcionService {
                         "No existe un producto con id " + idProducto
                     )
                 );
+
+        if (!puntoDeRecepcion.equals(producto.getDestino())) {
+            throw new OperacionNoAutorizadaException(
+                "Solo el destino del producto puede registrar la recepción"
+            );
+        }
 
         producto.registrarMedicion(
             new Medicion(LocalDateTime.now(reloj), temperatura, humedad, puntoDeRecepcion)
