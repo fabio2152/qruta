@@ -39,6 +39,12 @@ public class RegistroService {
             );
         }
 
+        if (usuarios.buscarPorNombreUsuario(solicitud.getNombreUsuario()).isPresent()) {
+            throw new UsuarioYaExisteException(
+                "El nombre de usuario " + solicitud.getNombreUsuario() + " ya está registrado"
+            );
+        }
+
         Productor productor =
             new Productor(
                 solicitud.getNombreUsuario(),
