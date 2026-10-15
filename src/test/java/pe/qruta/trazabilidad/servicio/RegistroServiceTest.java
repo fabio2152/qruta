@@ -1,10 +1,12 @@
 package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
@@ -51,6 +53,21 @@ class RegistroServiceTest {
 
         assertThat(usuarios.buscarPorNombreUsuario("productor9"))
             .contains(registrado);
+    }
+
+
+    @Test
+    void unRegistroConUnaContrasenaDeSieteCaracteresSeRechaza() {
+
+        // Dado
+        SolicitudRegistro solicitud = solicitudDeProductor();
+
+        solicitud.setContrasena("clave12");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.registrar(solicitud))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("La contraseña debe tener al menos 8 caracteres");
     }
 
 
