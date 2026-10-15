@@ -7,6 +7,7 @@ import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 
 
@@ -36,6 +37,14 @@ public class ProductoService {
             new Producto(nombre, productor, intermediarioAsignado);
 
         return repositorio.guardar(producto);
+    }
+
+
+    public Producto crearProducto(
+            DatosProducto datos,
+            Usuario productor
+    ) {
+        return null;
     }
 
 

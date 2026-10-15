@@ -86,6 +86,16 @@ public class Producto {
     }
 
 
+    public String getCodigo() {
+        return null;
+    }
+
+
+    public boolean isPublicado() {
+        return false;
+    }
+
+
     public boolean esVisiblePara(Usuario usuario) {
 
         return switch (usuario.getRol()) {
