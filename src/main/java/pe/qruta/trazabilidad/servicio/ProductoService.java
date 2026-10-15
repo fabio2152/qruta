@@ -120,6 +120,18 @@ public class ProductoService {
             Long idProducto,
             Usuario productor
     ) {
+
+        Producto producto = buscarProductoExistente(idProducto);
+
+        if (producto.getIntermediarioAsignado() != null) {
+            throw new ProductoNoDisponibleException(
+                "No se puede retirar una publicación que ya fue aceptada"
+            );
+        }
+
+        producto.retirarPublicacion();
+
+        repositorio.guardar(producto);
     }
 
 

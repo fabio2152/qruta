@@ -153,6 +153,11 @@ public class Producto {
     }
 
 
+    public void retirarPublicacion() {
+        publicado = false;
+    }
+
+
     public void asignarIntermediario(Usuario intermediario) {
         intermediarioAsignado = intermediario;
     }
