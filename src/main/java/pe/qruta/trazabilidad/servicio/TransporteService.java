@@ -44,6 +44,12 @@ public class TransporteService {
             );
         }
 
+        if (producto.getIntermediarioAsignado() != null) {
+            throw new ProductoNoDisponibleException(
+                "El producto ya fue aceptado por otro transportista"
+            );
+        }
+
         producto.asignarIntermediario(transportista);
 
         transportista.ocupar();
