@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.RelojAjustable;
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
@@ -92,6 +94,19 @@ class DestinoYRecepcionTest {
 
         // Entonces
         assertThat(palta.getDestino()).isEqualTo(mercado);
+    }
+
+
+    @Test
+    void elTransportistaIntentaElegirComoDestinoAOtroTransportistaYSeRechaza() {
+
+        // Dado
+        Producto palta = paltaAceptadaPorElTransportista();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> transporte.elegirDestino(palta.getId(), transportista, "transportista2"))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("El destino debe ser un mercado o un centro de acopio");
     }
 
 
