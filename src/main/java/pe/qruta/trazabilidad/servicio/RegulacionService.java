@@ -2,6 +2,7 @@ package pe.qruta.trazabilidad.servicio;
 
 import java.time.Clock;
 
+import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
@@ -32,5 +33,18 @@ public class RegulacionService {
             Usuario regulador,
             String motivo
     ) {
+
+        Producto producto =
+            productos
+                .buscarPorId(idProducto)
+                .orElseThrow(
+                    () -> new ProductoNoEncontradoException(
+                        "No existe un producto con id " + idProducto
+                    )
+                );
+
+        producto.bloquear(motivo, regulador, reloj);
+
+        productos.guardar(producto);
     }
 }

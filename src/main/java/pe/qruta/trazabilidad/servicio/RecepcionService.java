@@ -61,7 +61,7 @@ public class RecepcionService {
         Evaluacion evaluacion = evaluador.evaluar(producto, medicion);
 
         if (evaluacion.nivelRiesgo() == NivelRiesgo.CRITICO) {
-            producto.bloquear(MOTIVO_EVALUACION_CRITICA);
+            producto.bloquear(MOTIVO_EVALUACION_CRITICA, puntoDeRecepcion, reloj);
         }
 
         productos.guardar(producto);

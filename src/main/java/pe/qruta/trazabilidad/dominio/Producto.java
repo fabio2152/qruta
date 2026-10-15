@@ -262,7 +262,15 @@ public class Producto {
 
 
     /** Lo saca de la secuencia normal y recuerda la etapa que tenía, para poder desbloquearlo (6.6). */
-    public void bloquear(String motivo) {
+    public void bloquear(
+            String motivo,
+            Usuario quienBloquea,
+            Clock reloj
+    ) {
+        historial.add(
+            new CambioEstado(estado, EstadoProducto.BLOQUEADO, LocalDateTime.now(reloj), quienBloquea, motivo)
+        );
+
         estadoAntesDelBloqueo = estado;
         motivoBloqueo = motivo;
         estado = EstadoProducto.BLOQUEADO;
