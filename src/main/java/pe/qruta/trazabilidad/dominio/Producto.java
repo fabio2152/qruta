@@ -289,6 +289,22 @@ public class Producto {
     }
 
 
+    /** RE-34: vuelve a la etapa que tenía antes del bloqueo y lo deja registrado en el historial. */
+    public void desbloquear(
+            String motivo,
+            Usuario quienDesbloquea,
+            Clock reloj
+    ) {
+        historial.add(
+            new CambioEstado(estado, estadoAntesDelBloqueo, LocalDateTime.now(reloj), quienDesbloquea, motivo)
+        );
+
+        estado = estadoAntesDelBloqueo;
+        estadoAntesDelBloqueo = null;
+        motivoBloqueo = null;
+    }
+
+
     public EstadoProducto getEstadoAntesDelBloqueo() {
         return estadoAntesDelBloqueo;
     }

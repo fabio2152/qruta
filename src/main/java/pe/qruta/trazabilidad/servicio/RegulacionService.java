@@ -54,5 +54,18 @@ public class RegulacionService {
             Usuario regulador,
             String motivo
     ) {
+
+        Producto producto =
+            productos
+                .buscarPorId(idProducto)
+                .orElseThrow(
+                    () -> new ProductoNoEncontradoException(
+                        "No existe un producto con id " + idProducto
+                    )
+                );
+
+        producto.desbloquear(motivo, regulador, reloj);
+
+        productos.guardar(producto);
     }
 }
