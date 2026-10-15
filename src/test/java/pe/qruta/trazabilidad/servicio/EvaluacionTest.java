@@ -163,6 +163,28 @@ class EvaluacionTest {
     }
 
 
+    @Test
+    void unBananoConSesentaYSeisHorasRestantesTieneRiesgoMedio() {
+
+        // Dado
+        DatosProducto banano =
+            datosAgricolas("Banano orgánico", TipoProducto.BANANO, "Cavendish", LocalDateTime.of(2026, 9, 1, 8, 0));
+
+        LocalDateTime inicio = LocalDateTime.of(2026, 9, 12, 8, 0);
+
+        LocalDateTime llegada = LocalDateTime.of(2026, 9, 12, 14, 0);
+
+        // Cuando
+        Evaluacion evaluacion = recibir(banano, inicio, llegada, "14");
+
+        // Entonces: 336 − 270 = 66 horas, el 20 % o menos de 336
+        assertThat(evaluacion)
+            .isEqualTo(new Evaluacion(
+                llegada, new BigDecimal("14"), 66, false, NivelRiesgo.MEDIO, true
+            ));
+    }
+
+
     private Evaluacion recibirPolloDelEscenarioBase(String temperatura) {
         return recibir(datosDePollo(LocalDateTime.of(2026, 8, 31, 14, 0)), horaDelDia(8, 0), horaDelDia(14, 0), temperatura);
     }
