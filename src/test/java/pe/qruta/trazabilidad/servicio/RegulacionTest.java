@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.RelojAjustable;
 import pe.qruta.trazabilidad.dominio.CambioEstado;
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Rol;
@@ -119,6 +121,19 @@ class RegulacionTest {
                 regulador,
                 "Sospecha de contaminación"
             ));
+    }
+
+
+    @Test
+    void unBloqueoSinMotivoSeRechaza() {
+
+        // Dado
+        Producto pollo = polloEnTransito();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> regulacion.bloquear(pollo.getId(), regulador, "  "))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("El motivo del bloqueo es obligatorio");
     }
 
 
