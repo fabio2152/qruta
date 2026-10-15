@@ -1,11 +1,13 @@
 package pe.qruta.trazabilidad.servicio;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Rol;
@@ -52,6 +54,12 @@ public class ProductoService {
         if (productor.getRol() != Rol.PRODUCTOR) {
             throw new OperacionNoAutorizadaException(
                 "Solo un productor puede crear productos"
+            );
+        }
+
+        if (datos.getFechaProduccion().isAfter(LocalDateTime.now(reloj))) {
+            throw new DatoInvalidoException(
+                "La fecha de producción no puede estar en el futuro"
             );
         }
 
