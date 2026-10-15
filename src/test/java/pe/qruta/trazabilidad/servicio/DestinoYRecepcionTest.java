@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.RelojAjustable;
+import pe.qruta.trazabilidad.dominio.CambioDeEstadoNoPermitidoException;
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
@@ -160,6 +161,27 @@ class DestinoYRecepcionTest {
         )
             .isInstanceOf(OperacionNoAutorizadaException.class)
             .hasMessage("Solo el destino del producto puede registrar la recepción");
+    }
+
+
+    @Test
+    void registrarLaRecepcionDeUnProductoEnTransitoSeRechaza() {
+
+        // Dado
+        Producto palta = paltaAceptadaPorElTransportista();
+
+        transporte.elegirDestino(palta.getId(), transportista, "mercado1");
+
+        reloj.ajustarA(horaDelDia(8, 0));
+
+        servicio.cambiarEstado(palta.getId(), EstadoProducto.EN_TRANSITO, transportista);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() ->
+            recepcion.registrarRecepcion(palta.getId(), mercado, new BigDecimal("5"), new BigDecimal("85"))
+        )
+            .isInstanceOf(CambioDeEstadoNoPermitidoException.class)
+            .hasMessage("Solo se puede registrar la recepción de un producto en EN_DESTINO");
     }
 
 
