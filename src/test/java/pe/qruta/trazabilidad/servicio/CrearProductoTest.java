@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -10,7 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.Rol;
+import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
@@ -73,6 +77,20 @@ class CrearProductoTest {
         assertThat(pollo.getCodigo())
             .isNotBlank()
             .isNotEqualTo(otroPollo.getCodigo());
+    }
+
+
+    @Test
+    void unTransportistaIntentaCrearUnProductoYSeRechaza() {
+
+        // Dado
+        Usuario transportista =
+            new Usuario("transportista1", "clave123", Rol.INTERMEDIARIO);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.crearProducto(datosDePollo(), transportista))
+            .isInstanceOf(OperacionNoAutorizadaException.class)
+            .hasMessage("Solo un productor puede crear productos");
     }
 
 
