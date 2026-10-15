@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 
@@ -27,7 +28,7 @@ public class RecepcionService {
     }
 
 
-    public void registrarRecepcion(
+    public Evaluacion registrarRecepcion(
             Long idProducto,
             Usuario puntoDeRecepcion,
             BigDecimal temperatura,
@@ -49,5 +50,7 @@ public class RecepcionService {
         producto.registrarRecepcion(medicion);
 
         productos.guardar(producto);
+
+        return null;
     }
 }
