@@ -69,7 +69,9 @@ public class ConsultaPublicaService {
             producto.getLote(),
             producto.getFechaProduccion(),
             producto.getEstado(),
-            certificados
+            certificados,
+            null,
+            null
         );
     }
 }

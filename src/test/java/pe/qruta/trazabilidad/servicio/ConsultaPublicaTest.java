@@ -134,6 +134,26 @@ class ConsultaPublicaTest {
     }
 
 
+    @Test
+    void unProductoBloqueadoSeMuestraComoNoAptoParaConsumoConSuMotivo() {
+
+        // Dado
+        Producto pollo = servicio.crearProducto(datosDePollo(), productor);
+
+        regulacion.bloquear(pollo.getId(), regulador, "Sospecha de contaminación");
+
+        // Cuando
+        FichaPublica ficha = consulta.consultar(pollo.getCodigo());
+
+        // Entonces
+        assertThat(ficha.veredicto())
+            .isEqualTo("NO APTO PARA CONSUMO");
+
+        assertThat(ficha.motivo())
+            .isEqualTo("Sospecha de contaminación");
+    }
+
+
     private LocalDateTime horaDelDia(
             int hora,
             int minuto

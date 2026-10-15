@@ -21,6 +21,8 @@ public record FichaPublica(
         String lote,
         LocalDateTime fechaProduccion,
         EstadoProducto etapa,
-        List<String> certificados
+        List<String> certificados,
+        String veredicto,
+        String motivo
 ) {
 }
