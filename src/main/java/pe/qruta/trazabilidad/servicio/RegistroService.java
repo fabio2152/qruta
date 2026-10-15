@@ -5,6 +5,7 @@ import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
+import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
 
@@ -42,6 +43,13 @@ public class RegistroService {
         if (!solicitud.getCorreo().matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
             throw new DatoInvalidoException(
                 "El correo no tiene un formato válido"
+            );
+        }
+
+        if (solicitud.getTipoDocumento() == TipoDocumento.RUC
+                && !solicitud.getNumeroDocumento().matches("\\d{11}")) {
+            throw new DatoInvalidoException(
+                "El RUC debe tener exactamente 11 dígitos"
             );
         }
 
