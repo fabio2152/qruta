@@ -73,10 +73,13 @@ public class RecepcionService {
             temperatura.compareTo(tipo.getTemperaturaMaxima().add(new BigDecimal("3"))) > 0
                 || temperatura.compareTo(tipo.getTemperaturaMinima().subtract(new BigDecimal("3"))) < 0;
 
-        NivelRiesgo riesgo =
-            ruptura && tipo.getCategoria() == CategoriaProducto.PECUARIO
+        NivelRiesgo riesgo = NivelRiesgo.BAJO;
+
+        if (ruptura) {
+            riesgo = tipo.getCategoria() == CategoriaProducto.PECUARIO
                 ? NivelRiesgo.CRITICO
-                : NivelRiesgo.BAJO;
+                : NivelRiesgo.ALTO;
+        }
 
         if (riesgo == NivelRiesgo.CRITICO) {
             producto.bloquear("Evaluación crítica");
