@@ -6,7 +6,9 @@ import java.util.UUID;
 
 import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.ProductoPecuario;
@@ -46,6 +48,12 @@ public class ProductoService {
             DatosProducto datos,
             Usuario productor
     ) {
+
+        if (productor.getRol() != Rol.PRODUCTOR) {
+            throw new OperacionNoAutorizadaException(
+                "Solo un productor puede crear productos"
+            );
+        }
 
         Producto producto =
             new ProductoPecuario(generarCodigo(), productor, datos);
