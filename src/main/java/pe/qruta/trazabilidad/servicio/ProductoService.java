@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -60,6 +61,15 @@ public class ProductoService {
         if (datos.getFechaProduccion().isAfter(LocalDateTime.now(reloj))) {
             throw new DatoInvalidoException(
                 "La fecha de producción no puede estar en el futuro"
+            );
+        }
+
+        long horasDesdeLaProduccion =
+            Duration.between(datos.getFechaProduccion(), LocalDateTime.now(reloj)).toHours();
+
+        if (horasDesdeLaProduccion >= datos.getTipoProducto().getVidaUtilBaseHoras()) {
+            throw new DatoInvalidoException(
+                "La vida útil del producto ya se agotó"
             );
         }
 
