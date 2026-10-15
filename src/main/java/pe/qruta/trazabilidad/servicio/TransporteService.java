@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
@@ -56,6 +57,12 @@ public class TransporteService {
     ) {
 
         Producto producto = buscarProducto(idProducto);
+
+        if (!transportista.equals(producto.getIntermediarioAsignado())) {
+            throw new OperacionNoAutorizadaException(
+                "Solo el transportista asignado elige el destino"
+            );
+        }
 
         Usuario destino =
             usuarios
