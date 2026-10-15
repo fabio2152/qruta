@@ -210,6 +210,12 @@ public class RegistroService {
             );
         }
 
+        if (!(usuario instanceof PuntoDeRecepcion) && aprobador.getRol() != Rol.REGULADOR) {
+            throw new OperacionNoAutorizadaException(
+                "Solo el regulador aprueba productores y transportistas"
+            );
+        }
+
         usuario.activar();
 
         usuarios.guardar(usuario);
