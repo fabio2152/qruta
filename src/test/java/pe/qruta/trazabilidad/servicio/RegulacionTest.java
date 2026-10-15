@@ -276,6 +276,21 @@ class RegulacionTest {
     }
 
 
+    @Test
+    void unTransportistaIntentaAceptarUnProductoBloqueadoYSeRechaza() {
+
+        // Dado
+        Producto pollo = polloPublicado();
+
+        regulacion.bloquear(pollo.getId(), regulador, "Sospecha de contaminación");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> transporte.aceptar(pollo.getId(), transportista))
+            .isInstanceOf(ProductoNoDisponibleException.class)
+            .hasMessage("El producto está bloqueado y no puede aceptarse");
+    }
+
+
     /** Pollo creado y publicado, todavía sin transportista. */
     private Producto polloPublicado() {
 
