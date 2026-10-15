@@ -262,6 +262,31 @@ class RegulacionTest {
     }
 
 
+    @Test
+    void unProductoBloqueadoNoApareceEnLasPublicacionesDisponibles() {
+
+        // Dado
+        Producto pollo = polloPublicado();
+
+        // Cuando
+        regulacion.bloquear(pollo.getId(), regulador, "Sospecha de contaminación");
+
+        // Entonces
+        assertThat(servicio.listarPublicaciones(transportista)).isEmpty();
+    }
+
+
+    /** Pollo creado y publicado, todavía sin transportista. */
+    private Producto polloPublicado() {
+
+        Producto pollo = servicio.crearProducto(datosDePollo(), productor);
+
+        servicio.publicar(pollo.getId(), productor);
+
+        return pollo;
+    }
+
+
     /** Pollo aceptado por transportista1, con destino mercado1, que salió a las 08:00. */
     private Producto polloEnTransito() {
 
