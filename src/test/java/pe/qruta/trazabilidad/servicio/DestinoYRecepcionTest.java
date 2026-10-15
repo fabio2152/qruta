@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -235,6 +236,25 @@ class DestinoYRecepcionTest {
 
         assertThat(transportista.getEstadoCarga())
             .isEqualTo(EstadoCarga.LIBRE);
+    }
+
+
+    @Test
+    void elMercadoVeLosProductosCuyoDestinoEsEl() {
+
+        // Dado
+        Producto palta = paltaAceptadaPorElTransportista();
+
+        transporte.elegirDestino(palta.getId(), transportista, "mercado1");
+
+        servicio.crearProducto(datosDePalta(), productor);
+
+        // Cuando
+        List<Producto> productosDelMercado = servicio.listarProductos(mercado);
+
+        // Entonces
+        assertThat(productosDelMercado)
+            .containsExactly(palta);
     }
 
 
