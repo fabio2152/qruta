@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
@@ -50,5 +51,13 @@ public class TransporteService {
         productos.guardar(producto);
 
         usuarios.guardar(transportista);
+    }
+
+
+    public void elegirDestino(
+            Long idProducto,
+            Usuario transportista,
+            String nombreUsuarioDestino
+    ) {
     }
 }

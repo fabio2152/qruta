@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
@@ -188,6 +189,11 @@ public class Producto {
         }
 
         publicado = true;
+    }
+
+
+    public PuntoDeRecepcion getDestino() {
+        return null;
     }
 
 
