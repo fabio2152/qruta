@@ -185,6 +185,26 @@ class EvaluacionTest {
     }
 
 
+    @Test
+    void unPolloRecibido168HorasDespuesDeSuProduccionNoTieneVidaUtilEsCriticoYQuedaBloqueado() {
+
+        // Dado: producido el 25/08 a las 14:00, recibido el 01/09 a las 14:00
+        DatosProducto pollo = datosDePollo(LocalDateTime.of(2026, 8, 25, 14, 0));
+
+        // Cuando
+        Evaluacion evaluacion = recibir(pollo, horaDelDia(8, 0), horaDelDia(14, 0), "3");
+
+        // Entonces
+        assertThat(evaluacion)
+            .isEqualTo(new Evaluacion(
+                horaDelDia(14, 0), new BigDecimal("3"), 0, false, NivelRiesgo.CRITICO, false
+            ));
+
+        assertThat(recibido.getEstado())
+            .isEqualTo(EstadoProducto.BLOQUEADO);
+    }
+
+
     private Evaluacion recibirPolloDelEscenarioBase(String temperatura) {
         return recibir(datosDePollo(LocalDateTime.of(2026, 8, 31, 14, 0)), horaDelDia(8, 0), horaDelDia(14, 0), temperatura);
     }
