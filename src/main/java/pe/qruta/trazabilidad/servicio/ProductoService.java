@@ -109,6 +109,13 @@ public class ProductoService {
                 "Los productos pecuarios requieren certificado sanitario SENASA"
             );
         }
+
+        if (categoria == CategoriaProducto.AGRICOLA
+                && (datos.getCalidad() == null || datos.getCalidad() < 1 || datos.getCalidad() > 3)) {
+            throw new DatoInvalidoException(
+                "La calidad debe estar entre 1 y 3"
+            );
+        }
     }
 
 
