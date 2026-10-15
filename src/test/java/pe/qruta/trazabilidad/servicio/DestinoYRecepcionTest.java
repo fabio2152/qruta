@@ -135,7 +135,7 @@ class DestinoYRecepcionTest {
 
 
     @Test
-    void elDestinoRegistraLaRecepcionAyLaMedicionQuedaGuardadaConLaHoraDelSistema() {
+    void elDestinoRegistraLaRecepcionYLaMedicionQuedaGuardadaConLaHoraDelSistema() {
 
         // Dado
         Producto palta = paltaEnDestino();

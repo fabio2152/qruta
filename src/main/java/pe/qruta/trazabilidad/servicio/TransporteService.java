@@ -31,14 +31,7 @@ public class TransporteService {
             Transportista transportista
     ) {
 
-        Producto producto =
-            productos
-                .buscarPorId(idProducto)
-                .orElseThrow(
-                    () -> new ProductoNoEncontradoException(
-                        "No existe un producto con id " + idProducto
-                    )
-                );
+        Producto producto = buscarProducto(idProducto);
 
         transportista.validarQueEstaLibre();
 
@@ -62,19 +55,16 @@ public class TransporteService {
             String nombreUsuarioDestino
     ) {
 
-        Producto producto =
-            productos
-                .buscarPorId(idProducto)
-                .orElseThrow(
-                    () -> new ProductoNoEncontradoException(
-                        "No existe un producto con id " + idProducto
-                    )
-                );
+        Producto producto = buscarProducto(idProducto);
 
         Usuario destino =
             usuarios
                 .buscarPorNombreUsuario(nombreUsuarioDestino)
-                .orElseThrow();
+                .orElseThrow(
+                    () -> new DatoInvalidoException(
+                        "No existe el destino " + nombreUsuarioDestino
+                    )
+                );
 
         if (!(destino instanceof PuntoDeRecepcion puntoDeRecepcion)) {
             throw new DatoInvalidoException(
@@ -91,5 +81,17 @@ public class TransporteService {
         producto.asignarDestino(puntoDeRecepcion);
 
         productos.guardar(producto);
+    }
+
+
+    private Producto buscarProducto(Long idProducto) {
+
+        return productos
+                .buscarPorId(idProducto)
+                .orElseThrow(
+                    () -> new ProductoNoEncontradoException(
+                        "No existe un producto con id " + idProducto
+                    )
+                );
     }
 }

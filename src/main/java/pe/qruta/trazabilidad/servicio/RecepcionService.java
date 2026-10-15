@@ -4,10 +4,6 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
-import pe.qruta.trazabilidad.dominio.CambioDeEstadoNoPermitidoException;
-import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
-import pe.qruta.trazabilidad.dominio.EstadoProducto;
-import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
@@ -47,28 +43,10 @@ public class RecepcionService {
                     )
                 );
 
-        if (!puntoDeRecepcion.equals(producto.getDestino())) {
-            throw new OperacionNoAutorizadaException(
-                "Solo el destino del producto puede registrar la recepción"
-            );
-        }
+        Medicion medicion =
+            new Medicion(LocalDateTime.now(reloj), temperatura, humedad, puntoDeRecepcion);
 
-        if (producto.getEstado() != EstadoProducto.EN_DESTINO) {
-            throw new CambioDeEstadoNoPermitidoException(
-                "Solo se puede registrar la recepción de un producto en EN_DESTINO"
-            );
-        }
-
-        if (temperatura.compareTo(new BigDecimal("-40")) < 0
-                || temperatura.compareTo(new BigDecimal("60")) > 0) {
-            throw new DatoInvalidoException(
-                "Lectura inválida del instrumento: la temperatura debe estar entre -40 °C y 60 °C"
-            );
-        }
-
-        producto.registrarMedicion(
-            new Medicion(LocalDateTime.now(reloj), temperatura, humedad, puntoDeRecepcion)
-        );
+        producto.registrarRecepcion(medicion);
 
         productos.guardar(producto);
     }

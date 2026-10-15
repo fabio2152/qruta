@@ -220,7 +220,21 @@ public class Producto {
     }
 
 
-    public void registrarMedicion(Medicion medicion) {
+    /** RE-26: solo el destino, y solo cuando el producto ya llegó (EN_DESTINO). */
+    public void registrarRecepcion(Medicion medicion) {
+
+        if (!medicion.registradaPor().equals(destino)) {
+            throw new OperacionNoAutorizadaException(
+                "Solo el destino del producto puede registrar la recepción"
+            );
+        }
+
+        if (estado != EstadoProducto.EN_DESTINO) {
+            throw new CambioDeEstadoNoPermitidoException(
+                "Solo se puede registrar la recepción de un producto en EN_DESTINO"
+            );
+        }
+
         mediciones.add(medicion);
     }
 
