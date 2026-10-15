@@ -45,6 +45,8 @@ public class Producto {
 
     private PuntoDeRecepcion destino;
 
+    private final List<Medicion> mediciones = new ArrayList<>();
+
     private Long version;
 
 
@@ -206,7 +208,12 @@ public class Producto {
 
 
     public List<Medicion> getMediciones() {
-        return List.of();
+        return List.copyOf(mediciones);
+    }
+
+
+    public void registrarMedicion(Medicion medicion) {
+        mediciones.add(medicion);
     }
 
 
