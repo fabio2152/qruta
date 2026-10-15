@@ -44,6 +44,9 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T30 | 8 | Normal | RE-15 | El regulador aprueba al productor: queda ACTIVA y ya puede iniciar sesión | [`3f22d71`](https://github.com/fabio2152/qruta/commit/3f22d71) | [`b5743fc`](https://github.com/fabio2152/qruta/commit/b5743fc) | ✅ |
 | T31 | 8 | Error | RE-15 | El regulador intenta aprobar un mercado y se rechaza | [`fc4f88a`](https://github.com/fabio2152/qruta/commit/fc4f88a) | [`a4f2962`](https://github.com/fabio2152/qruta/commit/a4f2962) | ✅ |
 | T32 | 8 | Límite | RE-17 | Un token emitido a las 08:00 es válido a las 15:59 y se rechaza a las 16:00 | [`aaef3f2`](https://github.com/fabio2152/qruta/commit/aaef3f2) | [`1db4235`](https://github.com/fabio2152/qruta/commit/1db4235) | ✅ |
+| T78 | 8b | Límite | RE-14 | Un productor con DNI de 7 dígitos se rechaza *(prueba agregada)* | [`81c79b7`](https://github.com/fabio2152/qruta/commit/81c79b7) | [`aab3860`](https://github.com/fabio2152/qruta/commit/aab3860) | ✅ |
+| T79 | 8b | Error | RE-12 | Un correo ya registrado se rechaza *(prueba agregada)* | [`20c54c8`](https://github.com/fabio2152/qruta/commit/20c54c8) | [`91c845a`](https://github.com/fabio2152/qruta/commit/91c845a) | ✅ |
+| T80 | 8b | Normal | RF-03 | Al cerrar sesión el token deja de ser válido *(prueba agregada)* | [`e6cbdac`](https://github.com/fabio2152/qruta/commit/e6cbdac) | [`93c1497`](https://github.com/fabio2152/qruta/commit/93c1497) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -55,6 +58,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 6 | Servicio: login | [`4176317`](https://github.com/fabio2152/qruta/commit/4176317) + [`573bb78`](https://github.com/fabio2152/qruta/commit/573bb78) | ✅ Completo |
 | 7 | Persistencia en PostgreSQL | [`8d8281f`](https://github.com/fabio2152/qruta/commit/8d8281f) | ✅ Completo |
 | 8 | Cuentas y sesión | [`404bb0a`](https://github.com/fabio2152/qruta/commit/404bb0a) | ✅ Completo |
+| 8b | Cuentas: pruebas agregadas por reglas sin cobertura | [`28182da`](https://github.com/fabio2152/qruta/commit/28182da) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1127,6 +1131,36 @@ public Usuario registrar(SolicitudRegistro solicitud) {
 - **Herencia para los datos y rol para los permisos (D-02).** `Productor` y `Mercado` heredan de `Usuario`. El mercado tiene rol INTERMEDIARIO, pero la regla de aprobación pregunta por su clase (`instanceof Mercado`).
 - **Sesiones en memoria.** Un token es un UUID guardado en `SesionService`, con la hora tomada del `Clock` inyectado. Si la aplicación se reinicia, hay que volver a iniciar sesión, lo que es aceptable para este alcance.
 - **Cobertura del dominio y los servicios al cerrar el ciclo:** 282 de 301 líneas (93,7 %).
+
+---
+
+## Ciclo 8b – Cuentas: pruebas agregadas
+
+**Fecha:** 2026-10-14
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-12, RE-14, RF-03
+**Tipo de casos:** Límite (T78), error (T79) y normal (T80)
+
+**Motivación (pruebas agregadas):** al cerrar el ciclo 8 se revisó qué reglas de la especificación no tenían ninguna prueba en la lista T22–T74. Por TDD, ese código no se había escrito: el DNI no se validaba, el correo podía repetirse y no existía cerrar sesión. El equipo decidió agregar las pruebas T76 a T80. Estas tres son de cuentas; T76 y T77 van al inicio del ciclo 9.
+
+### T78 – Un DNI de 7 dígitos se rechaza (RE-14, límite)
+
+- **🔴 RED** – `RegistroServiceTest#unProductorConUnDniDeSieteDigitosSeRechaza`. **Falló:** `Expecting code to raise a throwable`. Commit [`81c79b7`](https://github.com/fabio2152/qruta/commit/81c79b7) · [ciclo-8b-T78-red.txt](evidencias/ciclo-8b-T78-red.txt)
+- **🟢 GREEN** – `ValidadorDeFormato.esDniValido` (8 dígitos). El servicio lo aplica cuando el documento es DNI. T22, con un DNI de 8 dígitos, sigue en verde. Commit [`aab3860`](https://github.com/fabio2152/qruta/commit/aab3860) · [ciclo-8b-T78-green.txt](evidencias/ciclo-8b-T78-green.txt)
+
+### T79 – Un correo ya registrado se rechaza (RE-12)
+
+- **🔴 RED** – `unRegistroConUnCorreoYaRegistradoSeRechaza`: un transportista intenta usar el correo de un productor. **Falló:** `Expecting code to raise a throwable`. Commit [`20c54c8`](https://github.com/fabio2152/qruta/commit/20c54c8) · [ciclo-8b-T79-red.txt](evidencias/ciclo-8b-T79-red.txt)
+- **🟢 GREEN** – se recorre `usuarios.listarTodos()` comparando el correo sin distinguir mayúsculas. No hizo falta un método nuevo en el repositorio: con menos de 100 usuarios es suficiente (RNF-08). Commit [`91c845a`](https://github.com/fabio2152/qruta/commit/91c845a) · [ciclo-8b-T79-green.txt](evidencias/ciclo-8b-T79-green.txt)
+
+### T80 – Al cerrar sesión el token deja de ser válido (RF-03)
+
+- **🔴 RED** – `SesionServiceTest#alCerrarSesionElTokenDejaDeSerValido`. Esqueleto: `SesionService.cerrar` vacío. **Falló:** `Expecting code to raise a throwable`. Commit [`e6cbdac`](https://github.com/fabio2152/qruta/commit/e6cbdac) · [ciclo-8b-T80-red.txt](evidencias/ciclo-8b-T80-red.txt)
+- **🟢 GREEN** – `cerrar` elimina el token del mapa de sesiones. Así `validar` responde "Debe iniciar sesión". Commit [`93c1497`](https://github.com/fabio2152/qruta/commit/93c1497) · [ciclo-8b-T80-green.txt](evidencias/ciclo-8b-T80-green.txt)
+
+### 🔵 REFACTOR del ciclo 8b
+
+`validar` había llegado a siete reglas seguidas. Se dividió en tres métodos con nombre y con la regla que cumplen: `validarDatosDeAcceso` (RE-12, RE-13), `validarDocumento` (RE-14) y `validarQueNoEsteRegistrado` (RE-12). Así cada regla del registro se encuentra rápido durante la defensa. Resultado: `Tests run: 35, Failures: 0, Errors: 0`. Commit [`28182da`](https://github.com/fabio2152/qruta/commit/28182da) · [ciclo-8b-refactor.txt](evidencias/ciclo-8b-refactor.txt)
 
 ---
 
