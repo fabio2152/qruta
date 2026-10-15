@@ -608,6 +608,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T68 (normal).** Un producto bloqueado se muestra como "NO APTO PARA CONSUMO" con su motivo. → RE-38
 - **T69 (normal).** Un producto entregado a las 10:00 y consultado a las 16:00 lleva 6 horas en el mercado. → RE-39
 - **T70 (error).** La consulta de un código inexistente devuelve "no encontrado". → RE-37
+- **T91 (normal, agregada durante el ciclo).** La ficha muestra el recorrido con sus fechas, la duración del transporte y la última evaluación. → RE-37
 - Refactor sugerido: construir la respuesta pública con un objeto propio que solo tenga los campos permitidos.
 
 ### Ciclo 14 — Administración
@@ -617,7 +618,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T73 (normal).** El administrador aprueba un mercado. → RE-15
 - **T74 (normal).** El resumen del administrador informa la cantidad de usuarios por rol y de productos por etapa. → RE-40
 
-**Total al terminar: 90 pruebas** (T01 a T90). T75 cubre el requisito nuevo RE-41, y T76 a T90 cubren reglas que no tenían prueba.
+**Total al terminar: 91 pruebas** (T01 a T91). T75 cubre el requisito nuevo RE-41, y T76 a T91 cubren reglas que no tenían prueba.
 
 ---
 

@@ -94,6 +94,11 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T65 | 12 | Error | RE-35 | Suspender a un transportista OCUPADO se rechaza | [`23e3792`](https://github.com/fabio2152/qruta/commit/23e3792) | [`badeb80`](https://github.com/fabio2152/qruta/commit/badeb80) | ✅ |
 | T90 | 12 | Normal | RF-17, RE-35 | El regulador suspende a un productor, que ya no puede iniciar sesión *(prueba agregada)* | [`9251095`](https://github.com/fabio2152/qruta/commit/9251095) | [`27cf6cc`](https://github.com/fabio2152/qruta/commit/27cf6cc) | ✅ |
 | T66 | 12 | Normal | RE-36 | El reporte CSV tiene una fila por producto con las columnas de RE-36 | [`e142fe5`](https://github.com/fabio2152/qruta/commit/e142fe5) | [`c40da7a`](https://github.com/fabio2152/qruta/commit/c40da7a) | ✅ |
+| T67 | 13 | Normal | RE-37 | La consulta por código devuelve los datos públicos sin correo, documento ni teléfono | [`4a91016`](https://github.com/fabio2152/qruta/commit/4a91016) | [`dea4319`](https://github.com/fabio2152/qruta/commit/dea4319) | ✅ |
+| T68 | 13 | Normal | RE-38 | Un producto bloqueado se muestra como NO APTO PARA CONSUMO con su motivo | [`24c07d6`](https://github.com/fabio2152/qruta/commit/24c07d6) | [`9a98c4f`](https://github.com/fabio2152/qruta/commit/9a98c4f) | ✅ |
+| T69 | 13 | Normal | RE-39 | Entregado a las 10:00 y consultado a las 16:00: 6 h en el mercado | [`514f71b`](https://github.com/fabio2152/qruta/commit/514f71b) | [`61254fc`](https://github.com/fabio2152/qruta/commit/61254fc) | ✅ |
+| T70 | 13 | Error | RE-37 | La consulta de un código inexistente devuelve no encontrado | [`993a34c`](https://github.com/fabio2152/qruta/commit/993a34c) | [`aa944f8`](https://github.com/fabio2152/qruta/commit/aa944f8) | ✅ |
+| T91 | 13 | Normal | RE-37 | La ficha muestra el recorrido con fechas, la duración del transporte y la última evaluación *(prueba agregada)* | [`5e0c631`](https://github.com/fabio2152/qruta/commit/5e0c631) | [`257741c`](https://github.com/fabio2152/qruta/commit/257741c) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -112,6 +117,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 11 | Evaluación | [`7cca61a`](https://github.com/fabio2152/qruta/commit/7cca61a) | ✅ Completo |
 | 10b | Destino y recepción: pruebas agregadas | [`76fc254`](https://github.com/fabio2152/qruta/commit/76fc254) | ✅ Completo |
 | 12 | Regulación | [`57dadf8`](https://github.com/fabio2152/qruta/commit/57dadf8) | ✅ Completo |
+| 13 | Consulta pública por QR | [`f1b63ac`](https://github.com/fabio2152/qruta/commit/f1b63ac) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1482,6 +1488,41 @@ Como sugiere la especificación, **`RegulacionService` reúne las acciones exclu
 - La búsqueda del producto, que estaba repetida en bloquear y desbloquear, queda en `buscarProducto`.
 
 Resultado: `Tests run: 82, Failures: 0, Errors: 0`. Commit [`57dadf8`](https://github.com/fabio2152/qruta/commit/57dadf8) · [ciclo-12-refactor.txt](evidencias/ciclo-12-refactor.txt)
+
+---
+
+## Ciclo 13 – Consulta pública por QR
+
+**Fecha:** 2026-10-15
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-37, RE-38, RE-39 y RNF-03
+**Tipo de casos:** Normales (T67, T68, T69, T91) y de error (T70)
+
+**Motivación:** es lo que ve el consumidor final al escanear el QR, sin cuenta. Debe decir con claridad si el producto es apto y nunca exponer datos personales del productor (RNF-03).
+
+**Prueba agregada:** RE-37 pide mostrar el recorrido con fechas, la duración del transporte y la última evaluación, pero ninguna prueba lo exigía. Sin eso, la página de consulta quedaba casi vacía. Se agregó **T91**.
+
+Las pruebas están en `ConsultaPublicaTest`.
+
+| Prueba | 🔴 RED: qué faltaba | 🟢 GREEN: código mínimo |
+|---|---|---|
+| T67 | `consultar` devolvía `null` (`Expecting actual not to be null`). El primer intento falló con `NullPointerException` dentro de AssertJ; el script de fases lo detectó como un RED no válido y no hizo commit, así que se agregó `isNotNull()` antes de las demás comprobaciones | `FichaPublica` es un record **solo con campos permitidos**: razón social y región del productor, nunca su correo, DNI ni teléfono. La prueba lo comprueba con `toString().doesNotContain(...)` |
+| T68 | `veredicto` era `null` | "NO APTO PARA CONSUMO" si el producto está BLOQUEADO o su última evaluación es CRITICA, con el motivo del bloqueo |
+| T69 | `horasEnElMercado` era `null` | Horas desde la entrega hasta la consulta, con el reloj inyectado |
+| T70 | Lanzaba `NoSuchElementException: No value present` | `ProductoNoEncontradoException` con un mensaje claro (404 en la API) |
+| T91 | El recorrido estaba vacío | Recorrido (etapa, fecha y observación, **sin el usuario que hizo cada cambio**), duración del transporte en horas y última evaluación |
+
+Las evidencias de cada fase están en `evidencias/ciclo-13-TXX-{red,green}.txt`.
+
+### 🔵 REFACTOR del ciclo 13
+
+La especificación sugería construir la respuesta pública con un objeto propio. Eso ya se hizo desde T67, así que el refactor dejó cada decisión en su lugar:
+- **`Producto.esAptoParaConsumo()`**: RE-38 es una regla de negocio y pasa al dominio.
+- **`FichaPublica.desde(producto, ahora)`**: el único lugar que decide qué datos son públicos es el propio objeto público. `ConsultaPublicaService` queda en dos pasos: buscar por código y construir la ficha.
+
+Resultado: `Tests run: 87, Failures: 0, Errors: 0`. Commit [`f1b63ac`](https://github.com/fabio2152/qruta/commit/f1b63ac) · [ciclo-13-refactor.txt](evidencias/ciclo-13-refactor.txt)
+
+**Cobertura del dominio y los servicios:** 764 de 810 líneas (94,3 %).
 
 ---
 
