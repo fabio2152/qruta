@@ -13,6 +13,9 @@ import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.Productor;
+import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
+import pe.qruta.trazabilidad.dominio.producto.CategoriaProducto;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.ProductoPecuario;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
@@ -55,6 +58,17 @@ public class ProductoService {
         if (productor.getRol() != Rol.PRODUCTOR) {
             throw new OperacionNoAutorizadaException(
                 "Solo un productor puede crear productos"
+            );
+        }
+
+        CategoriaProducto categoria = datos.getTipoProducto().getCategoria();
+
+        if (productor instanceof Productor conTipo
+                && conTipo.getTipoProductor() != TipoProductor.AGROPECUARIO
+                && !conTipo.getTipoProductor().name().equals(categoria.name())) {
+            throw new OperacionNoAutorizadaException(
+                "Un productor " + conTipo.getTipoProductor()
+                    + " no puede crear productos de categoría " + categoria
             );
         }
 
