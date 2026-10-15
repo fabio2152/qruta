@@ -175,6 +175,21 @@ class CrearProductoTest {
     }
 
 
+    @Test
+    void unaPaltaConCalidadCuatroSeRechaza() {
+
+        // Dado
+        DatosProducto datos = datosDePalta();
+
+        datos.setCalidad(4);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.crearProducto(datos, productor))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("La calidad debe estar entre 1 y 3");
+    }
+
+
     private Productor productorDeTipo(TipoProductor tipoProductor) {
 
         return new Productor(
