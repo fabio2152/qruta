@@ -1,10 +1,12 @@
 package pe.qruta.trazabilidad.servicio;
 
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
+import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
+import pe.qruta.trazabilidad.dominio.cuenta.TipoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
@@ -33,6 +35,12 @@ public class RegistroService {
 
 
     public Usuario registrar(SolicitudRegistro solicitud) {
+
+        if (solicitud.getTipoCuenta() == TipoCuenta.REGULADOR) {
+            throw new OperacionNoAutorizadaException(
+                "El registro público no está disponible para reguladores"
+            );
+        }
 
         if (solicitud.getContrasena().length() < 8) {
             throw new DatoInvalidoException(
