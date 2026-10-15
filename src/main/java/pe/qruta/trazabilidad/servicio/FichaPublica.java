@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
+import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
 
 
@@ -24,6 +25,9 @@ public record FichaPublica(
         List<String> certificados,
         String veredicto,
         String motivo,
-        Long horasEnElMercado
+        Long horasEnElMercado,
+        List<PasoDelRecorrido> recorrido,
+        Long duracionTransporteHoras,
+        Evaluacion ultimaEvaluacion
 ) {
 }

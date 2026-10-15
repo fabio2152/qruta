@@ -22,6 +22,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.Productor;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoProductor;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
+import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
@@ -203,6 +204,47 @@ class ConsultaPublicaTest {
         assertThatThrownBy(() -> consulta.consultar("ZZZZ9999"))
             .isInstanceOf(ProductoNoEncontradoException.class)
             .hasMessage("No existe un producto con el código ZZZZ9999");
+    }
+
+
+    @Test
+    void laFichaMuestraElRecorridoConFechasLaDuracionDelTransporteYLaUltimaEvaluacion() {
+
+        // Dado
+        Producto pollo = servicio.crearProducto(datosDePollo(), productor);
+
+        servicio.publicar(pollo.getId(), productor);
+
+        transporte.aceptar(pollo.getId(), transportista);
+
+        transporte.elegirDestino(pollo.getId(), transportista, "mercado1");
+
+        reloj.ajustarA(horaDelDia(8, 0));
+
+        servicio.cambiarEstado(pollo.getId(), EstadoProducto.EN_TRANSITO, transportista);
+
+        reloj.ajustarA(horaDelDia(11, 0));
+
+        servicio.cambiarEstado(pollo.getId(), EstadoProducto.EN_DESTINO, transportista);
+
+        Evaluacion evaluacion =
+            recepcion.registrarRecepcion(pollo.getId(), mercado, new BigDecimal("3"), new BigDecimal("80"));
+
+        // Cuando
+        FichaPublica ficha = consulta.consultar(pollo.getCodigo());
+
+        // Entonces
+        assertThat(ficha.recorrido())
+            .containsExactly(
+                new PasoDelRecorrido(EstadoProducto.EN_TRANSITO, horaDelDia(8, 0), null),
+                new PasoDelRecorrido(EstadoProducto.EN_DESTINO, horaDelDia(11, 0), null)
+            );
+
+        assertThat(ficha.duracionTransporteHoras())
+            .isEqualTo(3L);
+
+        assertThat(ficha.ultimaEvaluacion())
+            .isEqualTo(evaluacion);
     }
 
 

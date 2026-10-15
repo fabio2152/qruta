@@ -83,7 +83,10 @@ public class ConsultaPublicaService {
             producto.getMotivoBloqueo(),
             producto.getHoraEntrega() == null
                 ? null
-                : Duration.between(producto.getHoraEntrega(), LocalDateTime.now(reloj)).toHours()
+                : Duration.between(producto.getHoraEntrega(), LocalDateTime.now(reloj)).toHours(),
+            List.of(),
+            null,
+            null
         );
     }
 
