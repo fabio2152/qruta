@@ -77,11 +77,11 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 
 ## Control de requisitos mínimos
 
-- [x] Al menos 5 pruebas automatizadas (32: 10 del dominio y 22 del servicio).
-- [x] Al menos 3 ciclos RED-GREEN-REFACTOR completos (8).
-- [x] Casos normales (T01, T02, T03, T09–T13, T15, T16, T22, T24, T30).
-- [x] Casos límite (T05, T23, T27, T32).
-- [x] Casos de error (T04, T06, T07, T08, T14, T17, T25, T26, T28, T29, T31).
+- [x] Al menos 5 pruebas automatizadas (49: 10 del dominio y 39 del servicio).
+- [x] Al menos 3 ciclos RED-GREEN-REFACTOR completos (10: del 1 al 9, más el 8b).
+- [x] Casos normales (T01, T02, T03, T09–T13, T15, T16, T22, T24, T30, T33, T38, T40, T76, T80, T81).
+- [x] Casos límite (T05, T23, T27, T32, T36, T78).
+- [x] Casos de error (T04, T06, T07, T08, T14, T17, T25, T26, T28, T29, T31, T34, T35, T37, T39, T41–T43, T77, T79).
 - [x] Ejecución completa de todas las pruebas (`./mvnw test`) en verde al cerrar cada ciclo.
 - [x] Reporte de cobertura JaCoCo (`target/site/jacoco/index.html`): ver [Resultados](#resultados).
 
