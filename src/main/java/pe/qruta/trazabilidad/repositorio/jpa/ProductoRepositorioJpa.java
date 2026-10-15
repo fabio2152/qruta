@@ -1,9 +1,11 @@
 package pe.qruta.trazabilidad.repositorio.jpa;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,13 +43,22 @@ public class ProductoRepositorioJpa
         ProductoEntidad entidad =
             producto.getId() == null
                 ? new ProductoEntidad(
-                    producto.getNombre(),
-                    usuarioEntidad(producto.getProductor().getNombreUsuario()),
-                    usuarioEntidad(producto.getIntermediarioAsignado().getNombreUsuario())
+                    producto,
+                    usuarioEntidad(producto.getProductor().getNombreUsuario())
                 )
                 : productos.findById(producto.getId()).orElseThrow();
 
-        entidad.actualizarDesde(producto);
+        // D-13: si otro usuario guardó el producto después de que lo leímos, la operación se rechaza.
+        if (producto.getId() != null && !Objects.equals(producto.getVersion(), entidad.getVersion())) {
+            throw new ObjectOptimisticLockingFailureException(ProductoEntidad.class, producto.getId());
+        }
+
+        entidad.actualizarDesde(
+            producto,
+            producto.getIntermediarioAsignado() == null
+                ? null
+                : usuarioEntidad(producto.getIntermediarioAsignado().getNombreUsuario())
+        );
 
         // El historial solo crece: se agregan los cambios que todavía no están guardados.
         List<CambioEstado> historial = producto.getHistorial();
@@ -64,9 +75,18 @@ public class ProductoRepositorioJpa
             );
         }
 
-        ProductoEntidad guardada = productos.save(entidad);
+        ProductoEntidad guardada = productos.saveAndFlush(entidad);
 
-        producto.setId(guardada.getId());
+        producto.restaurar(
+            guardada.getId(),
+            producto.getIntermediarioAsignado(),
+            producto.getEstado(),
+            producto.getHoraInicioTransporte(),
+            producto.getHoraLlegada(),
+            producto.getHistorial(),
+            producto.isPublicado(),
+            guardada.getVersion()
+        );
 
         return producto;
     }

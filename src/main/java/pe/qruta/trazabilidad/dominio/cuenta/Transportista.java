@@ -28,6 +28,25 @@ public class Transportista extends Intermediario {
     }
 
 
+    /** Para reconstruir desde la base de datos un transportista con su estado de carga guardado. */
+    public Transportista(
+            String nombreUsuario,
+            String nombreCompleto,
+            String correo,
+            String contrasena,
+            EstadoCuenta estadoCuenta,
+            String razonSocial,
+            String ruc,
+            String telefono,
+            String region,
+            String placaVehiculo,
+            EstadoCarga estadoCarga
+    ) {
+        this(nombreUsuario, nombreCompleto, correo, contrasena, estadoCuenta, razonSocial, ruc, telefono, region, placaVehiculo);
+        this.estadoCarga = estadoCarga;
+    }
+
+
     public String getPlacaVehiculo() {
         return placaVehiculo;
     }

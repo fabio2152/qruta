@@ -179,3 +179,20 @@ code { background: var(--superficie-suave); padding: 0 .3rem; border-radius: 4px
     .datos { grid-template-columns: 1fr; }
     .marca__sub { display: none; }
 }
+
+/* ---------- Fase 2: registro, transportista y cuentas ---------- */
+.pestanas { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; background: var(--superficie-suave); padding: 4px; border-radius: 10px; }
+.pestana { font: inherit; font-weight: 600; border: none; background: transparent; padding: .5rem; border-radius: 8px; cursor: pointer; color: var(--texto-suave); }
+.pestana--activa { background: var(--superficie); color: var(--primario); box-shadow: var(--sombra); }
+
+.estado-carga { font-weight: 700; font-size: .85rem; padding: .25rem .7rem; border-radius: 999px; }
+.estado-carga--LIBRE { background: var(--primario-claro); color: var(--primario); }
+.estado-carga--OCUPADO { background: #fff4e5; color: #9a5b00; }
+
+.lista-publicaciones, .lista-usuarios { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.lista-publicaciones li, .lista-usuarios li { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: .9rem; }
+.lista-publicaciones li > div, .lista-usuarios li > div { display: grid; }
+.lista-publicaciones .texto-suave, .lista-usuarios .texto-suave { margin: 0; font-size: .8rem; }
+
+.insignia--PENDIENTE { background: #fff4e5; color: #9a5b00; }
+.insignia--SUSPENDIDA { background: var(--error-claro); color: var(--error); }

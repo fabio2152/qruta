@@ -16,7 +16,7 @@
             </span>
             <div>
                 <strong>QRuta</strong>
-                <span class="marca__sub">Trazabilidad de productos</span>
+                <span class="marca__sub">Trazabilidad de productos perecibles</span>
             </div>
         </div>
 
@@ -30,32 +30,89 @@
 
 <main class="contenedor">
 
-    <!-- ===================== LOGIN ===================== -->
+    <!-- ===================== LOGIN Y REGISTRO ===================== -->
     <section id="vista-login" class="login">
         <div class="tarjeta login__tarjeta">
-            <h1>Iniciar sesión</h1>
-            <p class="texto-suave">Seguimiento del producto desde el origen hasta la entrega.</p>
 
-            <form id="formulario-login" class="formulario">
-                <label>
-                    Usuario
-                    <input id="login-usuario" name="usuario" autocomplete="username" required>
-                </label>
-                <label>
-                    Contraseña
-                    <input id="login-contrasena" name="contrasena" type="password" autocomplete="current-password" required>
-                </label>
-                <button class="boton boton--primario" type="submit">Ingresar</button>
-            </form>
+            <div class="pestanas" role="tablist">
+                <button id="pestana-login" class="pestana pestana--activa" type="button">Iniciar sesión</button>
+                <button id="pestana-registro" class="pestana" type="button">Registrarse</button>
+            </div>
 
-            <div class="usuarios-demo">
-                <p class="texto-suave">Usuarios de prueba (contraseña <code>clave123</code>):</p>
-                <div class="usuarios-demo__lista">
-                    <button type="button" class="chip" data-usuario="productor1">productor1</button>
-                    <button type="button" class="chip" data-usuario="intermediario1">intermediario1</button>
-                    <button type="button" class="chip" data-usuario="intermediario2">intermediario2</button>
-                    <button type="button" class="chip" data-usuario="regulador1">regulador1</button>
+            <!-- Iniciar sesión -->
+            <div id="bloque-login">
+                <p class="texto-suave">Seguimiento de pollo, palta y banano desde el productor hasta el consumidor.</p>
+
+                <form id="formulario-login" class="formulario">
+                    <label>
+                        Usuario
+                        <input id="login-usuario" autocomplete="username" required>
+                    </label>
+                    <label>
+                        Contraseña
+                        <input id="login-contrasena" type="password" autocomplete="current-password" required>
+                    </label>
+                    <button class="boton boton--primario" type="submit">Ingresar</button>
+                </form>
+
+                <div class="usuarios-demo">
+                    <p class="texto-suave">Cuentas de prueba (contraseña <code>clave123</code>):</p>
+                    <div class="usuarios-demo__lista">
+                        <button type="button" class="chip" data-usuario="productor1">productor1</button>
+                        <button type="button" class="chip" data-usuario="transportista1">transportista1</button>
+                        <button type="button" class="chip" data-usuario="transportista2">transportista2</button>
+                        <button type="button" class="chip" data-usuario="mercado1">mercado1</button>
+                        <button type="button" class="chip" data-usuario="acopio1">acopio1</button>
+                        <button type="button" class="chip" data-usuario="regulador1">regulador1</button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Registrarse (CU-01) -->
+            <div id="bloque-registro" hidden>
+                <p class="texto-suave">Tu cuenta quedará <strong>pendiente</strong> hasta que la autoridad la apruebe.</p>
+
+                <form id="formulario-registro" class="formulario">
+                    <label>
+                        Tipo de cuenta
+                        <select id="registro-tipo">
+                            <option value="PRODUCTOR">Productor</option>
+                            <option value="TRANSPORTISTA">Transportista</option>
+                            <option value="MERCADO">Mercado</option>
+                            <option value="CENTRO_DE_ACOPIO">Centro de acopio</option>
+                        </select>
+                    </label>
+                    <label>Nombre de usuario <input id="registro-usuario" required></label>
+                    <label>Nombre completo <input id="registro-nombre" required></label>
+                    <label>Correo <input id="registro-correo" type="email" required></label>
+                    <label>Contraseña (mínimo 8 caracteres) <input id="registro-contrasena" type="password" minlength="8" required></label>
+                    <label>Razón social <input id="registro-razon" required></label>
+
+                    <label data-solo="PRODUCTOR">
+                        Documento
+                        <select id="registro-tipo-documento">
+                            <option value="DNI">DNI (persona natural)</option>
+                            <option value="RUC">RUC (empresa)</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span id="etiqueta-documento">Número de documento</span>
+                        <input id="registro-documento" inputmode="numeric" required>
+                    </label>
+                    <label data-solo="PRODUCTOR">
+                        Tipo de productor
+                        <select id="registro-tipo-productor">
+                            <option value="AGROPECUARIO">Agropecuario</option>
+                            <option value="AGRICOLA">Agrícola</option>
+                            <option value="PECUARIO">Pecuario</option>
+                        </select>
+                    </label>
+                    <label data-solo="TRANSPORTISTA">Placa del vehículo <input id="registro-placa"></label>
+                    <label>Teléfono <input id="registro-telefono" inputmode="tel"></label>
+                    <label>Región <input id="registro-region" required></label>
+
+                    <button class="boton boton--primario" type="submit">Crear cuenta</button>
+                </form>
             </div>
         </div>
     </section>
@@ -75,48 +132,69 @@
 
             <aside class="columna-lateral">
 
-                <!-- Productor: registrar producto -->
+                <!-- Productor: crear producto (CU-05) -->
                 <div id="panel-crear" class="tarjeta" hidden>
                     <h2>Registrar producto</h2>
-                    <p class="texto-suave">El producto nace en <strong>EN_ORIGEN</strong>.</p>
+                    <p class="texto-suave">Nace en <strong>EN_ORIGEN</strong> con su código QR. Después puedes publicarlo.</p>
                     <form id="formulario-crear" class="formulario">
                         <label>
-                            Nombre del producto
-                            <input id="crear-nombre" placeholder="Ej. Palta Hass" required>
+                            Tipo de producto
+                            <select id="crear-tipo">
+                                <option value="POLLO">Pollo</option>
+                                <option value="PALTA">Palta</option>
+                                <option value="BANANO">Banano</option>
+                            </select>
                         </label>
+                        <label>Nombre <input id="crear-nombre" placeholder="Ej. Pollo entero" required></label>
+                        <label>Lote <input id="crear-lote" placeholder="Ej. L-001" required></label>
+                        <label>Fecha y hora de producción <input id="crear-fecha" type="datetime-local" required></label>
                         <label>
-                            Intermediario asignado
-                            <select id="crear-intermediario" required></select>
+                            Tipo de producción
+                            <select id="crear-produccion">
+                                <option value="ESTANDAR">Estándar</option>
+                                <option value="ORGANICO">Orgánico</option>
+                            </select>
                         </label>
+
+                        <label data-categoria="PECUARIO">Especie <input id="crear-especie" placeholder="Ej. Gallus gallus"></label>
+                        <label data-categoria="PECUARIO">Código de planta <input id="crear-planta"></label>
+                        <label data-categoria="PECUARIO">Certificado sanitario SENASA <input id="crear-senasa"></label>
+
+                        <label data-categoria="AGRICOLA">Variedad <input id="crear-variedad" placeholder="Ej. Hass"></label>
+                        <label data-categoria="AGRICOLA">
+                            Estado de maduración
+                            <select id="crear-maduracion">
+                                <option value="VERDE">Verde</option>
+                                <option value="MADURO">Maduro</option>
+                            </select>
+                        </label>
+                        <label data-categoria="AGRICOLA">
+                            Calidad
+                            <select id="crear-calidad">
+                                <option value="1">1 · Muy buena</option>
+                                <option value="2">2 · Buena</option>
+                                <option value="3">3 · Regular</option>
+                            </select>
+                        </label>
+                        <label data-categoria="AGRICOLA">Certificado fitosanitario <input id="crear-fito"></label>
+
                         <button class="boton boton--primario" type="submit">Registrar</button>
                     </form>
                 </div>
 
-                <!-- Intermediario: cambio manual de estado -->
-                <div id="panel-cambio" class="tarjeta" hidden>
-                    <h2>Cambiar estado</h2>
-                    <p class="texto-suave">Indica el producto y la etapa. El sistema registra la hora.</p>
-                    <form id="formulario-cambio" class="formulario">
-                        <label>
-                            Id del producto
-                            <input id="cambio-id" type="number" min="1" required>
-                        </label>
-                        <label>
-                            Nueva etapa
-                            <select id="cambio-estado">
-                                <option>EN_TRANSITO</option>
-                                <option>EN_DESTINO</option>
-                                <option>ENTREGADO</option>
-                                <option>EN_ORIGEN</option>
-                            </select>
-                        </label>
-                        <button class="boton boton--primario" type="submit">Cambiar</button>
-                    </form>
+                <!-- Transportista: estado de carga y publicaciones (CU-08, CU-09) -->
+                <div id="panel-transportista" class="tarjeta" hidden>
+                    <h2>Mi estado de carga</h2>
+                    <p><span id="estado-carga" class="estado-carga"></span></p>
+                    <h2>Publicaciones disponibles</h2>
+                    <p class="texto-suave">Solo las ves mientras estás LIBRE. Al aceptar una, pasas a OCUPADO.</p>
+                    <ul id="lista-publicaciones" class="lista-publicaciones"></ul>
                 </div>
 
-                <!-- Regulador: usuarios del sistema -->
+                <!-- Regulador: cuentas (CU-03) -->
                 <div id="panel-usuarios" class="tarjeta" hidden>
-                    <h2>Usuarios del sistema</h2>
+                    <h2>Cuentas</h2>
+                    <p class="texto-suave">Aprueba a productores y transportistas pendientes.</p>
                     <ul id="lista-usuarios" class="lista-usuarios"></ul>
                 </div>
 

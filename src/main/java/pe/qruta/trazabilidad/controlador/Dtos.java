@@ -8,11 +8,18 @@ import pe.qruta.trazabilidad.dominio.CambioEstado;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.CentroDeAcopio;
+import pe.qruta.trazabilidad.dominio.cuenta.Intermediario;
+import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
+import pe.qruta.trazabilidad.dominio.cuenta.Productor;
+import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
+import pe.qruta.trazabilidad.dominio.producto.ProductoAgro;
+import pe.qruta.trazabilidad.dominio.producto.ProductoPecuario;
 
 
 /**
  * Objetos que entran y salen de la API REST.
- * Separan el formato JSON de las clases del dominio.
+ * Separan el formato JSON de las clases del dominio y nunca incluyen contraseñas (RNF-02).
  */
 final class Dtos {
 
@@ -31,9 +38,9 @@ final class Dtos {
     }
 
 
-    record CrearProductoSolicitud(
-            String nombre,
-            String intermediario
+    record LoginRespuesta(
+            String token,
+            UsuarioRespuesta usuario
     ) {
     }
 
@@ -46,25 +53,74 @@ final class Dtos {
 
     record UsuarioRespuesta(
             String nombreUsuario,
-            String rol
+            String nombreCompleto,
+            String rol,
+            String tipoCuenta,
+            String estadoCuenta,
+            String estadoCarga,
+            String razonSocial,
+            String region
     ) {
 
         static UsuarioRespuesta desde(Usuario usuario) {
+
+            String razonSocial = null;
+            String region = null;
+            String estadoCarga = null;
+
+            if (usuario instanceof Productor productor) {
+                razonSocial = productor.getRazonSocial();
+                region = productor.getRegion();
+            }
+
+            if (usuario instanceof Intermediario intermediario) {
+                razonSocial = intermediario.getRazonSocial();
+                region = intermediario.getRegion();
+            }
+
+            if (usuario instanceof Transportista transportista) {
+                estadoCarga = transportista.getEstadoCarga().name();
+            }
+
             return new UsuarioRespuesta(
                 usuario.getNombreUsuario(),
-                usuario.getRol().name()
+                usuario.getNombreCompleto(),
+                usuario.getRol().name(),
+                tipoCuenta(usuario),
+                usuario.getEstadoCuenta() == null ? null : usuario.getEstadoCuenta().name(),
+                estadoCarga,
+                razonSocial,
+                region
             );
+        }
+
+
+        /** Tipo de cuenta para la interfaz: la clase del dominio o, si es un usuario simple, su rol. */
+        private static String tipoCuenta(Usuario usuario) {
+
+            if (usuario instanceof Productor) return "PRODUCTOR";
+            if (usuario instanceof Transportista) return "TRANSPORTISTA";
+            if (usuario instanceof Mercado) return "MERCADO";
+            if (usuario instanceof CentroDeAcopio) return "CENTRO_DE_ACOPIO";
+
+            return usuario.getRol().name();
         }
     }
 
 
     record ProductoRespuesta(
             Long id,
+            String codigo,
             String nombre,
+            String tipoProducto,
+            String variedadOEspecie,
+            String lote,
+            String fechaProduccion,
             String productor,
             String intermediario,
             String estado,
             String siguienteEstado,
+            boolean publicado,
             String horaInicioTransporte,
             String horaLlegada,
             String duracionTransporte
@@ -77,17 +133,34 @@ final class Dtos {
 
             return new ProductoRespuesta(
                 producto.getId(),
+                producto.getCodigo(),
                 producto.getNombre(),
+                producto.getTipoProducto() == null ? null : producto.getTipoProducto().name(),
+                variedadOEspecie(producto),
+                producto.getLote(),
+                formatear(producto.getFechaProduccion()),
                 producto.getProductor().getNombreUsuario(),
-                producto.getIntermediarioAsignado().getNombreUsuario(),
+                producto.getIntermediarioAsignado() == null
+                    ? null
+                    : producto.getIntermediarioAsignado().getNombreUsuario(),
                 producto.getEstado().name(),
                 siguiente == null ? null : siguiente.name(),
+                producto.isPublicado(),
                 formatear(producto.getHoraInicioTransporte()),
                 formatear(producto.getHoraLlegada()),
                 producto.getHoraLlegada() == null
                     ? null
                     : formatear(producto.getDuracionTransporte())
             );
+        }
+
+
+        private static String variedadOEspecie(Producto producto) {
+
+            if (producto instanceof ProductoAgro agro) return agro.getVariedad();
+            if (producto instanceof ProductoPecuario pecuario) return pecuario.getEspecie();
+
+            return null;
         }
     }
 

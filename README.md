@@ -110,13 +110,13 @@ cd qruta
 
 ## Instrucciones de ejecución
 
-1. Levantar la base de datos PostgreSQL (puerto **5433**, base `qruta_db`, usuario y contraseña `qruta`):
+1. Levantar la base de datos PostgreSQL (contenedor `qruta-fase2-postgres`, puerto **5434**, base `qruta_db`, usuario y contraseña `qruta`):
 
 ```bash
 docker compose up -d
 ```
 
-Los datos se guardan en el volumen `qruta-datos` y sobreviven a los reinicios. Para borrarlos: `docker compose down -v`.
+Los datos se guardan en el volumen `qruta-fase2-datos` y sobreviven a los reinicios. Para borrarlos: `docker compose down -v`.
 
 2. Iniciar la aplicación (las tablas se crean solas la primera vez):
 
@@ -134,41 +134,63 @@ mvnw.cmd spring-boot:run
 
 Abrir **http://localhost:8080** en el navegador.
 
-### Usuarios de prueba
+**Para escanear el QR con el celular** (avance del sábado, en local):
+- abrir la aplicación con la IP de la laptop en la red Wi-Fi, por ejemplo `http://192.168.1.20:8080` (la IP se ve con `ipconfig`);
+- conectar el celular a la misma red;
+- permitir el puerto 8080 en el firewall de Windows.
 
-Se cargan al iniciar la aplicación si todavía no existen en la base. Todos usan la contraseña `clave123` (solo para la demostración: no se cifra).
+La aplicación ya escucha en todas las interfaces (`server.address=0.0.0.0`).
 
-| Usuario | Rol | Qué puede hacer |
+### Cuentas de prueba
+
+Se cargan al iniciar la aplicación si todavía no existen. Todas están ACTIVAS y usan la contraseña `clave123`, guardada cifrada con BCrypt.
+
+| Usuario | Tipo de cuenta | Qué puede hacer |
 |---|---|---|
-| `productor1` | PRODUCTOR | Registrar productos y asignarlos a un intermediario; ver los suyos |
-| `intermediario1` | INTERMEDIARIO | Avanzar por las etapas los productos que tiene asignados |
-| `intermediario2` | INTERMEDIARIO | Igual que el anterior (sirve para mostrar el rechazo por no estar asignado) |
-| `regulador1` | REGULADOR | Ver todos los productos, los usuarios y el historial |
+| `productor1` | Productor agropecuario (Cusco) | Crear pollo, palta o banano y publicarlos |
+| `transportista1`, `transportista2` | Transportista | Ver publicaciones mientras está LIBRE, aceptar una y avanzar sus etapas |
+| `mercado1` | Mercado (Mercado Mayorista de Lima) | Punto de destino (recepción en el ciclo 10) |
+| `acopio1` | Centro de acopio (Huancayo) | Punto de destino (recepción en el ciclo 10) |
+| `regulador1` | Regulador (SENASA) | Aprobar productores y transportistas; ver todos los productos e historiales |
+| `intermediario1`, `intermediario2` | Intermediario de la fase 1 | Asignación directa de la fase 1 (D-04) |
 
-### Guion de la demostración
+### Guion de la demostración (avance actual)
 
-1. Ingresar como `productor1` y registrar "Palta Hass" asignada a `intermediario1`: aparece en EN_ORIGEN.
-2. Ingresar como `intermediario2` y, en **Cambiar estado**, intentar pasar el producto #1 a EN_TRANSITO: *"El usuario no está asignado a este producto"*.
-3. Ingresar como `intermediario1` y pulsar **Pasar a EN_TRANSITO**: se registra la hora de inicio.
-4. En **Cambiar estado**, intentar pasar el producto #1 a ENTREGADO: *"No se puede pasar de EN_TRANSITO a ENTREGADO"*.
-5. Pulsar **Pasar a EN_DESTINO**: se registra la llegada y se muestra la duración del transporte.
-6. Ingresar como `regulador1` y pulsar **Ver historial**.
+1. En **Registrarse**, crear un transportista nuevo. Al intentar ingresar: *"Su cuenta está pendiente de aprobación"*.
+2. Ingresar como `regulador1` y pulsar **Aprobar** sobre la cuenta nueva. Ahora el transportista ya puede ingresar.
+3. Ingresar como `productor1`, crear un pollo (con su certificado SENASA) y pulsar **Publicar**. El producto muestra su código QR.
+4. Ingresar con el transportista nuevo: la publicación aparece en **Publicaciones disponibles**. Al pulsar **Aceptar** pasa a OCUPADO.
+5. Ingresar como `transportista2`: la publicación ya no aparece.
+6. Con el transportista nuevo, pulsar **Pasar a EN_TRANSITO** y luego **Pasar a EN_DESTINO**: se registran las horas y la duración.
+7. Como `regulador1`, pulsar **Ver historial**.
 
 ### API REST
 
-Todas las peticiones, salvo el login, indican quién las hace con la cabecera `X-Usuario: <nombreUsuario>`.
+Salvo el registro, el login y la consulta pública, todas las peticiones exigen la cabecera `Authorization: Bearer <token>`. El token lo devuelve el login y vale 8 horas.
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| `POST` | `/api/login` | Iniciar sesión (`{"nombreUsuario", "contrasena"}`) |
-| `POST` | `/api/productos` | Crear un producto (`{"nombre", "intermediario"}`) |
-| `GET` | `/api/productos` | Listar los productos según el rol |
+| `POST` | `/api/auth/registro` | Registro público: productor, transportista, mercado o centro de acopio (queda PENDIENTE) |
+| `POST` | `/api/auth/login` | Iniciar sesión: devuelve `token` y `usuario` |
+| `POST` | `/api/auth/logout` | Cerrar sesión: el token deja de valer |
+| `GET` | `/api/usuarios` | Cuentas con su estado (solo el regulador) |
+| `GET` | `/api/usuarios/yo` | Datos de la sesión actual (por ejemplo, el estado de carga) |
+| `POST` | `/api/usuarios/{nombreUsuario}/aprobar` | Aprobar una cuenta (RE-15) |
+| `POST` | `/api/productos` | El productor crea un producto (`DatosProducto`) |
+| `GET` | `/api/productos` | Productos según el rol (RE-10) |
+| `POST` | `/api/productos/{id}/publicar` | Publicar el producto |
+| `POST` | `/api/productos/{id}/retirar-publicacion` | Retirar la publicación |
+| `GET` | `/api/publicaciones` | Publicaciones disponibles (transportista LIBRE) |
+| `POST` | `/api/productos/{id}/aceptar` | El transportista acepta el producto |
 | `PUT` | `/api/productos/{id}/estado` | Cambiar la etapa (`{"estado": "EN_TRANSITO"}`) |
 | `GET` | `/api/productos/{id}/historial` | Historial de cambios del producto |
-| `GET` | `/api/usuarios` | Productores e intermediarios (solo el regulador) |
-| `GET` | `/api/usuarios/intermediarios` | Intermediarios disponibles para asignar |
 
-Las reglas incumplidas responden con su mensaje: `403` (sin permiso), `409` (cambio de etapa no permitido o duración no disponible), `404` (producto inexistente) y `401` (credenciales incorrectas).
+Los errores responden `{"mensaje": "..."}` con estos códigos:
+- `400`: datos inválidos;
+- `401`: sin sesión o con el token vencido;
+- `403`: sin permiso o con la cuenta no activa;
+- `404`: no existe;
+- `409`: conflicto (nombre repetido, producto ya aceptado, etapa no permitida).
 
 ## Procedimiento para ejecutar las pruebas
 

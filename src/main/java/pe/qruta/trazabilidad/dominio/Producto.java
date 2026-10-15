@@ -41,6 +41,8 @@ public class Producto {
 
     private boolean publicado;
 
+    private Long version;
+
 
     /** Asignación directa: un productor con transportista propio (D-04, fase 1). */
     public Producto(
@@ -83,13 +85,41 @@ public class Producto {
         Producto producto =
             new Producto(nombre, productor, intermediarioAsignado);
 
-        producto.id = id;
-        producto.estado = estado;
-        producto.horaInicioTransporte = horaInicioTransporte;
-        producto.horaLlegada = horaLlegada;
-        producto.historial.addAll(historial);
+        producto.restaurar(id, intermediarioAsignado, estado, horaInicioTransporte, horaLlegada, historial, false, null);
 
         return producto;
+    }
+
+
+    /**
+     * Devuelve al producto el estado que tenía guardado en la base de datos.
+     * Lo usan reconstruir(...) y el adaptador JPA para ProductoPecuario y ProductoAgro.
+     */
+    public void restaurar(
+            Long id,
+            Usuario intermediarioAsignado,
+            EstadoProducto estado,
+            LocalDateTime horaInicioTransporte,
+            LocalDateTime horaLlegada,
+            List<CambioEstado> historial,
+            boolean publicado,
+            Long version
+    ) {
+        this.id = id;
+        this.intermediarioAsignado = intermediarioAsignado;
+        this.estado = estado;
+        this.horaInicioTransporte = horaInicioTransporte;
+        this.horaLlegada = horaLlegada;
+        this.historial.clear();
+        this.historial.addAll(historial);
+        this.publicado = publicado;
+        this.version = version;
+    }
+
+
+    /** Versión leída de la base de datos: permite detectar dos aceptaciones simultáneas (D-13). */
+    public Long getVersion() {
+        return version;
     }
 
 

@@ -6,15 +6,19 @@ import java.time.ZoneId;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 import pe.qruta.trazabilidad.servicio.LoginService;
 import pe.qruta.trazabilidad.servicio.ProductoService;
+import pe.qruta.trazabilidad.servicio.RegistroService;
+import pe.qruta.trazabilidad.servicio.SesionService;
+import pe.qruta.trazabilidad.servicio.TransporteService;
 
 
 /**
  * Conecta las clases de dominio y servicio (Java puro, sin Spring)
- * con el contenedor de Spring. Aquí se decide qué reloj usa la aplicación real;
+ * con el contenedor de Spring. Aquí se decide qué reloj y qué cifrador usa la aplicación real;
  * los repositorios son los de PostgreSQL (paquete repositorio.jpa).
  */
 @Configuration
@@ -24,6 +28,12 @@ public class ConfiguracionAplicacion {
     @Bean
     public Clock relojDelSistema() {
         return Clock.system(ZoneId.of("America/Lima"));
+    }
+
+
+    @Bean
+    public CifradorDeContrasenas cifradorDeContrasenas() {
+        return new CifradorBCrypt();
     }
 
 
@@ -41,8 +51,35 @@ public class ConfiguracionAplicacion {
 
     @Bean
     public LoginService loginService(
+            UsuarioRepositorio usuarioRepositorio,
+            CifradorDeContrasenas cifrador
+    ) {
+        return new LoginService(usuarioRepositorio, cifrador);
+    }
+
+
+    @Bean
+    public RegistroService registroService(
+            UsuarioRepositorio usuarioRepositorio,
+            CifradorDeContrasenas cifrador
+    ) {
+        return new RegistroService(usuarioRepositorio, cifrador);
+    }
+
+
+    @Bean
+    public SesionService sesionService(
+            Clock relojDelSistema
+    ) {
+        return new SesionService(relojDelSistema);
+    }
+
+
+    @Bean
+    public TransporteService transporteService(
+            ProductoRepositorio productoRepositorio,
             UsuarioRepositorio usuarioRepositorio
     ) {
-        return new LoginService(usuarioRepositorio);
+        return new TransporteService(productoRepositorio, usuarioRepositorio);
     }
 }
