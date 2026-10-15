@@ -6,11 +6,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
+import pe.qruta.trazabilidad.dominio.EstadoProducto;
+import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
@@ -112,6 +115,38 @@ class AdministracionTest {
         // Entonces
         assertThat(usuarios.buscarPorNombreUsuario("mercado9").orElseThrow().getEstadoCuenta())
             .isEqualTo(EstadoCuenta.ACTIVA);
+    }
+
+
+    @Test
+    void elResumenInformaLaCantidadDeUsuariosPorRolYDeProductosPorEtapa() {
+
+        // Dado: el administrador, un productor y dos intermediarios; dos productos en origen y uno en tránsito
+        Usuario productor = new Usuario("productor1", "clave123", Rol.PRODUCTOR);
+        Usuario intermediario = new Usuario("intermediario1", "clave123", Rol.INTERMEDIARIO);
+
+        usuarios.guardar(productor);
+        usuarios.guardar(intermediario);
+        usuarios.guardar(new Usuario("intermediario2", "clave123", Rol.INTERMEDIARIO));
+
+        ProductoService servicio = new ProductoService(productos, relojFijo());
+
+        servicio.crearProducto("Palta Hass", productor, intermediario);
+        servicio.crearProducto("Banano", productor, intermediario);
+
+        Producto enCamino = servicio.crearProducto("Pollo", productor, intermediario);
+
+        servicio.cambiarEstado(enCamino.getId(), EstadoProducto.EN_TRANSITO, intermediario);
+
+        // Cuando
+        ResumenAdministrador resumen = administracion.resumen(administrador);
+
+        // Entonces
+        assertThat(resumen.usuariosPorRol())
+            .isEqualTo(Map.of(Rol.ADMINISTRADOR, 1L, Rol.PRODUCTOR, 1L, Rol.INTERMEDIARIO, 2L));
+
+        assertThat(resumen.productosPorEtapa())
+            .isEqualTo(Map.of(EstadoProducto.EN_ORIGEN, 2L, EstadoProducto.EN_TRANSITO, 1L));
     }
 
 

@@ -1,5 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
+import java.util.Map;
+
 import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
@@ -63,5 +65,10 @@ public class AdministracionService {
         usuarios.guardar(regulador);
 
         return regulador;
+    }
+
+
+    public ResumenAdministrador resumen(Usuario administrador) {
+        return new ResumenAdministrador(Map.of(), Map.of());
     }
 }
