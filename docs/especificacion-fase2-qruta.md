@@ -599,6 +599,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T64 (error).** El administrador intenta bloquear un producto y se rechaza. → RE-33, RE-40
 - **T65 (error).** El regulador intenta suspender a un transportista OCUPADO y se rechaza. → RE-35
 - **T66 (normal).** El reporte CSV tiene una fila por producto y las columnas definidas en RE-36. → RE-36
+- **T90 (normal, agregada durante el ciclo).** El regulador suspende a un productor: su cuenta queda SUSPENDIDA y ya no puede iniciar sesión. → RF-17, RE-35, RE-16
 - Refactor sugerido: reunir en `RegulacionService` las acciones exclusivas del regulador.
 
 ### Ciclo 13 — Consulta pública
@@ -616,7 +617,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T73 (normal).** El administrador aprueba un mercado. → RE-15
 - **T74 (normal).** El resumen del administrador informa la cantidad de usuarios por rol y de productos por etapa. → RE-40
 
-**Total al terminar: 89 pruebas** (T01 a T89). T75 cubre el requisito nuevo RE-41, y T76 a T89 cubren reglas que no tenían prueba.
+**Total al terminar: 90 pruebas** (T01 a T90). T75 cubre el requisito nuevo RE-41, y T76 a T90 cubren reglas que no tenían prueba.
 
 ---
 

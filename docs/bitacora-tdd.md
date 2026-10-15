@@ -86,6 +86,14 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T87 | 10b | Error | RE-24 | Elegir como destino un mercado con la cuenta PENDIENTE se rechaza *(prueba agregada)* | [`a04f291`](https://github.com/fabio2152/qruta/commit/a04f291) | [`495c1d5`](https://github.com/fabio2152/qruta/commit/495c1d5) | ✅ |
 | T88 | 10b | Límite | RE-26 | Una recepción con 101 % de humedad se rechaza *(prueba agregada)* | [`f4bfc23`](https://github.com/fabio2152/qruta/commit/f4bfc23) | [`b79f2d4`](https://github.com/fabio2152/qruta/commit/b79f2d4) | ✅ |
 | T89 | 10b | Error | RE-26 | Registrar la recepción por segunda vez se rechaza *(prueba agregada)* | [`0077423`](https://github.com/fabio2152/qruta/commit/0077423) | [`ed165d0`](https://github.com/fabio2152/qruta/commit/ed165d0) | ✅ |
+| T60 | 12 | Normal | RE-33, RE-34 | El regulador bloquea con motivo: queda BLOQUEADO y el bloqueo aparece en el historial | [`64cfe8d`](https://github.com/fabio2152/qruta/commit/64cfe8d) | [`b38867a`](https://github.com/fabio2152/qruta/commit/b38867a) | ✅ |
+| T61 | 12 | Error | RE-33 | Un bloqueo sin motivo se rechaza | [`887cb05`](https://github.com/fabio2152/qruta/commit/887cb05) | [`6a0851a`](https://github.com/fabio2152/qruta/commit/6a0851a) | ✅ |
+| T62 | 12 | Error | RE-33 | Un producto bloqueado no puede cambiar de etapa | [`6b3d688`](https://github.com/fabio2152/qruta/commit/6b3d688) | [`1db2800`](https://github.com/fabio2152/qruta/commit/1db2800) | ✅ |
+| T63 | 12 | Normal | RE-34 | El regulador desbloquea y el producto vuelve a la etapa que tenía | [`a199a22`](https://github.com/fabio2152/qruta/commit/a199a22) | [`b9d5856`](https://github.com/fabio2152/qruta/commit/b9d5856) | ✅ |
+| T64 | 12 | Error | RE-33, RE-40 | El administrador intenta bloquear un producto y se rechaza | [`59da15e`](https://github.com/fabio2152/qruta/commit/59da15e) | [`d8c2732`](https://github.com/fabio2152/qruta/commit/d8c2732) | ✅ |
+| T65 | 12 | Error | RE-35 | Suspender a un transportista OCUPADO se rechaza | [`23e3792`](https://github.com/fabio2152/qruta/commit/23e3792) | [`badeb80`](https://github.com/fabio2152/qruta/commit/badeb80) | ✅ |
+| T90 | 12 | Normal | RF-17, RE-35 | El regulador suspende a un productor, que ya no puede iniciar sesión *(prueba agregada)* | [`9251095`](https://github.com/fabio2152/qruta/commit/9251095) | [`27cf6cc`](https://github.com/fabio2152/qruta/commit/27cf6cc) | ✅ |
+| T66 | 12 | Normal | RE-36 | El reporte CSV tiene una fila por producto con las columnas de RE-36 | [`e142fe5`](https://github.com/fabio2152/qruta/commit/e142fe5) | [`c40da7a`](https://github.com/fabio2152/qruta/commit/c40da7a) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -103,6 +111,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 10 | Destino y recepción | [`73849a7`](https://github.com/fabio2152/qruta/commit/73849a7) | ✅ Completo |
 | 11 | Evaluación | [`7cca61a`](https://github.com/fabio2152/qruta/commit/7cca61a) | ✅ Completo |
 | 10b | Destino y recepción: pruebas agregadas | [`76fc254`](https://github.com/fabio2152/qruta/commit/76fc254) | ✅ Completo |
+| 12 | Regulación | [`57dadf8`](https://github.com/fabio2152/qruta/commit/57dadf8) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1436,6 +1445,43 @@ Las evidencias de cada fase están en `evidencias/ciclo-10b-TXX-{red,green}.txt`
 Con T85 a T87, `TransporteService.elegirDestino` había acumulado cuatro reglas de RE-24 y RE-25. Pasaron a **`Producto.elegirDestino(quienElige, nuevoDestino)`**, con la misma idea de los ciclos 9 y 10: el producto conoce sus reglas y el servicio solo busca y coordina. El servicio conserva lo que no le corresponde al producto: buscar al destino y comprobar que sea un `PuntoDeRecepcion`. `asignarDestino` desaparece, porque ya no hay forma de asignar un destino sin pasar por las reglas.
 
 Resultado: `Tests run: 74, Failures: 0, Errors: 0`. Commit [`76fc254`](https://github.com/fabio2152/qruta/commit/76fc254) · [ciclo-10b-refactor.txt](evidencias/ciclo-10b-refactor.txt)
+
+---
+
+## Ciclo 12 – Regulación
+
+**Fecha:** 2026-10-15
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-33, RE-34, RE-35, RE-36, RE-40 y RF-17
+**Tipo de casos:** Normales (T60, T63, T66, T90) y de error (T61, T62, T64, T65)
+
+**Motivación:** el regulador, por ejemplo SENASA, ejerce el control sanitario. Bloquea lo riesgoso, lo desbloquea cuando se aclara, suspende a quien no cumple y descarga las métricas. El administrador gestiona la plataforma, pero no tiene ese poder (D-07).
+
+**Prueba agregada:** T65 solo exige que se rechace suspender a un transportista OCUPADO. Con eso, la suspensión en sí (RF-17, prioridad M) no tenía prueba y no hacía nada. Se agregó **T90**, que además cubre el mensaje "Su cuenta está suspendida" del login.
+
+Las pruebas están en `RegulacionTest`. El producto base es un pollo aceptado, con destino `mercado1`, que salió a las 08:00.
+
+| Prueba | 🔴 RED: qué faltaba | 🟢 GREEN: código mínimo |
+|---|---|---|
+| T60 | `expected: BLOQUEADO but was: EN_TRANSITO` | `CambioEstado` gana `observacion` y conserva su constructor de 4 datos para T15 y T20. `Producto.bloquear(motivo, quien, reloj)` deja el registro (EN_TRANSITO → BLOQUEADO, 10:00, regulador, motivo). El bloqueo automático por evaluación crítica usa el mismo método, así que también queda en el historial (RE-34) |
+| T61 | Se aceptaba un motivo en blanco | El motivo es obligatorio |
+| T62 | Se rechazaba con el mensaje equivocado ("ya fue entregado"), porque BLOQUEADO no tiene etapa siguiente | `validarCambioDeEtapa` revisa BLOQUEADO antes que el estado final |
+| T63 | `expected: EN_TRANSITO but was: BLOQUEADO` | `Producto.desbloquear(motivo, quien, reloj)` vuelve a `estadoAntesDelBloqueo` y lo registra (BLOQUEADO → EN_TRANSITO) |
+| T64 | El administrador bloqueaba | Nace `Rol.ADMINISTRADOR`; en la visibilidad ve todo, como el regulador (RE-10 ampliada). Bloquear y desbloquear exigen rol REGULADOR |
+| T65 | Se suspendía sin revisar | Un `Transportista` OCUPADO no se suspende |
+| T90 | `expected: SUSPENDIDA but was: ACTIVA` | `Usuario.suspender()` y se guarda la cuenta. El login ya rechazaba las cuentas no activas (T29) |
+| T66 | El reporte estaba vacío | `Producto` guarda sus evaluaciones (`getUltimaEvaluacion`), `RecepcionService` las registra y se arma el CSV: encabezado y una fila por producto, con celdas vacías si no hay recepción |
+
+Las evidencias de cada fase están en `evidencias/ciclo-12-TXX-{red,green}.txt`.
+
+### 🔵 REFACTOR del ciclo 12
+
+Como sugiere la especificación, **`RegulacionService` reúne las acciones exclusivas del regulador**, y además:
+- **Polimorfismo:** `Transportista` sobrescribe `suspender()` y se niega si está OCUPADO. El servicio ya no pregunta `instanceof Transportista`; la regla vive en el objeto que la conoce. Es el principio abierto/cerrado: otro tipo de usuario con su propia restricción solo sobrescribe el método.
+- **Responsabilidad única:** el armado del CSV pasó a `ReporteSanitario` (encabezado, filas y comillas para textos con comas), y `RegulacionService` solo lo invoca.
+- La búsqueda del producto, que estaba repetida en bloquear y desbloquear, queda en `buscarProducto`.
+
+Resultado: `Tests run: 82, Failures: 0, Errors: 0`. Commit [`57dadf8`](https://github.com/fabio2152/qruta/commit/57dadf8) · [ciclo-12-refactor.txt](evidencias/ciclo-12-refactor.txt)
 
 ---
 
