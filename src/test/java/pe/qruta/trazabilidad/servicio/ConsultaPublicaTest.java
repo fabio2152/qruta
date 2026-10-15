@@ -1,6 +1,7 @@
 package pe.qruta.trazabilidad.servicio;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -189,6 +190,19 @@ class ConsultaPublicaTest {
         // Entonces
         assertThat(ficha.horasEnElMercado())
             .isEqualTo(6L);
+    }
+
+
+    @Test
+    void laConsultaDeUnCodigoInexistenteDevuelveNoEncontrado() {
+
+        // Dado
+        // ningún producto con el código ZZZZ9999
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> consulta.consultar("ZZZZ9999"))
+            .isInstanceOf(ProductoNoEncontradoException.class)
+            .hasMessage("No existe un producto con el código ZZZZ9999");
     }
 
 
