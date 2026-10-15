@@ -2,12 +2,14 @@ package pe.qruta.trazabilidad.servicio;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
+import pe.qruta.trazabilidad.dominio.evaluacion.NivelRiesgo;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
 
 
@@ -51,6 +53,14 @@ public class RecepcionService {
 
         productos.guardar(producto);
 
-        return null;
+        long horasDesdeLaProduccion =
+            Duration.between(producto.getFechaProduccion(), medicion.fechaHora()).toHours();
+
+        long vidaUtilRestante =
+            producto.getTipoProducto().getVidaUtilBaseHoras() - horasDesdeLaProduccion;
+
+        return new Evaluacion(
+            medicion.fechaHora(), temperatura, vidaUtilRestante, false, NivelRiesgo.BAJO, true
+        );
     }
 }
