@@ -104,6 +104,12 @@ public class ProductoService {
 
         Producto producto = buscarProductoExistente(idProducto);
 
+        if (!productor.equals(producto.getProductor())) {
+            throw new OperacionNoAutorizadaException(
+                "Solo el productor que creó el producto puede publicarlo"
+            );
+        }
+
         producto.publicar();
 
         repositorio.guardar(producto);
