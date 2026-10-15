@@ -4,12 +4,15 @@ import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.OperacionNoAutorizadaException;
 import pe.qruta.trazabilidad.dominio.Rol;
 import pe.qruta.trazabilidad.dominio.Usuario;
+import pe.qruta.trazabilidad.dominio.cuenta.CentroDeAcopio;
 import pe.qruta.trazabilidad.dominio.cuenta.CifradorDeContrasenas;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
+import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.TipoDocumento;
+import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.dominio.cuenta.ValidadorDeFormato;
 import pe.qruta.trazabilidad.repositorio.UsuarioRepositorio;
 
@@ -131,8 +134,22 @@ public class RegistroService {
 
         String contrasenaCifrada = cifrador.cifrar(solicitud.getContrasena());
 
-        if (solicitud.getTipoCuenta() == TipoCuenta.MERCADO) {
-            return new Mercado(
+        return switch (solicitud.getTipoCuenta()) {
+
+            case TRANSPORTISTA -> new Transportista(
+                solicitud.getNombreUsuario(),
+                solicitud.getNombreCompleto(),
+                solicitud.getCorreo(),
+                contrasenaCifrada,
+                EstadoCuenta.PENDIENTE,
+                solicitud.getRazonSocial(),
+                solicitud.getNumeroDocumento(),
+                solicitud.getTelefono(),
+                solicitud.getRegion(),
+                solicitud.getPlacaVehiculo()
+            );
+
+            case MERCADO -> new Mercado(
                 solicitud.getNombreUsuario(),
                 solicitud.getNombreCompleto(),
                 solicitud.getCorreo(),
@@ -143,21 +160,33 @@ public class RegistroService {
                 solicitud.getTelefono(),
                 solicitud.getRegion()
             );
-        }
 
-        return new Productor(
-            solicitud.getNombreUsuario(),
-            solicitud.getNombreCompleto(),
-            solicitud.getCorreo(),
-            contrasenaCifrada,
-            EstadoCuenta.PENDIENTE,
-            solicitud.getRazonSocial(),
-            solicitud.getTipoDocumento(),
-            solicitud.getNumeroDocumento(),
-            solicitud.getTelefono(),
-            solicitud.getTipoProductor(),
-            solicitud.getRegion()
-        );
+            case CENTRO_DE_ACOPIO -> new CentroDeAcopio(
+                solicitud.getNombreUsuario(),
+                solicitud.getNombreCompleto(),
+                solicitud.getCorreo(),
+                contrasenaCifrada,
+                EstadoCuenta.PENDIENTE,
+                solicitud.getRazonSocial(),
+                solicitud.getNumeroDocumento(),
+                solicitud.getTelefono(),
+                solicitud.getRegion()
+            );
+
+            default -> new Productor(
+                solicitud.getNombreUsuario(),
+                solicitud.getNombreCompleto(),
+                solicitud.getCorreo(),
+                contrasenaCifrada,
+                EstadoCuenta.PENDIENTE,
+                solicitud.getRazonSocial(),
+                solicitud.getTipoDocumento(),
+                solicitud.getNumeroDocumento(),
+                solicitud.getTelefono(),
+                solicitud.getTipoProductor(),
+                solicitud.getRegion()
+            );
+        };
     }
 
 
@@ -175,7 +204,7 @@ public class RegistroService {
                     )
                 );
 
-        if (usuario instanceof Mercado && aprobador.getRol() == Rol.REGULADOR) {
+        if (usuario instanceof PuntoDeRecepcion && aprobador.getRol() == Rol.REGULADOR) {
             throw new OperacionNoAutorizadaException(
                 "Las cuentas de mercados y centros de acopio las aprueba el administrador"
             );

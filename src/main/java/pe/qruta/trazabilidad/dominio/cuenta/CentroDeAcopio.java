@@ -1,13 +1,20 @@
 package pe.qruta.trazabilidad.dominio.cuenta;
 
-import pe.qruta.trazabilidad.dominio.Rol;
-import pe.qruta.trazabilidad.dominio.Usuario;
+
+public class CentroDeAcopio extends PuntoDeRecepcion {
 
 
-public class CentroDeAcopio extends Usuario {
-
-
-    public CentroDeAcopio(String nombreUsuario) {
-        super(nombreUsuario, Rol.INTERMEDIARIO);
+    public CentroDeAcopio(
+            String nombreUsuario,
+            String nombreCompleto,
+            String correo,
+            String contrasena,
+            EstadoCuenta estadoCuenta,
+            String razonSocial,
+            String ruc,
+            String telefono,
+            String region
+    ) {
+        super(nombreUsuario, nombreCompleto, correo, contrasena, estadoCuenta, razonSocial, ruc, telefono, region);
     }
 }
