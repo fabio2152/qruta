@@ -10,11 +10,13 @@ public class LoginService {
 
     private final UsuarioRepositorio usuarios;
 
+    private final CifradorDeContrasenas cifrador;
+
 
     public LoginService(
             UsuarioRepositorio usuarios
     ) {
-        this.usuarios = usuarios;
+        this(usuarios, new CifradorTextoPlano());
     }
 
 
@@ -23,6 +25,7 @@ public class LoginService {
             CifradorDeContrasenas cifrador
     ) {
         this.usuarios = usuarios;
+        this.cifrador = cifrador;
     }
 
 
@@ -34,7 +37,7 @@ public class LoginService {
         Usuario usuario =
             usuarios
                 .buscarPorNombreUsuario(nombreUsuario)
-                .filter(encontrado -> encontrado.tieneContrasena(contrasena))
+                .filter(encontrado -> cifrador.coincide(contrasena, encontrado.getContrasena()))
                 .orElseThrow(
                     () -> new CredencialesInvalidasException(
                         "Usuario o contraseña incorrectos"

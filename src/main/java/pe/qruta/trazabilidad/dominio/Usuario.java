@@ -83,6 +83,11 @@ public class Usuario {
     }
 
 
+    public void activar() {
+        estadoCuenta = EstadoCuenta.ACTIVA;
+    }
+
+
     public boolean tieneContrasena(String contrasena) {
         return this.contrasena.equals(contrasena);
     }

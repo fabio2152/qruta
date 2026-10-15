@@ -92,5 +92,18 @@ public class RegistroService {
             String nombreUsuario,
             Usuario aprobador
     ) {
+
+        Usuario usuario =
+            usuarios
+                .buscarPorNombreUsuario(nombreUsuario)
+                .orElseThrow(
+                    () -> new DatoInvalidoException(
+                        "No existe el usuario " + nombreUsuario
+                    )
+                );
+
+        usuario.activar();
+
+        usuarios.guardar(usuario);
     }
 }

@@ -15,7 +15,14 @@ public class UsuarioRepositorioEnMemoria
 
     @Override
     public void guardar(Usuario usuario) {
-        usuarios.add(usuario);
+
+        int posicion = usuarios.indexOf(usuario);
+
+        if (posicion >= 0) {
+            usuarios.set(posicion, usuario);
+        } else {
+            usuarios.add(usuario);
+        }
     }
 
 
