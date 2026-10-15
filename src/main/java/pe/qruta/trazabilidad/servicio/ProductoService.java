@@ -116,6 +116,13 @@ public class ProductoService {
     }
 
 
+    public void retirarPublicacion(
+            Long idProducto,
+            Usuario productor
+    ) {
+    }
+
+
     /** Publicaciones disponibles para los transportistas, en un listado propio (D-06). */
     public List<Producto> listarPublicaciones(Usuario transportista) {
 

@@ -170,6 +170,23 @@ class PublicacionYAceptacionTest {
     }
 
 
+    @Test
+    void elProductorIntentaRetirarUnaPublicacionYaAceptadaYSeRechaza() {
+
+        // Dado
+        Producto palta = servicio.crearProducto(datosDePalta(), productor);
+
+        servicio.publicar(palta.getId(), productor);
+
+        transporte.aceptar(palta.getId(), transportista);
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.retirarPublicacion(palta.getId(), productor))
+            .isInstanceOf(ProductoNoDisponibleException.class)
+            .hasMessage("No se puede retirar una publicación que ya fue aceptada");
+    }
+
+
     private Productor productor(
             String nombreUsuario,
             String correo
