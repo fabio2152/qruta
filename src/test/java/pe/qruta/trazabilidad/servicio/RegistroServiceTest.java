@@ -112,6 +112,21 @@ class RegistroServiceTest {
     }
 
 
+    @Test
+    void unRegistroConUnCorreoSinFormatoValidoSeRechaza() {
+
+        // Dado
+        SolicitudRegistro solicitud = solicitudDeProductor();
+
+        solicitud.setCorreo("rosa.quispe.correo.pe");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.registrar(solicitud))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("El correo no tiene un formato válido");
+    }
+
+
     /** Solicitud válida de un productor; la contraseña "clave123" tiene exactamente 8 caracteres. */
     private SolicitudRegistro solicitudDeProductor() {
 
