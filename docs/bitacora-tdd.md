@@ -102,6 +102,10 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T92 | 12b | Normal | RE-33 | Un producto bloqueado no aparece en las publicaciones disponibles *(prueba agregada)* | [`0056824`](https://github.com/fabio2152/qruta/commit/0056824) | [`94fe1b7`](https://github.com/fabio2152/qruta/commit/94fe1b7) | ✅ |
 | T93 | 12b | Error | RE-33 | Aceptar un producto bloqueado se rechaza *(prueba agregada)* | [`712a91e`](https://github.com/fabio2152/qruta/commit/712a91e) | [`b2c471e`](https://github.com/fabio2152/qruta/commit/b2c471e) | ✅ |
 | T94 | 12b | Error | RE-33, RE-20 | Publicar un producto bloqueado se rechaza *(prueba agregada)* | [`200b9a5`](https://github.com/fabio2152/qruta/commit/200b9a5) | [`f8b5fdf`](https://github.com/fabio2152/qruta/commit/f8b5fdf) | ✅ |
+| T71 | 14 | Normal | RE-11 | El administrador crea un regulador con código institucional y queda ACTIVO | [`55cde3a`](https://github.com/fabio2152/qruta/commit/55cde3a) | [`0b7692f`](https://github.com/fabio2152/qruta/commit/0b7692f) | ✅ |
+| T72 | 14 | Error | RE-11 | Crear un regulador sin código institucional se rechaza | [`c5c9404`](https://github.com/fabio2152/qruta/commit/c5c9404) | [`4757a01`](https://github.com/fabio2152/qruta/commit/4757a01) | ✅ |
+| T73 | 14 | Normal | RE-15 | El administrador aprueba un mercado — **prueba de confirmación** (pasó sin código nuevo; las dos columnas apuntan al mismo commit) | [`bca3d41`](https://github.com/fabio2152/qruta/commit/bca3d41) | [`bca3d41`](https://github.com/fabio2152/qruta/commit/bca3d41) | ✅ |
+| T74 | 14 | Normal | RE-40 | El resumen informa la cantidad de usuarios por rol y de productos por etapa | [`a60681f`](https://github.com/fabio2152/qruta/commit/a60681f) | [`4721e95`](https://github.com/fabio2152/qruta/commit/4721e95) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -122,6 +126,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 12 | Regulación | [`57dadf8`](https://github.com/fabio2152/qruta/commit/57dadf8) | ✅ Completo |
 | 13 | Consulta pública por QR | [`f1b63ac`](https://github.com/fabio2152/qruta/commit/f1b63ac) | ✅ Completo |
 | 12b | Bloqueo: pruebas agregadas | [`ce8f96f`](https://github.com/fabio2152/qruta/commit/ce8f96f) | ✅ Completo |
+| 14 | Administración | [`3c4b2a9`](https://github.com/fabio2152/qruta/commit/3c4b2a9) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1552,6 +1557,35 @@ Las evidencias de cada fase están en `evidencias/ciclo-12b-TXX-{red,green}.txt`
 La comparación `estado == BLOQUEADO` ya se repetía en cinco lugares: dominio, servicio de transporte y reporte. Se reemplazó por **`Producto.estaBloqueado()`**, que nombra la regla RE-33 y se lee como el requisito.
 
 Resultado: `Tests run: 90, Failures: 0, Errors: 0`. Commit [`ce8f96f`](https://github.com/fabio2152/qruta/commit/ce8f96f) · [ciclo-12b-refactor.txt](evidencias/ciclo-12b-refactor.txt)
+
+---
+
+## Ciclo 14 – Administración
+
+**Fecha:** 2026-10-15
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-11, RE-15, RE-40 y D-07
+**Tipo de casos:** Normales (T71, T74), error (T72) y una prueba de confirmación (T73)
+
+**Motivación:** el administrador gestiona la plataforma: crea a los reguladores, aprueba a mercados y centros de acopio, y ve el panel general. No tiene poder sanitario (D-07; T64 ya comprobó que no puede bloquear).
+
+Las pruebas están en `AdministracionTest`.
+
+| Prueba | 🔴 RED: qué faltaba | 🟢 GREEN: código mínimo |
+|---|---|---|
+| T71 | `crearRegulador` devolvía `null` | Nace `Regulador`, con institución y código institucional. `AdministracionService.crearRegulador` lo crea ACTIVO, con la contraseña cifrada mediante el mismo `CifradorDeContrasenas` del registro |
+| T72 | Se aceptaba un código en blanco | El código institucional es obligatorio |
+| T74 | `expected: {PRODUCTOR=1, INTERMEDIARIO=2, ADMINISTRADOR=1} but was: {}` | `groupingBy(..., counting())` sobre usuarios y productos, en el record `ResumenAdministrador` |
+
+**T73 – prueba de confirmación (sección 0, punto 6):** se escribió esperando un RED, pero **pasó sin escribir código**. `RegistroService.aprobar` (T31, T77) solo impide que el *regulador* apruebe un punto de recepción, así que el administrador ya podía hacerlo. Por la regla del proyecto no se cuenta como ciclo RED-GREEN: queda un solo commit `test` y la evidencia [ciclo-14-T73-confirmacion.txt](evidencias/ciclo-14-T73-confirmacion.txt).
+
+**Hallazgo de T73:** la regla actual dice "el regulador no aprueba mercados", no "solo el administrador aprueba mercados". Un productor también podría aprobar un mercado. Cambiarlo es un cambio de comportamiento, así que no se hizo en el refactor; queda anotado como pendiente.
+
+### 🔵 REFACTOR del ciclo 14
+
+Las dos condiciones de RE-15 sobre quién aprueba cada cuenta estaban sueltas en `aprobar`. Pasaron a **`validarQuienAprueba(usuario, aprobador)`**, con dos variables que se leen como la regla: `esPuntoDeRecepcion` y `apruebaElRegulador`. El comportamiento es idéntico.
+
+Resultado: `Tests run: 94, Failures: 0, Errors: 0`. Commit [`3c4b2a9`](https://github.com/fabio2152/qruta/commit/3c4b2a9) · [ciclo-14-refactor.txt](evidencias/ciclo-14-refactor.txt)
 
 ---
 
