@@ -47,6 +47,20 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | T78 | 8b | Límite | RE-14 | Un productor con DNI de 7 dígitos se rechaza *(prueba agregada)* | [`81c79b7`](https://github.com/fabio2152/qruta/commit/81c79b7) | [`aab3860`](https://github.com/fabio2152/qruta/commit/aab3860) | ✅ |
 | T79 | 8b | Error | RE-12 | Un correo ya registrado se rechaza *(prueba agregada)* | [`20c54c8`](https://github.com/fabio2152/qruta/commit/20c54c8) | [`91c845a`](https://github.com/fabio2152/qruta/commit/91c845a) | ✅ |
 | T80 | 8b | Normal | RF-03 | Al cerrar sesión el token deja de ser válido *(prueba agregada)* | [`e6cbdac`](https://github.com/fabio2152/qruta/commit/e6cbdac) | [`93c1497`](https://github.com/fabio2152/qruta/commit/93c1497) | ✅ |
+| T76 | 9 | Normal | RE-15, D-02, D-03 | Un transportista y un centro de acopio se registran con su propia clase *(prueba agregada)* | [`bc3a8dc`](https://github.com/fabio2152/qruta/commit/bc3a8dc) | [`70c0a99`](https://github.com/fabio2152/qruta/commit/70c0a99) | ✅ |
+| T77 | 9 | Error | RE-15 | Un productor intenta aprobar a un transportista y se rechaza *(prueba agregada)* | [`10d9ff7`](https://github.com/fabio2152/qruta/commit/10d9ff7) | [`fd3d3a1`](https://github.com/fabio2152/qruta/commit/fd3d3a1) | ✅ |
+| T33 | 9 | Normal | RE-18 | Un productor activo crea un pollo: EN_ORIGEN, sin transportista, sin publicar y con código QR único | [`b6ef621`](https://github.com/fabio2152/qruta/commit/b6ef621) | [`e29923f`](https://github.com/fabio2152/qruta/commit/e29923f) | ✅ |
+| T34 | 9 | Error | RE-02 | Un transportista intenta crear un producto y se rechaza | [`59fcd7b`](https://github.com/fabio2152/qruta/commit/59fcd7b) | [`f7bd26f`](https://github.com/fabio2152/qruta/commit/f7bd26f) | ✅ |
+| T35 | 9 | Error | RE-19 | Un producto con fecha de producción en el futuro se rechaza | [`c966b9d`](https://github.com/fabio2152/qruta/commit/c966b9d) | [`ca4cdbe`](https://github.com/fabio2152/qruta/commit/ca4cdbe) | ✅ |
+| T36 | 9 | Límite | RE-19 | Un pollo producido hace exactamente 168 h se rechaza (vida útil agotada) | [`d59d9c5`](https://github.com/fabio2152/qruta/commit/d59d9c5) | [`434046f`](https://github.com/fabio2152/qruta/commit/434046f) | ✅ |
+| T37 | 9 | Error | RE-19 | Un productor agrícola intenta crear un pollo y se rechaza | [`d2ee1cd`](https://github.com/fabio2152/qruta/commit/d2ee1cd) | [`3d9dcb7`](https://github.com/fabio2152/qruta/commit/3d9dcb7) | ✅ |
+| T81 | 9 | Normal | RF-05, RE-19 | Un productor crea una palta: queda como ProductoAgro con su variedad y calidad *(prueba agregada)* | [`7ff5696`](https://github.com/fabio2152/qruta/commit/7ff5696) | [`3669215`](https://github.com/fabio2152/qruta/commit/3669215) | ✅ |
+| T38 | 9 | Normal | RE-20 | El productor publica su producto y aparece para un transportista LIBRE | [`857c9b1`](https://github.com/fabio2152/qruta/commit/857c9b1) | [`4f2157d`](https://github.com/fabio2152/qruta/commit/4f2157d) | ✅ |
+| T39 | 9 | Error | RE-20 | Un productor intenta publicar el producto de otro y se rechaza | [`389c5e3`](https://github.com/fabio2152/qruta/commit/389c5e3) | [`2c4821b`](https://github.com/fabio2152/qruta/commit/2c4821b) | ✅ |
+| T40 | 9 | Normal | RE-22 | Un transportista LIBRE acepta: queda asignado, pasa a OCUPADO y la publicación desaparece para los demás | [`df24077`](https://github.com/fabio2152/qruta/commit/df24077) | [`08ab141`](https://github.com/fabio2152/qruta/commit/08ab141) | ✅ |
+| T41 | 9 | Error | RE-22 | Un transportista OCUPADO intenta aceptar otro producto y se rechaza | [`aee46eb`](https://github.com/fabio2152/qruta/commit/aee46eb) | [`a023c23`](https://github.com/fabio2152/qruta/commit/a023c23) | ✅ |
+| T42 | 9 | Error | RE-23 | Un segundo transportista intenta aceptar un producto ya aceptado y se rechaza | [`25a7652`](https://github.com/fabio2152/qruta/commit/25a7652) | [`19c4432`](https://github.com/fabio2152/qruta/commit/19c4432) | ✅ |
+| T43 | 9 | Error | RE-21 | El productor intenta retirar una publicación ya aceptada y se rechaza | [`5d7f2bc`](https://github.com/fabio2152/qruta/commit/5d7f2bc) | [`074fde9`](https://github.com/fabio2152/qruta/commit/074fde9) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
@@ -59,6 +73,7 @@ Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4
 | 7 | Persistencia en PostgreSQL | [`8d8281f`](https://github.com/fabio2152/qruta/commit/8d8281f) | ✅ Completo |
 | 8 | Cuentas y sesión | [`404bb0a`](https://github.com/fabio2152/qruta/commit/404bb0a) | ✅ Completo |
 | 8b | Cuentas: pruebas agregadas por reglas sin cobertura | [`28182da`](https://github.com/fabio2152/qruta/commit/28182da) | ✅ Completo |
+| 9 | Creación, publicación y aceptación | [`3114843`](https://github.com/fabio2152/qruta/commit/3114843) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
@@ -1161,6 +1176,88 @@ public Usuario registrar(SolicitudRegistro solicitud) {
 ### 🔵 REFACTOR del ciclo 8b
 
 `validar` había llegado a siete reglas seguidas. Se dividió en tres métodos con nombre y con la regla que cumplen: `validarDatosDeAcceso` (RE-12, RE-13), `validarDocumento` (RE-14) y `validarQueNoEsteRegistrado` (RE-12). Así cada regla del registro se encuentra rápido durante la defensa. Resultado: `Tests run: 35, Failures: 0, Errors: 0`. Commit [`28182da`](https://github.com/fabio2152/qruta/commit/28182da) · [ciclo-8b-refactor.txt](evidencias/ciclo-8b-refactor.txt)
+
+---
+
+## Ciclo 9 – Creación, publicación y aceptación
+
+**Fecha:** 2026-10-14
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-02, RE-15, RE-18, RE-19, RE-20, RE-21, RE-22, RE-23 (y D-02, D-03, D-06)
+**Tipo de casos:** Normales (T76, T33, T81, T38, T40), límite (T36) y de error (T77, T34, T35, T37, T39, T41, T42, T43)
+
+**Motivación:** este es el flujo principal de la plataforma. El productor crea un lote con su código QR y lo publica, y un transportista libre lo toma. Hasta ahora, la única forma de asignar un transportista era la directa de la fase 1 (D-04), que se conserva.
+
+**Pruebas agregadas:**
+- **T76 y T77** se acordaron al cerrar el ciclo 8.
+- **T81** apareció durante este ciclo: toda creación producía un `ProductoPecuario`, incluso para una palta, y ninguna prueba de la especificación lo detectaba.
+
+Todas las pruebas de creación están en `CrearProductoTest` y las de publicación y aceptación en `PublicacionYAceptacionTest`. Todas usan un reloj fijo el 01/09/2026 a las 08:00. Cada RED falló por su verificación, nunca por un error de compilación: `Expecting code to raise a throwable`, `Expecting actual not to be null` o `expected: OCUPADO but was: LIBRE`. La salida completa está en `evidencias/ciclo-9-TXX-red.txt`.
+
+| Prueba | 🔴 RED: qué faltaba | 🟢 GREEN: código mínimo |
+|---|---|---|
+| T76 | El transportista se creaba como `Productor` | Jerarquía del modelo: `Intermediario` → `Transportista` (nace LIBRE) y `PuntoDeRecepcion` → `Mercado`, `CentroDeAcopio`. `registrar` elige la clase con un `switch` sobre `TipoCuenta`. La regla de T31 pasa de `instanceof Mercado` a `instanceof PuntoDeRecepcion`, para incluir al centro de acopio (D-03) |
+| T77 | Cualquier usuario aprobaba a un productor o transportista | `aprobar` exige rol REGULADOR para las cuentas que no son puntos de recepción |
+| T33 | `crearProducto(DatosProducto, Usuario)` devolvía `null` | `Producto` gana código, tipo, lote, fecha de producción y `publicado`, más un constructor para el flujo nuevo, sin transportista. Nace `ProductoPecuario` y el código es un UUID corto de 8 caracteres |
+| T34 | Cualquier rol creaba productos | Si el rol no es PRODUCTOR, se lanza `OperacionNoAutorizadaException` |
+| T35 | Se aceptaba una fecha futura | Se compara con `LocalDateTime.now(reloj)` |
+| T36 | Se aceptaba un pollo de 168 h | `TipoProducto` conoce su vida útil base (168, 504 y 336 h). Si `horas ≥ vida útil`, se rechaza |
+| T37 | Un agrícola creaba pollo | `TipoProducto` conoce su `CategoriaProducto`, y se compara con el tipo del productor |
+| T81 | La palta salía como `ProductoPecuario` | `ProductoAgro` (variedad, maduración, calidad y certificado). Se elige la subclase según la categoría |
+| T38 | `listarPublicaciones` devolvía una lista vacía | `Producto.publicar()` y un filtro por `isPublicado` |
+| T39 | Cualquier productor publicaba | Se compara con `producto.getProductor()` |
+| T40 | `aceptar` no hacía nada | `TransporteService.aceptar` asigna, ocupa y guarda el producto y el transportista. Las publicaciones excluyen los productos con transportista. **`esVisiblePara` compara `usuario.equals(intermediarioAsignado)`**: con productos sin transportista, la forma anterior fallaba por un valor vacío. La prueba lo cubre porque lista los productos del transportista mientras hay otro producto sin asignar |
+| T41 | Un transportista OCUPADO aceptaba | Se rechaza si el estado de carga es OCUPADO |
+| T42 | Un segundo transportista aceptaba | `ProductoNoDisponibleException` (409) si el producto ya tiene transportista |
+| T43 | Se retiraba una publicación aceptada | `retirarPublicacion` la rechaza si el producto tiene transportista; si no, desmarca `publicado` |
+
+Commits RED → GREEN:
+
+| Prueba | Commits | Prueba | Commits |
+|---|---|---|---|
+| T76 | [`bc3a8dc`](https://github.com/fabio2152/qruta/commit/bc3a8dc) → [`70c0a99`](https://github.com/fabio2152/qruta/commit/70c0a99) | T81 | [`7ff5696`](https://github.com/fabio2152/qruta/commit/7ff5696) → [`3669215`](https://github.com/fabio2152/qruta/commit/3669215) |
+| T77 | [`10d9ff7`](https://github.com/fabio2152/qruta/commit/10d9ff7) → [`fd3d3a1`](https://github.com/fabio2152/qruta/commit/fd3d3a1) | T38 | [`857c9b1`](https://github.com/fabio2152/qruta/commit/857c9b1) → [`4f2157d`](https://github.com/fabio2152/qruta/commit/4f2157d) |
+| T33 | [`b6ef621`](https://github.com/fabio2152/qruta/commit/b6ef621) → [`e29923f`](https://github.com/fabio2152/qruta/commit/e29923f) | T39 | [`389c5e3`](https://github.com/fabio2152/qruta/commit/389c5e3) → [`2c4821b`](https://github.com/fabio2152/qruta/commit/2c4821b) |
+| T34 | [`59fcd7b`](https://github.com/fabio2152/qruta/commit/59fcd7b) → [`f7bd26f`](https://github.com/fabio2152/qruta/commit/f7bd26f) | T40 | [`df24077`](https://github.com/fabio2152/qruta/commit/df24077) → [`08ab141`](https://github.com/fabio2152/qruta/commit/08ab141) |
+| T35 | [`c966b9d`](https://github.com/fabio2152/qruta/commit/c966b9d) → [`ca4cdbe`](https://github.com/fabio2152/qruta/commit/ca4cdbe) | T41 | [`aee46eb`](https://github.com/fabio2152/qruta/commit/aee46eb) → [`a023c23`](https://github.com/fabio2152/qruta/commit/a023c23) |
+| T36 | [`d59d9c5`](https://github.com/fabio2152/qruta/commit/d59d9c5) → [`434046f`](https://github.com/fabio2152/qruta/commit/434046f) | T42 | [`25a7652`](https://github.com/fabio2152/qruta/commit/25a7652) → [`19c4432`](https://github.com/fabio2152/qruta/commit/19c4432) |
+| T37 | [`d2ee1cd`](https://github.com/fabio2152/qruta/commit/d2ee1cd) → [`3d9dcb7`](https://github.com/fabio2152/qruta/commit/3d9dcb7) | T43 | [`5d7f2bc`](https://github.com/fabio2152/qruta/commit/5d7f2bc) → [`074fde9`](https://github.com/fabio2152/qruta/commit/074fde9) |
+
+### 🔵 REFACTOR del ciclo 9
+
+**Qué se mejoró y por qué:** la especificación pide que el servicio solo coordine. Las reglas se movieron al objeto que las conoce:
+
+- `Producto.publicar(quienPublica)` valida que sea su productor (RE-20).
+- `Producto.tieneTransportista()` y `estaDisponibleParaTransporte()` reemplazan las comparaciones con `null` repartidas en dos servicios.
+- `Transportista.validarQueEstaLibre()` y `Transportista.cargar(producto)` (RE-22): el transportista se asigna y se ocupa en un solo paso, sin poder hacer uno sin el otro.
+- `TipoProductor.puedeProducir(categoria)` (RE-19) reemplaza una condición de tres partes.
+- `crearProducto` queda en "validar → elegir subclase → guardar", con `validarNuevoProducto` aparte.
+
+**Código antes** (`TransporteService.aceptar`):
+
+```java
+if (transportista.getEstadoCarga() == EstadoCarga.OCUPADO) { throw ... }
+if (producto.getIntermediarioAsignado() != null) { throw ... }
+producto.asignarIntermediario(transportista);
+transportista.ocupar();
+```
+
+**Código después:**
+
+```java
+transportista.validarQueEstaLibre();
+if (producto.tieneTransportista()) { throw new ProductoNoDisponibleException(...); }
+transportista.cargar(producto);
+```
+
+- Resultado: `Tests run: 49, Failures: 0, Errors: 0`. Commit [`3114843`](https://github.com/fabio2152/qruta/commit/3114843) · [ciclo-9-refactor.txt](evidencias/ciclo-9-refactor.txt)
+
+### Decisiones de diseño del ciclo 9
+
+- **`DatosProducto` vive en el dominio** y no en el servicio, porque los constructores de `ProductoPecuario` y `ProductoAgro` lo reciben. Así el dominio no depende de la capa de servicio.
+- **Las dos formas de asignar un transportista conviven (D-04).** El constructor de la fase 1 sigue intacto para T01–T21, y el flujo nuevo es publicar y luego aceptar.
+- **Pendiente para la capa web:** el control de concurrencia con `@Version` (D-13) para dos aceptaciones simultáneas. La regla de negocio ya está probada en T42.
+- **Cobertura del dominio y los servicios:** 481 de 510 líneas (94,3 %).
 
 ---
 

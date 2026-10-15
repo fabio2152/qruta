@@ -534,6 +534,7 @@ Al inicio del ciclo se agregan dos pruebas más, por la misma razón:
 
 - **T76 (normal).** Un transportista y un centro de acopio se registran: quedan PENDIENTES como `Transportista` (LIBRE) y `CentroDeAcopio`. → RE-15, D-02, D-03
 - **T77 (error).** Un productor intenta aprobar a un transportista y se rechaza: los productores y transportistas solo los aprueba el regulador. → RE-15
+- **T81 (normal, agregada durante el ciclo).** Un productor crea una palta: queda como `ProductoAgro` con su variedad y calidad. → RF-05, RE-19
 
 - **T33 (normal).** Un productor activo crea un pollo: queda en EN_ORIGEN, sin transportista, sin publicar y con un código QR único. → RE-18
 - **T34 (error).** Un transportista intenta crear un producto y se rechaza. → RE-02
@@ -601,7 +602,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T73 (normal).** El administrador aprueba un mercado. → RE-15
 - **T74 (normal).** El resumen del administrador informa la cantidad de usuarios por rol y de productos por etapa. → RE-40
 
-**Total al terminar: 80 pruebas** (T01 a T80). T75 cubre el requisito nuevo RE-41, y T76 a T80 cubren reglas que no tenían prueba.
+**Total al terminar: 81 pruebas** (T01 a T81). T75 cubre el requisito nuevo RE-41, y T76 a T81 cubren reglas que no tenían prueba.
 
 ---
 
