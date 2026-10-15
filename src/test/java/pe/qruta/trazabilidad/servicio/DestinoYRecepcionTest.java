@@ -306,6 +306,21 @@ class DestinoYRecepcionTest {
     }
 
 
+    @Test
+    void unaRecepcionConCientoUnoPorCientoDeHumedadSeRechazaPorLecturaInvalida() {
+
+        // Dado
+        Producto palta = paltaEnDestino();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() ->
+            recepcion.registrarRecepcion(palta.getId(), mercado, new BigDecimal("6"), new BigDecimal("101"))
+        )
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("Lectura inválida del instrumento: la humedad debe estar entre 0 % y 100 %");
+    }
+
+
     /** Palta aceptada, con destino mercado1, que viajó de 08:00 a 14:00 y está EN_DESTINO. */
     private Producto paltaEnDestino() {
 
