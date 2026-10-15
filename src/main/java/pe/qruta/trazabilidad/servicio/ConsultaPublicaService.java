@@ -4,8 +4,11 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
+import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
+import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
+import pe.qruta.trazabilidad.dominio.evaluacion.NivelRiesgo;
 import pe.qruta.trazabilidad.dominio.producto.ProductoAgro;
 import pe.qruta.trazabilidad.dominio.producto.ProductoPecuario;
 import pe.qruta.trazabilidad.repositorio.ProductoRepositorio;
@@ -70,8 +73,18 @@ public class ConsultaPublicaService {
             producto.getFechaProduccion(),
             producto.getEstado(),
             certificados,
-            null,
-            null
+            esApto(producto) ? "APTO PARA CONSUMO" : "NO APTO PARA CONSUMO",
+            producto.getMotivoBloqueo()
         );
+    }
+
+
+    /** RE-38: un producto bloqueado o con riesgo CRITICO no es apto para el consumo. */
+    private boolean esApto(Producto producto) {
+
+        Evaluacion evaluacion = producto.getUltimaEvaluacion();
+
+        return producto.getEstado() != EstadoProducto.BLOQUEADO
+            && (evaluacion == null || evaluacion.nivelRiesgo() != NivelRiesgo.CRITICO);
     }
 }
