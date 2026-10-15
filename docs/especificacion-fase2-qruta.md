@@ -569,6 +569,14 @@ Al inicio del ciclo se agregan dos pruebas más, por la misma razón:
 - **T53 (normal).** El mercado ve los productos cuyo destino es él. → RE-10
 - Refactor sugerido: separar la recepción en `RecepcionService`, para que `ProductoService` no crezca.
 
+### Ciclo 10b — Destino y recepción: pruebas agregadas (15/10/2026)
+
+- **T85 (error).** Un transportista que no está asignado al producto intenta elegir su destino y se rechaza. → RE-24
+- **T86 (error).** Elegir el destino de un producto que ya está EN_DESTINO se rechaza. → RE-24
+- **T87 (error).** Elegir como destino un mercado con la cuenta PENDIENTE se rechaza. → RE-24
+- **T88 (límite).** Una recepción con 101 % de humedad se rechaza por lectura inválida. → RE-26
+- **T89 (error).** Registrar la recepción de un producto por segunda vez se rechaza. → RE-26
+
 ### Ciclo 11 — Evaluación
 
 En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue de 08:00 a 14:00 del 01/09/2026 (6 horas) y la recepción, a las 14:00 del 01/09/2026 (24 horas después de la producción).
@@ -608,7 +616,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T73 (normal).** El administrador aprueba un mercado. → RE-15
 - **T74 (normal).** El resumen del administrador informa la cantidad de usuarios por rol y de productos por etapa. → RE-40
 
-**Total al terminar: 84 pruebas** (T01 a T84). T75 cubre el requisito nuevo RE-41, y T76 a T84 cubren reglas que no tenían prueba.
+**Total al terminar: 89 pruebas** (T01 a T89). T75 cubre el requisito nuevo RE-41, y T76 a T89 cubren reglas que no tenían prueba.
 
 ---
 
