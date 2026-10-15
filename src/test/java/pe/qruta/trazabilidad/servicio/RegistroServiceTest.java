@@ -203,6 +203,21 @@ class RegistroServiceTest {
     }
 
 
+    @Test
+    void unProductorConUnDniDeSieteDigitosSeRechaza() {
+
+        // Dado
+        SolicitudRegistro solicitud = solicitudDeProductor();
+
+        solicitud.setNumeroDocumento("4567891");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> registro.registrar(solicitud))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("El DNI debe tener exactamente 8 dígitos");
+    }
+
+
     /** Solicitud válida de un mercado, con RUC de 11 dígitos. */
     private SolicitudRegistro solicitudDeMercado() {
 
