@@ -29,5 +29,12 @@ public record Medicion(
                 "Lectura inválida del instrumento: la temperatura debe estar entre -40 °C y 60 °C"
             );
         }
+
+        if (humedad != null
+                && (humedad.compareTo(BigDecimal.ZERO) < 0 || humedad.compareTo(new BigDecimal("100")) > 0)) {
+            throw new DatoInvalidoException(
+                "Lectura inválida del instrumento: la humedad debe estar entre 0 % y 100 %"
+            );
+        }
     }
 }
