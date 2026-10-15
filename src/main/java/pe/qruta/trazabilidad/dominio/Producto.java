@@ -390,7 +390,7 @@ public class Producto {
 
     /** Publicado y todavía sin transportista: aparece en las publicaciones disponibles. */
     public boolean estaDisponibleParaTransporte() {
-        return publicado && !tieneTransportista();
+        return publicado && !tieneTransportista() && estado != EstadoProducto.BLOQUEADO;
     }
 
 
