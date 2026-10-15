@@ -11,6 +11,7 @@ import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.dominio.evaluacion.Evaluacion;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
+import pe.qruta.trazabilidad.dominio.evaluacion.NivelRiesgo;
 import pe.qruta.trazabilidad.dominio.producto.DatosProducto;
 import pe.qruta.trazabilidad.dominio.producto.TipoProduccion;
 import pe.qruta.trazabilidad.dominio.producto.TipoProducto;
@@ -325,6 +326,16 @@ public class Producto {
 
     public List<Evaluacion> getEvaluaciones() {
         return List.copyOf(evaluaciones);
+    }
+
+
+    /** RE-38: un producto bloqueado o con riesgo CRITICO no es apto para el consumo. */
+    public boolean esAptoParaConsumo() {
+
+        Evaluacion ultima = getUltimaEvaluacion();
+
+        return estado != EstadoProducto.BLOQUEADO
+            && (ultima == null || ultima.nivelRiesgo() != NivelRiesgo.CRITICO);
     }
 
 
