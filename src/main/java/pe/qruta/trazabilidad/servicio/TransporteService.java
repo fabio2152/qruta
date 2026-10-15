@@ -1,5 +1,6 @@
 package pe.qruta.trazabilidad.servicio;
 
+import pe.qruta.trazabilidad.dominio.DatoInvalidoException;
 import pe.qruta.trazabilidad.dominio.Producto;
 import pe.qruta.trazabilidad.dominio.Usuario;
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
@@ -75,7 +76,13 @@ public class TransporteService {
                 .buscarPorNombreUsuario(nombreUsuarioDestino)
                 .orElseThrow();
 
-        producto.asignarDestino((PuntoDeRecepcion) destino);
+        if (!(destino instanceof PuntoDeRecepcion puntoDeRecepcion)) {
+            throw new DatoInvalidoException(
+                "El destino debe ser un mercado o un centro de acopio"
+            );
+        }
+
+        producto.asignarDestino(puntoDeRecepcion);
 
         productos.guardar(producto);
     }
