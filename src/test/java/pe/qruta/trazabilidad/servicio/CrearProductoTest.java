@@ -110,6 +110,21 @@ class CrearProductoTest {
     }
 
 
+    @Test
+    void unPolloProducidoHaceExactamente168HorasSeRechazaPorqueSuVidaUtilEstaAgotada() {
+
+        // Dado
+        DatosProducto datos = datosDePollo();
+
+        datos.setFechaProduccion(AHORA.minusHours(168));
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.crearProducto(datos, productor))
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("La vida útil del producto ya se agotó");
+    }
+
+
     private Productor productorDeTipo(TipoProductor tipoProductor) {
 
         return new Productor(
