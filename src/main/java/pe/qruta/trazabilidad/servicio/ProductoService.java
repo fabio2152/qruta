@@ -102,6 +102,18 @@ public class ProductoService {
                 "La vida útil del producto ya se agotó"
             );
         }
+
+        if (categoria == CategoriaProducto.PECUARIO
+                && estaVacio(datos.getCertificadoSanitarioSenasa())) {
+            throw new DatoInvalidoException(
+                "Los productos pecuarios requieren certificado sanitario SENASA"
+            );
+        }
+    }
+
+
+    private boolean estaVacio(String texto) {
+        return texto == null || texto.isBlank();
     }
 
 
