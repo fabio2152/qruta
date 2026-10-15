@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import pe.qruta.trazabilidad.RelojAjustable;
 import pe.qruta.trazabilidad.dominio.EstadoProducto;
 import pe.qruta.trazabilidad.dominio.Producto;
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCarga;
 import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.Mercado;
 import pe.qruta.trazabilidad.dominio.cuenta.Productor;
@@ -202,6 +203,21 @@ class EvaluacionTest {
 
         assertThat(recibido.getEstado())
             .isEqualTo(EstadoProducto.BLOQUEADO);
+    }
+
+
+    @Test
+    void despuesDelBloqueoAutomaticoElTransportistaVuelveAQuedarLibre() {
+
+        // Dado
+        // el pollo del escenario base, recibido a 7,1 °C: la evaluación lo bloquea (T56)
+
+        // Cuando
+        recibirPolloDelEscenarioBase("7.1");
+
+        // Entonces (RE-41: el traslado físico ya terminó con la recepción)
+        assertThat(transportista.getEstadoCarga())
+            .isEqualTo(EstadoCarga.LIBRE);
     }
 
 
