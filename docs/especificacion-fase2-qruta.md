@@ -602,6 +602,14 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T90 (normal, agregada durante el ciclo).** El regulador suspende a un productor: su cuenta queda SUSPENDIDA y ya no puede iniciar sesión. → RF-17, RE-35, RE-16
 - Refactor sugerido: reunir en `RegulacionService` las acciones exclusivas del regulador.
 
+### Ciclo 12b — Bloqueo: pruebas agregadas (15/10/2026)
+
+RE-33 dice que un producto bloqueado no admite aceptación ni publicación, pero ninguna prueba lo cubría.
+
+- **T92 (normal).** Un producto bloqueado no aparece en las publicaciones disponibles. → RE-33
+- **T93 (error).** Un transportista intenta aceptar un producto bloqueado y se rechaza. → RE-33
+- **T94 (error).** El productor intenta publicar un producto bloqueado y se rechaza. → RE-33, RE-20
+
 ### Ciclo 13 — Consulta pública
 
 - **T67 (normal).** La consulta por código devuelve los datos públicos y no incluye correo, documento ni teléfono. → RE-37
@@ -618,7 +626,7 @@ En estos casos, el pollo se produjo el 31/08/2026 a las 14:00, el transporte fue
 - **T73 (normal).** El administrador aprueba un mercado. → RE-15
 - **T74 (normal).** El resumen del administrador informa la cantidad de usuarios por rol y de productos por etapa. → RE-40
 
-**Total al terminar: 91 pruebas** (T01 a T91). T75 cubre el requisito nuevo RE-41, y T76 a T91 cubren reglas que no tenían prueba.
+**Total al terminar: 94 pruebas** (T01 a T94). T75 cubre el requisito nuevo RE-41, y T76 a T94 cubren reglas que no tenían prueba.
 
 ---
 
