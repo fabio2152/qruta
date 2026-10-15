@@ -153,6 +153,36 @@ class RegulacionTest {
     }
 
 
+    @Test
+    void elReguladorDesbloqueaElProductoYVuelveALaEtapaQueTenia() {
+
+        // Dado
+        Producto pollo = polloEnTransito();
+
+        regulacion.bloquear(pollo.getId(), regulador, "Sospecha de contaminación");
+
+        reloj.ajustarA(horaDelDia(11, 0));
+
+        // Cuando
+        regulacion.desbloquear(pollo.getId(), regulador, "Análisis de laboratorio negativo");
+
+        // Entonces
+        assertThat(pollo.getEstado())
+            .isEqualTo(EstadoProducto.EN_TRANSITO);
+
+        List<CambioEstado> historial = pollo.getHistorial();
+
+        assertThat(historial.get(historial.size() - 1))
+            .isEqualTo(new CambioEstado(
+                EstadoProducto.BLOQUEADO,
+                EstadoProducto.EN_TRANSITO,
+                horaDelDia(11, 0),
+                regulador,
+                "Análisis de laboratorio negativo"
+            ));
+    }
+
+
     /** Pollo aceptado por transportista1, con destino mercado1, que salió a las 08:00. */
     private Producto polloEnTransito() {
 

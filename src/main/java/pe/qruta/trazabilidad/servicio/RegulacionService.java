@@ -47,4 +47,12 @@ public class RegulacionService {
 
         productos.guardar(producto);
     }
+
+
+    public void desbloquear(
+            Long idProducto,
+            Usuario regulador,
+            String motivo
+    ) {
+    }
 }
