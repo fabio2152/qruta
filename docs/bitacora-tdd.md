@@ -2,54 +2,67 @@
 
 Registro de cada ciclo **RED → GREEN → REFACTOR** aplicado en el proyecto.
 Funcionalidad: **Actualizar el estado de un producto en la cadena** (CUN-05 — Registrar evento de trazabilidad).
+Fase 2 (desde el ciclo 8): **plataforma QRUTA completa**: cuentas, publicación y aceptación, recepción con evaluación, regulación y consulta pública por QR.
 
 Forma de trabajo: dentro de cada ciclo las pruebas se escriben **de a una** (RED → GREEN) y, cuando todas las pruebas del ciclo están en verde, se hace **un solo REFACTOR**. Cada paso queda respaldado por su commit y por la salida de `./mvnw test` guardada en [evidencias/](evidencias/).
 
-Repositorio: https://github.com/fabio2152/lab4
+Repositorio: https://github.com/fabio2152/qruta (continúa el historial de [lab4](https://github.com/fabio2152/lab4); la fase 2 está descrita en [especificacion-fase2-qruta.md](especificacion-fase2-qruta.md))
 
 ## Resumen de pruebas
 
 | Prueba | Ciclo | Tipo | Regla | Comportamiento | RED | GREEN | Estado |
 |---|---|---|---|---|---|---|---|
-| T01 | 1 | Normal | RE-01 | Un producto recién creado está en EN_ORIGEN | [`50337de`](https://github.com/fabio2152/lab4/commit/50337de) | [`f833eb0`](https://github.com/fabio2152/lab4/commit/f833eb0) | ✅ |
-| T02 | 1 | Normal | RE-07 | Al pasar a EN_TRANSITO se guarda la hora de inicio | [`e276c29`](https://github.com/fabio2152/lab4/commit/e276c29) | [`61ef540`](https://github.com/fabio2152/lab4/commit/61ef540) | ✅ |
-| T03 | 1 | Normal | RE-07, RE-08 | Al pasar a EN_DESTINO se guarda la llegada y la duración es 6 h 30 min | [`e40e9cd`](https://github.com/fabio2152/lab4/commit/e40e9cd) | [`a2bdd9f`](https://github.com/fabio2152/lab4/commit/a2bdd9f) | ✅ |
-| T04 | 2 | Error | RE-08 | Pedir la duración estando EN_TRANSITO se rechaza | [`6d5bdf6`](https://github.com/fabio2152/lab4/commit/6d5bdf6) | [`dda7055`](https://github.com/fabio2152/lab4/commit/dda7055) | ✅ |
-| T05 | 2 | Límite | RE-06 | Un producto ENTREGADO no puede cambiar de estado | [`0452480`](https://github.com/fabio2152/lab4/commit/0452480) | [`dd8ccc4`](https://github.com/fabio2152/lab4/commit/dd8ccc4) | ✅ |
-| T06 | 2 | Error | RE-05 | Pasar de EN_ORIGEN a EN_DESTINO se rechaza | [`f76fa76`](https://github.com/fabio2152/lab4/commit/f76fa76) | [`dc8fa59`](https://github.com/fabio2152/lab4/commit/dc8fa59) | ✅ |
-| T07 | 3 | Error | RE-04 | El productor no puede cambiar el estado | [`50e78ea`](https://github.com/fabio2152/lab4/commit/50e78ea) | [`c97cd14`](https://github.com/fabio2152/lab4/commit/c97cd14) | ✅ |
-| T08 | 3 | Error | RE-04 | Un intermediario no asignado no puede cambiar el estado | [`eb65b6f`](https://github.com/fabio2152/lab4/commit/eb65b6f) | [`9a040c6`](https://github.com/fabio2152/lab4/commit/9a040c6) | ✅ |
-| T09 | 4 | Normal | RE-01 | El productor crea un producto: queda guardado con id y en EN_ORIGEN | [`8e04615`](https://github.com/fabio2152/lab4/commit/8e04615) | [`5c045fd`](https://github.com/fabio2152/lab4/commit/5c045fd) | ✅ |
-| T10 | 4 | Normal | RE-10 | El regulador ve todos los productos | [`b26b24a`](https://github.com/fabio2152/lab4/commit/b26b24a) | [`389a438`](https://github.com/fabio2152/lab4/commit/389a438) | ✅ |
-| T11 | 4 | Normal | RE-10 | El productor ve solo los productos que creó | [`cec61fb`](https://github.com/fabio2152/lab4/commit/cec61fb) | [`3274ff4`](https://github.com/fabio2152/lab4/commit/3274ff4) | ✅ |
-| T12 | 4 | Normal | RE-10 | El intermediario ve solo sus productos asignados | [`a6eb858`](https://github.com/fabio2152/lab4/commit/a6eb858) | [`bc56885`](https://github.com/fabio2152/lab4/commit/bc56885) | ✅ |
-| T13 | 5 | Normal | RE-07 | Cambiar el estado por id usa el reloj del sistema | [`002de72`](https://github.com/fabio2152/lab4/commit/002de72) | [`0f3c69b`](https://github.com/fabio2152/lab4/commit/0f3c69b) | ✅ |
-| T14 | 5 | Error | — | Cambiar el estado de un producto inexistente se rechaza | [`238ed3e`](https://github.com/fabio2152/lab4/commit/238ed3e) | [`50edcd4`](https://github.com/fabio2152/lab4/commit/50edcd4) | ✅ |
-| T15 | 5 | Normal | RE-09 | Tras dos cambios, el historial tiene dos registros | [`7c9d445`](https://github.com/fabio2152/lab4/commit/7c9d445) | [`06169b8`](https://github.com/fabio2152/lab4/commit/06169b8) | ✅ |
-| T16 | 6 | Normal | Login | Usuario y contraseña correctos devuelven el usuario | [`4cff306`](https://github.com/fabio2152/lab4/commit/4cff306) | [`6b4187a`](https://github.com/fabio2152/lab4/commit/6b4187a) | ✅ |
-| T17 | 6 | Error | Login | Una contraseña incorrecta se rechaza | [`75eb7cd`](https://github.com/fabio2152/lab4/commit/75eb7cd) | [`162c9c8`](https://github.com/fabio2152/lab4/commit/162c9c8) | ✅ |
-| T18 | 7 | Normal | RE-04 | El intermediario asignado leído de nuevo (otra instancia) puede cambiar el estado | [`ca5002b`](https://github.com/fabio2152/lab4/commit/ca5002b) | [`dd0851c`](https://github.com/fabio2152/lab4/commit/dd0851c) | ✅ |
-| T19 | 7 | Normal | RE-10 | El intermediario ve sus productos aunque el usuario sea otra instancia | [`612e011`](https://github.com/fabio2152/lab4/commit/612e011) | [`d7d1eb8`](https://github.com/fabio2152/lab4/commit/d7d1eb8) | ✅ |
-| T20 | 7 | Normal | RE-08 | Un producto reconstruido en EN_TRANSITO calcula 6 h 30 min al llegar | [`257bf81`](https://github.com/fabio2152/lab4/commit/257bf81) | [`5537cbc`](https://github.com/fabio2152/lab4/commit/5537cbc) | ✅ |
-| T21 | 7 | Normal | RE-09 | Cambiar el estado guarda el producto actualizado en el repositorio | [`f54e713`](https://github.com/fabio2152/lab4/commit/f54e713) | [`4516ad2`](https://github.com/fabio2152/lab4/commit/4516ad2) | ✅ |
+| T01 | 1 | Normal | RE-01 | Un producto recién creado está en EN_ORIGEN | [`50337de`](https://github.com/fabio2152/qruta/commit/50337de) | [`f833eb0`](https://github.com/fabio2152/qruta/commit/f833eb0) | ✅ |
+| T02 | 1 | Normal | RE-07 | Al pasar a EN_TRANSITO se guarda la hora de inicio | [`e276c29`](https://github.com/fabio2152/qruta/commit/e276c29) | [`61ef540`](https://github.com/fabio2152/qruta/commit/61ef540) | ✅ |
+| T03 | 1 | Normal | RE-07, RE-08 | Al pasar a EN_DESTINO se guarda la llegada y la duración es 6 h 30 min | [`e40e9cd`](https://github.com/fabio2152/qruta/commit/e40e9cd) | [`a2bdd9f`](https://github.com/fabio2152/qruta/commit/a2bdd9f) | ✅ |
+| T04 | 2 | Error | RE-08 | Pedir la duración estando EN_TRANSITO se rechaza | [`6d5bdf6`](https://github.com/fabio2152/qruta/commit/6d5bdf6) | [`dda7055`](https://github.com/fabio2152/qruta/commit/dda7055) | ✅ |
+| T05 | 2 | Límite | RE-06 | Un producto ENTREGADO no puede cambiar de estado | [`0452480`](https://github.com/fabio2152/qruta/commit/0452480) | [`dd8ccc4`](https://github.com/fabio2152/qruta/commit/dd8ccc4) | ✅ |
+| T06 | 2 | Error | RE-05 | Pasar de EN_ORIGEN a EN_DESTINO se rechaza | [`f76fa76`](https://github.com/fabio2152/qruta/commit/f76fa76) | [`dc8fa59`](https://github.com/fabio2152/qruta/commit/dc8fa59) | ✅ |
+| T07 | 3 | Error | RE-04 | El productor no puede cambiar el estado | [`50e78ea`](https://github.com/fabio2152/qruta/commit/50e78ea) | [`c97cd14`](https://github.com/fabio2152/qruta/commit/c97cd14) | ✅ |
+| T08 | 3 | Error | RE-04 | Un intermediario no asignado no puede cambiar el estado | [`eb65b6f`](https://github.com/fabio2152/qruta/commit/eb65b6f) | [`9a040c6`](https://github.com/fabio2152/qruta/commit/9a040c6) | ✅ |
+| T09 | 4 | Normal | RE-01 | El productor crea un producto: queda guardado con id y en EN_ORIGEN | [`8e04615`](https://github.com/fabio2152/qruta/commit/8e04615) | [`5c045fd`](https://github.com/fabio2152/qruta/commit/5c045fd) | ✅ |
+| T10 | 4 | Normal | RE-10 | El regulador ve todos los productos | [`b26b24a`](https://github.com/fabio2152/qruta/commit/b26b24a) | [`389a438`](https://github.com/fabio2152/qruta/commit/389a438) | ✅ |
+| T11 | 4 | Normal | RE-10 | El productor ve solo los productos que creó | [`cec61fb`](https://github.com/fabio2152/qruta/commit/cec61fb) | [`3274ff4`](https://github.com/fabio2152/qruta/commit/3274ff4) | ✅ |
+| T12 | 4 | Normal | RE-10 | El intermediario ve solo sus productos asignados | [`a6eb858`](https://github.com/fabio2152/qruta/commit/a6eb858) | [`bc56885`](https://github.com/fabio2152/qruta/commit/bc56885) | ✅ |
+| T13 | 5 | Normal | RE-07 | Cambiar el estado por id usa el reloj del sistema | [`002de72`](https://github.com/fabio2152/qruta/commit/002de72) | [`0f3c69b`](https://github.com/fabio2152/qruta/commit/0f3c69b) | ✅ |
+| T14 | 5 | Error | — | Cambiar el estado de un producto inexistente se rechaza | [`238ed3e`](https://github.com/fabio2152/qruta/commit/238ed3e) | [`50edcd4`](https://github.com/fabio2152/qruta/commit/50edcd4) | ✅ |
+| T15 | 5 | Normal | RE-09 | Tras dos cambios, el historial tiene dos registros | [`7c9d445`](https://github.com/fabio2152/qruta/commit/7c9d445) | [`06169b8`](https://github.com/fabio2152/qruta/commit/06169b8) | ✅ |
+| T16 | 6 | Normal | Login | Usuario y contraseña correctos devuelven el usuario | [`4cff306`](https://github.com/fabio2152/qruta/commit/4cff306) | [`6b4187a`](https://github.com/fabio2152/qruta/commit/6b4187a) | ✅ |
+| T17 | 6 | Error | Login | Una contraseña incorrecta se rechaza | [`75eb7cd`](https://github.com/fabio2152/qruta/commit/75eb7cd) | [`162c9c8`](https://github.com/fabio2152/qruta/commit/162c9c8) | ✅ |
+| T18 | 7 | Normal | RE-04 | El intermediario asignado leído de nuevo (otra instancia) puede cambiar el estado | [`ca5002b`](https://github.com/fabio2152/qruta/commit/ca5002b) | [`dd0851c`](https://github.com/fabio2152/qruta/commit/dd0851c) | ✅ |
+| T19 | 7 | Normal | RE-10 | El intermediario ve sus productos aunque el usuario sea otra instancia | [`612e011`](https://github.com/fabio2152/qruta/commit/612e011) | [`d7d1eb8`](https://github.com/fabio2152/qruta/commit/d7d1eb8) | ✅ |
+| T20 | 7 | Normal | RE-08 | Un producto reconstruido en EN_TRANSITO calcula 6 h 30 min al llegar | [`257bf81`](https://github.com/fabio2152/qruta/commit/257bf81) | [`5537cbc`](https://github.com/fabio2152/qruta/commit/5537cbc) | ✅ |
+| T21 | 7 | Normal | RE-09 | Cambiar el estado guarda el producto actualizado en el repositorio | [`f54e713`](https://github.com/fabio2152/qruta/commit/f54e713) | [`4516ad2`](https://github.com/fabio2152/qruta/commit/4516ad2) | ✅ |
+| T22 | 8 | Normal | RE-13, RE-15 | Un productor se registra con contraseña de 8 caracteres y queda PENDIENTE | [`6a6c01f`](https://github.com/fabio2152/qruta/commit/6a6c01f) | [`a69c12e`](https://github.com/fabio2152/qruta/commit/a69c12e) | ✅ |
+| T23 | 8 | Límite | RE-13 | Un registro con contraseña de 7 caracteres se rechaza | [`32bf005`](https://github.com/fabio2152/qruta/commit/32bf005) | [`95c7407`](https://github.com/fabio2152/qruta/commit/95c7407) | ✅ |
+| T24 | 8 | Normal | RE-13 | La contraseña se guarda cifrada (BCrypt) y se puede verificar | [`00f106d`](https://github.com/fabio2152/qruta/commit/00f106d) | [`77ea0a6`](https://github.com/fabio2152/qruta/commit/77ea0a6) | ✅ |
+| T25 | 8 | Error | RE-12 | Un nombre de usuario ya existente se rechaza | [`deb48b7`](https://github.com/fabio2152/qruta/commit/deb48b7) | [`deb3b9a`](https://github.com/fabio2152/qruta/commit/deb3b9a) | ✅ |
+| T26 | 8 | Error | RE-12 | Un correo sin formato válido se rechaza | [`b5f73a5`](https://github.com/fabio2152/qruta/commit/b5f73a5) | [`8727c8d`](https://github.com/fabio2152/qruta/commit/8727c8d) | ✅ |
+| T27 | 8 | Límite | RE-14 | Un transportista con RUC de 10 dígitos se rechaza | [`59d4d8a`](https://github.com/fabio2152/qruta/commit/59d4d8a) | [`b29a8c3`](https://github.com/fabio2152/qruta/commit/b29a8c3) | ✅ |
+| T28 | 8 | Error | RE-11 | Un registro público con rol de regulador se rechaza | [`d74e744`](https://github.com/fabio2152/qruta/commit/d74e744) | [`ebb8450`](https://github.com/fabio2152/qruta/commit/ebb8450) | ✅ |
+| T29 | 8 | Error | RE-16 | Una cuenta PENDIENTE no puede iniciar sesión | [`298015c`](https://github.com/fabio2152/qruta/commit/298015c) | [`4bbb098`](https://github.com/fabio2152/qruta/commit/4bbb098) | ✅ |
+| T30 | 8 | Normal | RE-15 | El regulador aprueba al productor: queda ACTIVA y ya puede iniciar sesión | [`3f22d71`](https://github.com/fabio2152/qruta/commit/3f22d71) | [`b5743fc`](https://github.com/fabio2152/qruta/commit/b5743fc) | ✅ |
+| T31 | 8 | Error | RE-15 | El regulador intenta aprobar un mercado y se rechaza | [`fc4f88a`](https://github.com/fabio2152/qruta/commit/fc4f88a) | [`a4f2962`](https://github.com/fabio2152/qruta/commit/a4f2962) | ✅ |
+| T32 | 8 | Límite | RE-17 | Un token emitido a las 08:00 es válido a las 15:59 y se rechaza a las 16:00 | [`aaef3f2`](https://github.com/fabio2152/qruta/commit/aaef3f2) | [`1db4235`](https://github.com/fabio2152/qruta/commit/1db4235) | ✅ |
 
 | Ciclo | Tema | REFACTOR | Estado |
 |---|---|---|---|
-| 1 | Recorrido normal del producto | [`33b4d0a`](https://github.com/fabio2152/lab4/commit/33b4d0a) | ✅ Completo |
-| 2 | Orden de las etapas | [`15062f8`](https://github.com/fabio2152/lab4/commit/15062f8) | ✅ Completo |
-| 3 | Permisos | [`d3cd1f9`](https://github.com/fabio2152/lab4/commit/d3cd1f9) | ✅ Completo |
-| 4 | Servicio: crear y listar productos | [`8bc058e`](https://github.com/fabio2152/lab4/commit/8bc058e) | ✅ Completo |
-| 5 | Servicio: cambiar estado e historial | [`c72044d`](https://github.com/fabio2152/lab4/commit/c72044d) | ✅ Completo |
-| 6 | Servicio: login | [`4176317`](https://github.com/fabio2152/lab4/commit/4176317) + [`573bb78`](https://github.com/fabio2152/lab4/commit/573bb78) | ✅ Completo |
-| 7 | Persistencia en PostgreSQL | [`8d8281f`](https://github.com/fabio2152/lab4/commit/8d8281f) | ✅ Completo |
+| 1 | Recorrido normal del producto | [`33b4d0a`](https://github.com/fabio2152/qruta/commit/33b4d0a) | ✅ Completo |
+| 2 | Orden de las etapas | [`15062f8`](https://github.com/fabio2152/qruta/commit/15062f8) | ✅ Completo |
+| 3 | Permisos | [`d3cd1f9`](https://github.com/fabio2152/qruta/commit/d3cd1f9) | ✅ Completo |
+| 4 | Servicio: crear y listar productos | [`8bc058e`](https://github.com/fabio2152/qruta/commit/8bc058e) | ✅ Completo |
+| 5 | Servicio: cambiar estado e historial | [`c72044d`](https://github.com/fabio2152/qruta/commit/c72044d) | ✅ Completo |
+| 6 | Servicio: login | [`4176317`](https://github.com/fabio2152/qruta/commit/4176317) + [`573bb78`](https://github.com/fabio2152/qruta/commit/573bb78) | ✅ Completo |
+| 7 | Persistencia en PostgreSQL | [`8d8281f`](https://github.com/fabio2152/qruta/commit/8d8281f) | ✅ Completo |
+| 8 | Cuentas y sesión | [`404bb0a`](https://github.com/fabio2152/qruta/commit/404bb0a) | ✅ Completo |
 
 ## Control de requisitos mínimos
 
-- [x] Al menos 5 pruebas automatizadas (21: 10 del dominio y 11 del servicio).
-- [x] Al menos 3 ciclos RED-GREEN-REFACTOR completos (7).
-- [x] Casos normales (T01, T02, T03, T09–T13, T15, T16).
-- [x] Casos límite (T05).
-- [x] Casos de error (T04, T06, T07, T08, T14, T17).
+- [x] Al menos 5 pruebas automatizadas (32: 10 del dominio y 22 del servicio).
+- [x] Al menos 3 ciclos RED-GREEN-REFACTOR completos (8).
+- [x] Casos normales (T01, T02, T03, T09–T13, T15, T16, T22, T24, T30).
+- [x] Casos límite (T05, T23, T27, T32).
+- [x] Casos de error (T04, T06, T07, T08, T14, T17, T25, T26, T28, T29, T31).
 - [x] Ejecución completa de todas las pruebas (`./mvnw test`) en verde al cerrar cada ciclo.
 - [x] Reporte de cobertura JaCoCo (`target/site/jacoco/index.html`): ver [Resultados](#resultados).
 
@@ -81,7 +94,7 @@ expected: EN_ORIGEN
  but was: null
 ```
 
-- Commit: `test(ciclo-1): T01 producto recien creado esta en EN_ORIGEN [RED]` ([`50337de`](https://github.com/fabio2152/lab4/commit/50337de))
+- Commit: `test(ciclo-1): T01 producto recien creado esta en EN_ORIGEN [RED]` ([`50337de`](https://github.com/fabio2152/qruta/commit/50337de))
 - Evidencia: [ciclo-1-T01-red.txt](evidencias/ciclo-1-T01-red.txt) · Captura: [1rojo.png](evidencias/1rojo.png)
 
 **🟢 GREEN**
@@ -95,7 +108,7 @@ public EstadoProducto getEstado() {
 ```
 
 - Resultado: `Tests run: 1, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: `feat(ciclo-1): T01 producto recien creado esta en EN_ORIGEN [GREEN]` ([`f833eb0`](https://github.com/fabio2152/lab4/commit/f833eb0))
+- Commit: `feat(ciclo-1): T01 producto recien creado esta en EN_ORIGEN [GREEN]` ([`f833eb0`](https://github.com/fabio2152/qruta/commit/f833eb0))
 - Evidencia: [ciclo-1-T01-green.txt](evidencias/ciclo-1-T01-green.txt) · Captura: [1verde.png](evidencias/1verde.png)
 
 ### T02 – Al pasar a EN_TRANSITO se guarda la hora de inicio (RE-07)
@@ -117,7 +130,7 @@ expected: EN_TRANSITO
  but was: EN_ORIGEN
 ```
 
-- Commit: `test(ciclo-1): T02 al pasar a EN_TRANSITO se guarda la hora de inicio del transporte [RED]` ([`e276c29`](https://github.com/fabio2152/lab4/commit/e276c29))
+- Commit: `test(ciclo-1): T02 al pasar a EN_TRANSITO se guarda la hora de inicio del transporte [RED]` ([`e276c29`](https://github.com/fabio2152/qruta/commit/e276c29))
 - Evidencia: [ciclo-1-T02-red.txt](evidencias/ciclo-1-T02-red.txt) · Captura: [2rojo.png](evidencias/2rojo.png)
 
 **🟢 GREEN**
@@ -132,7 +145,7 @@ public void cambiarEstado(EstadoProducto nuevoEstado, Usuario usuario, Clock rel
 ```
 
 - Resultado: `Tests run: 2, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: `feat(ciclo-1): T02 al pasar a EN_TRANSITO se guarda la hora de inicio del transporte [GREEN]` ([`61ef540`](https://github.com/fabio2152/lab4/commit/61ef540))
+- Commit: `feat(ciclo-1): T02 al pasar a EN_TRANSITO se guarda la hora de inicio del transporte [GREEN]` ([`61ef540`](https://github.com/fabio2152/qruta/commit/61ef540))
 - Evidencia: [ciclo-1-T02-green.txt](evidencias/ciclo-1-T02-green.txt) · Captura: [2verde.png](evidencias/2verde.png)
 
 ### T03 – Al pasar a EN_DESTINO se guarda la llegada y se calcula la duración (RE-07, RE-08)
@@ -154,7 +167,7 @@ expected: 2026-09-01T14:30 (java.time.LocalDateTime)
  but was: null
 ```
 
-- Commit: `test(ciclo-1): T03 al pasar a EN_DESTINO se guarda la hora de llegada y la duracion del transporte [RED]` ([`e40e9cd`](https://github.com/fabio2152/lab4/commit/e40e9cd))
+- Commit: `test(ciclo-1): T03 al pasar a EN_DESTINO se guarda la hora de llegada y la duracion del transporte [RED]` ([`e40e9cd`](https://github.com/fabio2152/qruta/commit/e40e9cd))
 - Evidencia: [ciclo-1-T03-red.txt](evidencias/ciclo-1-T03-red.txt) · Captura: [3rojo.png](evidencias/3rojo.png)
 
 **🟢 GREEN**
@@ -176,7 +189,7 @@ public Duration getDuracionTransporte() {
 ```
 
 - Resultado: `Tests run: 3, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: `feat(ciclo-1): T03 al pasar a EN_DESTINO se guarda la hora de llegada y la duracion del transporte [GREEN]` ([`a2bdd9f`](https://github.com/fabio2152/lab4/commit/a2bdd9f))
+- Commit: `feat(ciclo-1): T03 al pasar a EN_DESTINO se guarda la hora de llegada y la duracion del transporte [GREEN]` ([`a2bdd9f`](https://github.com/fabio2152/qruta/commit/a2bdd9f))
 - Evidencia: [ciclo-1-T03-green.txt](evidencias/ciclo-1-T03-green.txt) · Captura: [3verde.png](evidencias/3verde.png)
 
 ### 🔵 REFACTOR del ciclo 1
@@ -229,7 +242,7 @@ private void registrarHora(EstadoProducto nuevoEstado, LocalDateTime ahora) {
 ```
 
 - Resultado: `Tests run: 3, Failures: 0, Errors: 0` – BUILD SUCCESS (el comportamiento no cambió).
-- Commit: `refactor(ciclo-1): extraer registro de horas y reloj de prueba reutilizable [REFACTOR]` ([`33b4d0a`](https://github.com/fabio2152/lab4/commit/33b4d0a))
+- Commit: `refactor(ciclo-1): extraer registro de horas y reloj de prueba reutilizable [REFACTOR]` ([`33b4d0a`](https://github.com/fabio2152/qruta/commit/33b4d0a))
 - Evidencia: [ciclo-1-refactor.txt](evidencias/ciclo-1-refactor.txt)
 
 ### Decisiones de diseño y aprendizajes del ciclo 1
@@ -270,7 +283,7 @@ but was:
   java.lang.NullPointerException: temporal
 ```
 
-- Commit: `test(ciclo-2): T04 pedir la duracion de un producto EN_TRANSITO se rechaza [RED]` ([`6d5bdf6`](https://github.com/fabio2152/lab4/commit/6d5bdf6))
+- Commit: `test(ciclo-2): T04 pedir la duracion de un producto EN_TRANSITO se rechaza [RED]` ([`6d5bdf6`](https://github.com/fabio2152/qruta/commit/6d5bdf6))
 - Evidencia: [ciclo-2-T04-red.txt](evidencias/ciclo-2-T04-red.txt) · Captura: [4rojo.png](evidencias/4rojo.png)
 
 **🟢 GREEN**
@@ -291,7 +304,7 @@ public Duration getDuracionTransporte() {
 ```
 
 - Resultado: `Tests run: 4, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: `feat(ciclo-2): T04 pedir la duracion de un producto EN_TRANSITO se rechaza [GREEN]` ([`dda7055`](https://github.com/fabio2152/lab4/commit/dda7055))
+- Commit: `feat(ciclo-2): T04 pedir la duracion de un producto EN_TRANSITO se rechaza [GREEN]` ([`dda7055`](https://github.com/fabio2152/qruta/commit/dda7055))
 - Evidencia: [ciclo-2-T04-green.txt](evidencias/ciclo-2-T04-green.txt) · Captura: [4verde.png](evidencias/4verde.png)
 
 ### T05 – Un producto ENTREGADO no puede cambiar de estado (RE-06)
@@ -313,7 +326,7 @@ Tests run: 5, Failures: 1, Errors: 0
 Expecting code to raise a throwable.
 ```
 
-- Commit: `test(ciclo-2): T05 un producto ENTREGADO no puede cambiar de estado [RED]` ([`0452480`](https://github.com/fabio2152/lab4/commit/0452480))
+- Commit: `test(ciclo-2): T05 un producto ENTREGADO no puede cambiar de estado [RED]` ([`0452480`](https://github.com/fabio2152/qruta/commit/0452480))
 - Evidencia: [ciclo-2-T05-red.txt](evidencias/ciclo-2-T05-red.txt) · Captura: [5rojo.png](evidencias/5rojo.png)
 
 **🟢 GREEN**
@@ -329,7 +342,7 @@ if (estado == EstadoProducto.ENTREGADO) {
 ```
 
 - Resultado: `Tests run: 5, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: `feat(ciclo-2): T05 un producto ENTREGADO no puede cambiar de estado [GREEN]` ([`dd8ccc4`](https://github.com/fabio2152/lab4/commit/dd8ccc4))
+- Commit: `feat(ciclo-2): T05 un producto ENTREGADO no puede cambiar de estado [GREEN]` ([`dd8ccc4`](https://github.com/fabio2152/qruta/commit/dd8ccc4))
 - Evidencia: [ciclo-2-T05-green.txt](evidencias/ciclo-2-T05-green.txt) · Captura: [5verde.png](evidencias/5verde.png)
 
 ### T06 – Pasar de EN_ORIGEN directamente a EN_DESTINO se rechaza (RE-05)
@@ -351,7 +364,7 @@ Tests run: 6, Failures: 1, Errors: 0
 Expecting code to raise a throwable.
 ```
 
-- Commit: `test(ciclo-2): T06 pasar de EN_ORIGEN directamente a EN_DESTINO se rechaza [RED]` ([`f76fa76`](https://github.com/fabio2152/lab4/commit/f76fa76))
+- Commit: `test(ciclo-2): T06 pasar de EN_ORIGEN directamente a EN_DESTINO se rechaza [RED]` ([`f76fa76`](https://github.com/fabio2152/qruta/commit/f76fa76))
 - Evidencia: [ciclo-2-T06-red.txt](evidencias/ciclo-2-T06-red.txt) · Captura: [6rojo.png](evidencias/6rojo.png)
 
 **🟢 GREEN**
@@ -375,7 +388,7 @@ if (!esLaSiguienteEtapa) {
 ```
 
 - Resultado: `Tests run: 6, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: `feat(ciclo-2): T06 pasar de EN_ORIGEN directamente a EN_DESTINO se rechaza [GREEN]` ([`dc8fa59`](https://github.com/fabio2152/lab4/commit/dc8fa59))
+- Commit: `feat(ciclo-2): T06 pasar de EN_ORIGEN directamente a EN_DESTINO se rechaza [GREEN]` ([`dc8fa59`](https://github.com/fabio2152/qruta/commit/dc8fa59))
 - Evidencia: [ciclo-2-T06-green.txt](evidencias/ciclo-2-T06-green.txt) · Captura: [6verde.png](evidencias/6verde.png)
 
 ### 🔵 REFACTOR del ciclo 2
@@ -464,7 +477,7 @@ private void validarCambioDeEtapa(EstadoProducto nuevoEstado) {
 ```
 
 - Resultado: `Tests run: 6, Failures: 0, Errors: 0` – BUILD SUCCESS (el comportamiento no cambió).
-- Commit: `refactor(ciclo-2): cada etapa de EstadoProducto conoce su siguiente [REFACTOR]` ([`15062f8`](https://github.com/fabio2152/lab4/commit/15062f8))
+- Commit: `refactor(ciclo-2): cada etapa de EstadoProducto conoce su siguiente [REFACTOR]` ([`15062f8`](https://github.com/fabio2152/qruta/commit/15062f8))
 - Evidencia: [ciclo-2-refactor.txt](evidencias/ciclo-2-refactor.txt)
 
 ### Decisiones de diseño y aprendizajes del ciclo 2
@@ -504,7 +517,7 @@ Tests run: 7, Failures: 1, Errors: 0
 Expecting code to raise a throwable.
 ```
 
-- Commit: `test(ciclo-3): T07 el productor no puede cambiar el estado de su producto [RED]` ([`50e78ea`](https://github.com/fabio2152/lab4/commit/50e78ea))
+- Commit: `test(ciclo-3): T07 el productor no puede cambiar el estado de su producto [RED]` ([`50e78ea`](https://github.com/fabio2152/qruta/commit/50e78ea))
 - Evidencia: [ciclo-3-T07-red.txt](evidencias/ciclo-3-T07-red.txt) · Captura: [7rojo.png](evidencias/7rojo.png)
 
 **🟢 GREEN**
@@ -520,7 +533,7 @@ if (usuario.getRol() != Rol.INTERMEDIARIO) {
 ```
 
 - Resultado: `Tests run: 7, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: `feat(ciclo-3): T07 el productor no puede cambiar el estado de su producto [GREEN]` ([`c97cd14`](https://github.com/fabio2152/lab4/commit/c97cd14))
+- Commit: `feat(ciclo-3): T07 el productor no puede cambiar el estado de su producto [GREEN]` ([`c97cd14`](https://github.com/fabio2152/qruta/commit/c97cd14))
 - Evidencia: [ciclo-3-T07-green.txt](evidencias/ciclo-3-T07-green.txt) · Captura: [7verde.png](evidencias/7verde.png)
 
 ### T08 – Un intermediario no asignado no puede cambiar el estado (RE-04)
@@ -544,7 +557,7 @@ Tests run: 8, Failures: 1, Errors: 0
 Expecting code to raise a throwable.
 ```
 
-- Commit: `test(ciclo-3): T08 un intermediario no asignado no puede cambiar el estado [RED]` ([`eb65b6f`](https://github.com/fabio2152/lab4/commit/eb65b6f))
+- Commit: `test(ciclo-3): T08 un intermediario no asignado no puede cambiar el estado [RED]` ([`eb65b6f`](https://github.com/fabio2152/qruta/commit/eb65b6f))
 - Evidencia: [ciclo-3-T08-red.txt](evidencias/ciclo-3-T08-red.txt) · Captura: [8rojo.png](evidencias/8rojo.png)
 
 **🟢 GREEN**
@@ -564,7 +577,7 @@ if (usuario != intermediarioAsignado) {
 ```
 
 - Resultado: `Tests run: 8, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: `feat(ciclo-3): T08 un intermediario no asignado no puede cambiar el estado [GREEN]` ([`9a040c6`](https://github.com/fabio2152/lab4/commit/9a040c6))
+- Commit: `feat(ciclo-3): T08 un intermediario no asignado no puede cambiar el estado [GREEN]` ([`9a040c6`](https://github.com/fabio2152/qruta/commit/9a040c6))
 - Evidencia: [ciclo-3-T08-green.txt](evidencias/ciclo-3-T08-green.txt) · Captura: [8verde.png](evidencias/8verde.png)
 
 ### 🔵 REFACTOR del ciclo 3
@@ -634,7 +647,7 @@ private void validarPermiso(Usuario usuario) {
 ```
 
 - Resultado: `Tests run: 8, Failures: 0, Errors: 0` – BUILD SUCCESS (el comportamiento no cambió).
-- Commit: `refactor(ciclo-3): separar la validacion de permisos en su propio metodo [REFACTOR]` ([`d3cd1f9`](https://github.com/fabio2152/lab4/commit/d3cd1f9))
+- Commit: `refactor(ciclo-3): separar la validacion de permisos en su propio metodo [REFACTOR]` ([`d3cd1f9`](https://github.com/fabio2152/qruta/commit/d3cd1f9))
 - Evidencia: [ciclo-3-refactor.txt](evidencias/ciclo-3-refactor.txt)
 
 ### Decisiones de diseño y aprendizajes del ciclo 3
@@ -669,12 +682,12 @@ Entonces el producto tiene id, buscarPorId(id) devuelve ese mismo producto y est
 
 - Esqueletos: `ProductoService` (constructor vacío; `crearProducto` y `buscarPorId` devuelven `null`), `ProductoRepositorioEnMemoria` vacío y `Producto.getId()` que devuelve `null`.
 - **Qué falló:** `Expecting actual not to be null` (el servicio no creaba nada).
-- Commit: [`8e04615`](https://github.com/fabio2152/lab4/commit/8e04615) · Evidencia: [ciclo-4-T09-red.txt](evidencias/ciclo-4-T09-red.txt)
+- Commit: [`8e04615`](https://github.com/fabio2152/qruta/commit/8e04615) · Evidencia: [ciclo-4-T09-red.txt](evidencias/ciclo-4-T09-red.txt)
 
 **🟢 GREEN**
 
 - **Código mínimo:** el repositorio guarda en una lista y asigna un id secuencial (`guardar`, `buscarPorId` con `Optional`); `Producto` tiene `id` con `getId`/`setId`; el servicio crea el producto y lo guarda. El reloj todavía no se guarda: ninguna prueba lo usa.
-- Commit: [`5c045fd`](https://github.com/fabio2152/lab4/commit/5c045fd) · Evidencia: [ciclo-4-T09-green.txt](evidencias/ciclo-4-T09-green.txt)
+- Commit: [`5c045fd`](https://github.com/fabio2152/qruta/commit/5c045fd) · Evidencia: [ciclo-4-T09-green.txt](evidencias/ciclo-4-T09-green.txt)
 
 ### T10 – El regulador ve todos los productos (RE-10)
 
@@ -683,12 +696,12 @@ Entonces el producto tiene id, buscarPorId(id) devuelve ese mismo producto y est
 - Dos productos asignados a intermediarios distintos; `listarProductos(regulador)` debe devolver ambos.
 - Esqueletos: valor `REGULADOR` en `Rol` y `listarProductos` que devuelve `null`.
 - **Qué falló:** `Expecting actual not to be null`.
-- Commit: [`b26b24a`](https://github.com/fabio2152/lab4/commit/b26b24a) · Evidencia: [ciclo-4-T10-red.txt](evidencias/ciclo-4-T10-red.txt)
+- Commit: [`b26b24a`](https://github.com/fabio2152/qruta/commit/b26b24a) · Evidencia: [ciclo-4-T10-red.txt](evidencias/ciclo-4-T10-red.txt)
 
 **🟢 GREEN**
 
 - **Código mínimo:** `listarProductos` devuelve `repositorio.listarTodos()` sin filtrar. Es correcto para el regulador y todavía nadie exige filtros.
-- Commit: [`389a438`](https://github.com/fabio2152/lab4/commit/389a438) · Evidencia: [ciclo-4-T10-green.txt](evidencias/ciclo-4-T10-green.txt)
+- Commit: [`389a438`](https://github.com/fabio2152/qruta/commit/389a438) · Evidencia: [ciclo-4-T10-green.txt](evidencias/ciclo-4-T10-green.txt)
 
 ### T11 – El productor ve solo los productos que creó (RE-10)
 
@@ -696,12 +709,12 @@ Entonces el producto tiene id, buscarPorId(id) devuelve ese mismo producto y est
 
 - Un producto de `productor1` y otro de `productor2`; `productor1` debe ver solo el suyo.
 - **Qué falló:** se devolvían los dos productos (el GREEN de T10 no filtraba).
-- Commit: [`cec61fb`](https://github.com/fabio2152/lab4/commit/cec61fb) · Evidencia: [ciclo-4-T11-red.txt](evidencias/ciclo-4-T11-red.txt)
+- Commit: [`cec61fb`](https://github.com/fabio2152/qruta/commit/cec61fb) · Evidencia: [ciclo-4-T11-red.txt](evidencias/ciclo-4-T11-red.txt)
 
 **🟢 GREEN**
 
 - **Código mínimo:** `Producto` guarda por fin el `productor` que recibía desde T01 (`getProductor()`), y el servicio filtra cuando el rol es PRODUCTOR.
-- Commit: [`3274ff4`](https://github.com/fabio2152/lab4/commit/3274ff4) · Evidencia: [ciclo-4-T11-green.txt](evidencias/ciclo-4-T11-green.txt)
+- Commit: [`3274ff4`](https://github.com/fabio2152/qruta/commit/3274ff4) · Evidencia: [ciclo-4-T11-green.txt](evidencias/ciclo-4-T11-green.txt)
 
 ### T12 – El intermediario ve solo sus productos asignados (RE-10)
 
@@ -709,12 +722,12 @@ Entonces el producto tiene id, buscarPorId(id) devuelve ese mismo producto y est
 
 - Un producto para `intermediario1` y otro para `intermediario2`; `intermediario1` debe ver solo el suyo.
 - **Qué falló:** se devolvían los dos productos.
-- Commit: [`a6eb858`](https://github.com/fabio2152/lab4/commit/a6eb858) · Evidencia: [ciclo-4-T12-red.txt](evidencias/ciclo-4-T12-red.txt)
+- Commit: [`a6eb858`](https://github.com/fabio2152/qruta/commit/a6eb858) · Evidencia: [ciclo-4-T12-red.txt](evidencias/ciclo-4-T12-red.txt)
 
 **🟢 GREEN**
 
 - **Código mínimo:** `getIntermediarioAsignado()` en `Producto` y un segundo `if` en el servicio para el rol INTERMEDIARIO.
-- Commit: [`bc56885`](https://github.com/fabio2152/lab4/commit/bc56885) · Evidencia: [ciclo-4-T12-green.txt](evidencias/ciclo-4-T12-green.txt)
+- Commit: [`bc56885`](https://github.com/fabio2152/qruta/commit/bc56885) · Evidencia: [ciclo-4-T12-green.txt](evidencias/ciclo-4-T12-green.txt)
 
 ### 🔵 REFACTOR del ciclo 4
 
@@ -760,7 +773,7 @@ public boolean esVisiblePara(Usuario usuario) {
 ```
 
 - Resultado: `Tests run: 12, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: [`8bc058e`](https://github.com/fabio2152/lab4/commit/8bc058e) · Evidencia: [ciclo-4-refactor.txt](evidencias/ciclo-4-refactor.txt)
+- Commit: [`8bc058e`](https://github.com/fabio2152/qruta/commit/8bc058e) · Evidencia: [ciclo-4-refactor.txt](evidencias/ciclo-4-refactor.txt)
 
 ---
 
@@ -778,12 +791,12 @@ public boolean esVisiblePara(Usuario usuario) {
 - `servicio.cambiarEstado(id, EN_TRANSITO, intermediario)`: el producto debe quedar EN_TRANSITO con hora de inicio igual a la del reloj del servicio (08:00).
 - Esqueleto: `cambiarEstado(idProducto, nuevoEstado, usuario)` vacío.
 - **Qué falló:** `expected: EN_TRANSITO but was: EN_ORIGEN`.
-- Commit: [`002de72`](https://github.com/fabio2152/lab4/commit/002de72) · Evidencia: [ciclo-5-T13-red.txt](evidencias/ciclo-5-T13-red.txt)
+- Commit: [`002de72`](https://github.com/fabio2152/qruta/commit/002de72) · Evidencia: [ciclo-5-T13-red.txt](evidencias/ciclo-5-T13-red.txt)
 
 **🟢 GREEN**
 
 - **Código mínimo:** el servicio guarda el `Clock` que recibía desde T09, busca el producto y delega en `producto.cambiarEstado(nuevoEstado, usuario, reloj)`. Todas las reglas del dominio (ciclos 1 a 3) se reutilizan sin duplicarlas.
-- Commit: [`0f3c69b`](https://github.com/fabio2152/lab4/commit/0f3c69b) · Evidencia: [ciclo-5-T13-green.txt](evidencias/ciclo-5-T13-green.txt)
+- Commit: [`0f3c69b`](https://github.com/fabio2152/qruta/commit/0f3c69b) · Evidencia: [ciclo-5-T13-green.txt](evidencias/ciclo-5-T13-green.txt)
 
 ### T14 – Cambiar el estado de un producto inexistente se rechaza
 
@@ -792,12 +805,12 @@ public boolean esVisiblePara(Usuario usuario) {
 - Se espera `ProductoNoEncontradoException` con *"No existe un producto con id 99"*.
 - Esqueleto: clase vacía `ProductoNoEncontradoException`.
 - **Qué falló:** se lanzaba un `NullPointerException` (el GREEN de T13 usaba `orElse(null)`).
-- Commit: [`238ed3e`](https://github.com/fabio2152/lab4/commit/238ed3e) · Evidencia: [ciclo-5-T14-red.txt](evidencias/ciclo-5-T14-red.txt)
+- Commit: [`238ed3e`](https://github.com/fabio2152/qruta/commit/238ed3e) · Evidencia: [ciclo-5-T14-red.txt](evidencias/ciclo-5-T14-red.txt)
 
 **🟢 GREEN**
 
 - **Código mínimo:** `orElseThrow(...)` con la excepción propia y su mensaje.
-- Commit: [`50edcd4`](https://github.com/fabio2152/lab4/commit/50edcd4) · Evidencia: [ciclo-5-T14-green.txt](evidencias/ciclo-5-T14-green.txt)
+- Commit: [`50edcd4`](https://github.com/fabio2152/qruta/commit/50edcd4) · Evidencia: [ciclo-5-T14-green.txt](evidencias/ciclo-5-T14-green.txt)
 
 ### T15 – Tras dos cambios, el historial tiene dos registros (RE-09)
 
@@ -813,12 +826,12 @@ Entonces hay dos registros, en orden:
 
 - Esqueletos: el `record CambioEstado(estadoAnterior, estadoNuevo, fechaHora, usuario)` y `obtenerHistorial` que devuelve `null`.
 - **Qué falló:** `Expecting actual not to be null`.
-- Commit: [`7c9d445`](https://github.com/fabio2152/lab4/commit/7c9d445) · Evidencia: [ciclo-5-T15-red.txt](evidencias/ciclo-5-T15-red.txt)
+- Commit: [`7c9d445`](https://github.com/fabio2152/qruta/commit/7c9d445) · Evidencia: [ciclo-5-T15-red.txt](evidencias/ciclo-5-T15-red.txt)
 
 **🟢 GREEN**
 
 - **Código mínimo:** `Producto` agrega un `CambioEstado` a su historial en cada cambio válido (después de las validaciones, así un intento rechazado no queda registrado) y lo expone con `getHistorial()`; el servicio lo devuelve.
-- Commit: [`06169b8`](https://github.com/fabio2152/lab4/commit/06169b8) · Evidencia: [ciclo-5-T15-green.txt](evidencias/ciclo-5-T15-green.txt)
+- Commit: [`06169b8`](https://github.com/fabio2152/qruta/commit/06169b8) · Evidencia: [ciclo-5-T15-green.txt](evidencias/ciclo-5-T15-green.txt)
 
 ### 🔵 REFACTOR del ciclo 5
 
@@ -851,7 +864,7 @@ private Producto buscarProductoExistente(Long idProducto) {
 ```
 
 - Resultado: `Tests run: 15, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commit: [`c72044d`](https://github.com/fabio2152/lab4/commit/c72044d) · Evidencia: [ciclo-5-refactor.txt](evidencias/ciclo-5-refactor.txt)
+- Commit: [`c72044d`](https://github.com/fabio2152/qruta/commit/c72044d) · Evidencia: [ciclo-5-refactor.txt](evidencias/ciclo-5-refactor.txt)
 
 ---
 
@@ -869,12 +882,12 @@ private Producto buscarProductoExistente(Long idProducto) {
 
 - Esqueletos: `LoginService` (`iniciarSesion` devuelve `null`), `UsuarioRepositorioEnMemoria` con `guardar` vacío, y un constructor `Usuario(nombreUsuario, contrasena, rol)` que delega en el existente (las pruebas del dominio no se tocaron).
 - **Qué falló:** `Expecting actual: null` — se esperaba el mismo objeto `productor1`.
-- Commit: [`4cff306`](https://github.com/fabio2152/lab4/commit/4cff306) · Evidencia: [ciclo-6-T16-red.txt](evidencias/ciclo-6-T16-red.txt)
+- Commit: [`4cff306`](https://github.com/fabio2152/qruta/commit/4cff306) · Evidencia: [ciclo-6-T16-red.txt](evidencias/ciclo-6-T16-red.txt)
 
 **🟢 GREEN**
 
 - **Código mínimo:** `Usuario` guarda su `nombreUsuario`; el repositorio busca por nombre; el login devuelve el usuario encontrado. **Todavía no revisa la contraseña**: ninguna prueba lo exigía.
-- Commit: [`6b4187a`](https://github.com/fabio2152/lab4/commit/6b4187a) · Evidencia: [ciclo-6-T16-green.txt](evidencias/ciclo-6-T16-green.txt)
+- Commit: [`6b4187a`](https://github.com/fabio2152/qruta/commit/6b4187a) · Evidencia: [ciclo-6-T16-green.txt](evidencias/ciclo-6-T16-green.txt)
 
 ### T17 – Una contraseña incorrecta se rechaza
 
@@ -882,7 +895,7 @@ private Producto buscarProductoExistente(Long idProducto) {
 
 - Se espera `CredencialesInvalidasException` con *"Usuario o contraseña incorrectos"*.
 - **Qué falló:** `Expecting code to raise a throwable.` — el atajo de T16 aceptaba cualquier contraseña.
-- Commit: [`75eb7cd`](https://github.com/fabio2152/lab4/commit/75eb7cd) · Evidencia: [ciclo-6-T17-red.txt](evidencias/ciclo-6-T17-red.txt)
+- Commit: [`75eb7cd`](https://github.com/fabio2152/qruta/commit/75eb7cd) · Evidencia: [ciclo-6-T17-red.txt](evidencias/ciclo-6-T17-red.txt)
 
 **🟢 GREEN**
 
@@ -899,13 +912,13 @@ return usuarios
         );
 ```
 
-- Commit: [`162c9c8`](https://github.com/fabio2152/lab4/commit/162c9c8) · Evidencia: [ciclo-6-T17-green.txt](evidencias/ciclo-6-T17-green.txt)
+- Commit: [`162c9c8`](https://github.com/fabio2152/qruta/commit/162c9c8) · Evidencia: [ciclo-6-T17-green.txt](evidencias/ciclo-6-T17-green.txt)
 
 ### 🔵 REFACTOR del ciclo 6
 
 **Qué se mejoró y por qué:** `Usuario` tenía la delegación al revés (el constructor completo llamaba al corto y luego asignaba la contraseña), lo que obligaba a que `contrasena` no fuera `final`. Ahora el constructor completo asigna los tres campos, el corto delega en él con `this(nombreUsuario, null, rol)`, y todos los campos son `final`.
 
-**Nota sobre los commits:** el primer commit de refactor ([`4176317`](https://github.com/fabio2152/lab4/commit/4176317)) subió por error solo la evidencia, sin el cambio de código. Como las reglas del proyecto prohíben reescribir el historial (`amend`, `rebase`, `push --force`), se corrigió con un segundo commit ([`573bb78`](https://github.com/fabio2152/lab4/commit/573bb78)) que contiene el cambio real. Ambos quedan visibles en el historial.
+**Nota sobre los commits:** el primer commit de refactor ([`4176317`](https://github.com/fabio2152/qruta/commit/4176317)) subió por error solo la evidencia, sin el cambio de código. Como las reglas del proyecto prohíben reescribir el historial (`amend`, `rebase`, `push --force`), se corrigió con un segundo commit ([`573bb78`](https://github.com/fabio2152/qruta/commit/573bb78)) que contiene el cambio real. Ambos quedan visibles en el historial.
 
 **Código antes:**
 
@@ -944,7 +957,7 @@ public Usuario(String nombreUsuario, String contrasena, Rol rol) {
 ```
 
 - Resultado: `Tests run: 17, Failures: 0, Errors: 0` – BUILD SUCCESS.
-- Commits: [`4176317`](https://github.com/fabio2152/lab4/commit/4176317) (solo evidencia) y [`573bb78`](https://github.com/fabio2152/lab4/commit/573bb78) (cambio de código) · Evidencia: [ciclo-6-refactor.txt](evidencias/ciclo-6-refactor.txt)
+- Commits: [`4176317`](https://github.com/fabio2152/qruta/commit/4176317) (solo evidencia) y [`573bb78`](https://github.com/fabio2152/qruta/commit/573bb78) (cambio de código) · Evidencia: [ciclo-6-refactor.txt](evidencias/ciclo-6-refactor.txt)
 
 ### Decisiones de diseño y aprendizajes de los ciclos 4 a 6
 
@@ -962,37 +975,158 @@ public Usuario(String nombreUsuario, String contrasena, Rol rol) {
 **Reglas que se abordan:** RE-04, RE-08, RE-09, RE-10 (mantenerlas cuando los datos vienen de una base de datos)
 **Tipo de casos:** Normales
 
-**Motivación:** al guardar los datos en PostgreSQL, cada lectura crea objetos nuevos. Un `Usuario` leído de la base ya no es *el mismo objeto* que el asignado al producto, y un `Producto` leído tiene que reconstruirse con su estado, horas e historial. Antes del ciclo se hizo un refactor preparatorio: `ProductoRepositorio` y `UsuarioRepositorio` pasaron a ser interfaces ([`f09ff22`](https://github.com/fabio2152/lab4/commit/f09ff22)), así las pruebas siguen usando la versión en memoria.
+**Motivación:** al guardar los datos en PostgreSQL, cada lectura crea objetos nuevos. Un `Usuario` leído de la base ya no es *el mismo objeto* que el asignado al producto, y un `Producto` leído tiene que reconstruirse con su estado, horas e historial. Antes del ciclo se hizo un refactor preparatorio: `ProductoRepositorio` y `UsuarioRepositorio` pasaron a ser interfaces ([`f09ff22`](https://github.com/fabio2152/qruta/commit/f09ff22)), así las pruebas siguen usando la versión en memoria.
 
 ### T18 – El intermediario asignado leído de nuevo puede cambiar el estado (RE-04)
 
-- **🔴 RED** – `ProductoTest#elIntermediarioAsignadoLeidoDeNuevoPuedeCambiarElEstado`: se pasa otra instancia de `intermediario1`. **Falló** con `OperacionNoAutorizadaException: El usuario no está asignado a este producto`, porque se comparaba con `!=` (referencia). Commit [`ca5002b`](https://github.com/fabio2152/lab4/commit/ca5002b) · [ciclo-7-T18-red.txt](evidencias/ciclo-7-T18-red.txt)
-- **🟢 GREEN** – `Usuario` define `equals`/`hashCode` por `nombreUsuario` y `validarPermiso` usa `equals`. Commit [`dd0851c`](https://github.com/fabio2152/lab4/commit/dd0851c) · [ciclo-7-T18-green.txt](evidencias/ciclo-7-T18-green.txt)
+- **🔴 RED** – `ProductoTest#elIntermediarioAsignadoLeidoDeNuevoPuedeCambiarElEstado`: se pasa otra instancia de `intermediario1`. **Falló** con `OperacionNoAutorizadaException: El usuario no está asignado a este producto`, porque se comparaba con `!=` (referencia). Commit [`ca5002b`](https://github.com/fabio2152/qruta/commit/ca5002b) · [ciclo-7-T18-red.txt](evidencias/ciclo-7-T18-red.txt)
+- **🟢 GREEN** – `Usuario` define `equals`/`hashCode` por `nombreUsuario` y `validarPermiso` usa `equals`. Commit [`dd0851c`](https://github.com/fabio2152/qruta/commit/dd0851c) · [ciclo-7-T18-green.txt](evidencias/ciclo-7-T18-green.txt)
 
 ### T19 – El intermediario ve sus productos aunque el usuario sea otra instancia (RE-10)
 
-- **🔴 RED** – `ProductoServiceTest#elIntermediarioVeSusProductosAunqueElUsuarioSeaOtraInstancia`. **Falló**: `Expecting actual: []` (el filtro de visibilidad comparaba con `==`). Commit [`612e011`](https://github.com/fabio2152/lab4/commit/612e011) · [ciclo-7-T19-red.txt](evidencias/ciclo-7-T19-red.txt)
-- **🟢 GREEN** – `esVisiblePara` usa `equals` en el caso INTERMEDIARIO. Commit [`d7d1eb8`](https://github.com/fabio2152/lab4/commit/d7d1eb8) · [ciclo-7-T19-green.txt](evidencias/ciclo-7-T19-green.txt)
+- **🔴 RED** – `ProductoServiceTest#elIntermediarioVeSusProductosAunqueElUsuarioSeaOtraInstancia`. **Falló**: `Expecting actual: []` (el filtro de visibilidad comparaba con `==`). Commit [`612e011`](https://github.com/fabio2152/qruta/commit/612e011) · [ciclo-7-T19-red.txt](evidencias/ciclo-7-T19-red.txt)
+- **🟢 GREEN** – `esVisiblePara` usa `equals` en el caso INTERMEDIARIO. Commit [`d7d1eb8`](https://github.com/fabio2152/qruta/commit/d7d1eb8) · [ciclo-7-T19-green.txt](evidencias/ciclo-7-T19-green.txt)
 
 ### T20 – Un producto reconstruido en EN_TRANSITO calcula la duración al llegar (RE-08)
 
-- **🔴 RED** – `ProductoTest#unProductoReconstruidoEnTransitoCalculaLaDuracionAlLlegar`. Esqueleto: `Producto.reconstruir(...)` que devolvía un producto nuevo. **Falló**: `expected: EN_TRANSITO but was: EN_ORIGEN`. Commit [`257bf81`](https://github.com/fabio2152/lab4/commit/257bf81) · [ciclo-7-T20-red.txt](evidencias/ciclo-7-T20-red.txt)
-- **🟢 GREEN** – `reconstruir` restaura id, estado, horas e historial. Después, las reglas del dominio siguen funcionando: pasa a EN_DESTINO y la duración es 6 h 30 min. Commit [`5537cbc`](https://github.com/fabio2152/lab4/commit/5537cbc) · [ciclo-7-T20-green.txt](evidencias/ciclo-7-T20-green.txt)
+- **🔴 RED** – `ProductoTest#unProductoReconstruidoEnTransitoCalculaLaDuracionAlLlegar`. Esqueleto: `Producto.reconstruir(...)` que devolvía un producto nuevo. **Falló**: `expected: EN_TRANSITO but was: EN_ORIGEN`. Commit [`257bf81`](https://github.com/fabio2152/qruta/commit/257bf81) · [ciclo-7-T20-red.txt](evidencias/ciclo-7-T20-red.txt)
+- **🟢 GREEN** – `reconstruir` restaura id, estado, horas e historial. Después, las reglas del dominio siguen funcionando: pasa a EN_DESTINO y la duración es 6 h 30 min. Commit [`5537cbc`](https://github.com/fabio2152/qruta/commit/5537cbc) · [ciclo-7-T20-green.txt](evidencias/ciclo-7-T20-green.txt)
 
 ### T21 – Cambiar el estado guarda el producto actualizado (RE-09)
 
-- **🔴 RED** – `ProductoServiceTest#cambiarElEstadoGuardaElProductoActualizadoEnElRepositorio`, con un repositorio de prueba que cuenta los `guardar`. **Falló**: `expected: 2 but was: 1` (en memoria no hacía falta volver a guardar; con una base de datos el cambio se perdería). Commit [`f54e713`](https://github.com/fabio2152/lab4/commit/f54e713) · [ciclo-7-T21-red.txt](evidencias/ciclo-7-T21-red.txt)
-- **🟢 GREEN** – el servicio llama a `repositorio.guardar(producto)` después de `cambiarEstado`, y el repositorio en memoria no duplica un producto que ya tiene id. Commit [`4516ad2`](https://github.com/fabio2152/lab4/commit/4516ad2) · [ciclo-7-T21-green.txt](evidencias/ciclo-7-T21-green.txt)
+- **🔴 RED** – `ProductoServiceTest#cambiarElEstadoGuardaElProductoActualizadoEnElRepositorio`, con un repositorio de prueba que cuenta los `guardar`. **Falló**: `expected: 2 but was: 1` (en memoria no hacía falta volver a guardar; con una base de datos el cambio se perdería). Commit [`f54e713`](https://github.com/fabio2152/qruta/commit/f54e713) · [ciclo-7-T21-red.txt](evidencias/ciclo-7-T21-red.txt)
+- **🟢 GREEN** – el servicio llama a `repositorio.guardar(producto)` después de `cambiarEstado`, y el repositorio en memoria no duplica un producto que ya tiene id. Commit [`4516ad2`](https://github.com/fabio2152/qruta/commit/4516ad2) · [ciclo-7-T21-green.txt](evidencias/ciclo-7-T21-green.txt)
 
 ### 🔵 REFACTOR del ciclo 7
 
-El caso PRODUCTOR de `esVisiblePara` todavía comparaba con `==`. Se cambió a `equals`, así el dominio **nunca** compara usuarios por referencia. Resultado: `Tests run: 21, Failures: 0, Errors: 0`. Commit [`8d8281f`](https://github.com/fabio2152/lab4/commit/8d8281f) · [ciclo-7-refactor.txt](evidencias/ciclo-7-refactor.txt)
+El caso PRODUCTOR de `esVisiblePara` todavía comparaba con `==`. Se cambió a `equals`, así el dominio **nunca** compara usuarios por referencia. Resultado: `Tests run: 21, Failures: 0, Errors: 0`. Commit [`8d8281f`](https://github.com/fabio2152/qruta/commit/8d8281f) · [ciclo-7-refactor.txt](evidencias/ciclo-7-refactor.txt)
 
 ### Decisiones de diseño del ciclo 7
 
 - **El dominio sigue sin Spring ni JPA:** las anotaciones de base de datos están en clases aparte (`ProductoEntidad`, `UsuarioEntidad`, `CambioEstadoEntidad`, paquete `repositorio.jpa`), que traducen hacia y desde el dominio con `Producto.reconstruir(...)`.
 - **Inversión de dependencias:** el servicio depende de las interfaces `ProductoRepositorio` y `UsuarioRepositorio`. Las pruebas usan la implementación en memoria y la aplicación usa la de PostgreSQL, sin cambiar el servicio.
 - **Las pruebas no necesitan la base de datos:** siguen corriendo en milisegundos y en GitHub Actions sin Docker.
+
+---
+
+## Ciclo 8 – Cuentas y sesión (fase 2)
+
+**Fecha:** 2026-10-14
+**Responsables:** Fabio Ezequiel Malpartida Lema, Piero Anghelo Pittman Tolentino
+**Reglas que se abordan:** RE-11, RE-12, RE-13, RE-14, RE-15, RE-16, RE-17
+**Tipo de casos:** Normales (T22, T24, T30), límite (T23, T27, T32) y de error (T25, T26, T28, T29, T31)
+
+**Motivación:** en la fase 1 los usuarios eran de prueba y sin contraseña cifrada. La plataforma ahora necesita que productores, transportistas y mercados se registren solos, que alguien con autoridad los apruebe y que cada sesión tenga un token con vencimiento.
+
+**Cómo se respetaron T01–T21 sin modificarlas:**
+- Los constructores actuales de `Usuario` siguen existiendo y crean cuentas ACTIVAS (decisión D-05).
+- `LoginService` conserva su constructor de un solo parámetro, que compara la contraseña tal cual, como esperan T16 y T17. La aplicación real usa el constructor que recibe el cifrador BCrypt.
+
+### T22 – Un productor se registra y queda PENDIENTE (RE-13, RE-15)
+
+- **🔴 RED** – `RegistroServiceTest#unProductorSeRegistraConUnaContrasenaDeOchoCaracteresYQuedaPendiente`.
+  - Esqueletos: `RegistroService.registrar` que devolvía `null`, `SolicitudRegistro`, los enums `EstadoCuenta`, `TipoCuenta`, `TipoDocumento` y `TipoProductor`, y `Productor`.
+  - **Falló:** `Expecting actual not to be null`.
+  - Commit [`6a6c01f`](https://github.com/fabio2152/qruta/commit/6a6c01f) · [ciclo-8-T22-red.txt](evidencias/ciclo-8-T22-red.txt)
+- **🟢 GREEN** – `Usuario` gana `nombreCompleto`, `correo` y `estadoCuenta`. `Productor` guarda sus datos y `registrar` crea al productor PENDIENTE y lo guarda. Commit [`a69c12e`](https://github.com/fabio2152/qruta/commit/a69c12e) · [ciclo-8-T22-green.txt](evidencias/ciclo-8-T22-green.txt)
+
+### T23 – Una contraseña de 7 caracteres se rechaza (RE-13, límite)
+
+- **🔴 RED** – `unRegistroConUnaContrasenaDeSieteCaracteresSeRechaza`. Esqueleto: `DatoInvalidoException`. **Falló:** `Expecting code to raise a throwable`. Commit [`32bf005`](https://github.com/fabio2152/qruta/commit/32bf005) · [ciclo-8-T23-red.txt](evidencias/ciclo-8-T23-red.txt)
+- **🟢 GREEN** – si la contraseña tiene menos de 8 caracteres se lanza `DatoInvalidoException`. T22 (8 caracteres) sigue pasando: el límite queda probado por los dos lados. Commit [`95c7407`](https://github.com/fabio2152/qruta/commit/95c7407) · [ciclo-8-T23-green.txt](evidencias/ciclo-8-T23-green.txt)
+
+### T24 – La contraseña se guarda cifrada y se puede verificar (RE-13)
+
+- **🔴 RED** – `laContrasenaSeGuardaCifradaYSePuedeVerificar`.
+  - Esqueletos: la interfaz `CifradorDeContrasenas` (dominio, Java puro) y `CifradorBCrypt` vacío.
+  - **Falló:** `Expecting actual: "clave123" not to be equal to: "clave123"`.
+  - Commit [`00f106d`](https://github.com/fabio2152/qruta/commit/00f106d) · [ciclo-8-T24-red.txt](evidencias/ciclo-8-T24-red.txt)
+- **🟢 GREEN** – se agrega la dependencia `spring-security-crypto`. `CifradorBCrypt` usa `BCryptPasswordEncoder` y `registrar` guarda `cifrador.cifrar(contrasena)`. El constructor simple de `RegistroService` usa `CifradorTextoPlano`. Commit [`77ea0a6`](https://github.com/fabio2152/qruta/commit/77ea0a6) · [ciclo-8-T24-green.txt](evidencias/ciclo-8-T24-green.txt)
+
+### T25 – Un nombre de usuario repetido se rechaza (RE-12)
+
+- **🔴 RED** – `unRegistroConUnNombreDeUsuarioYaExistenteSeRechaza`. Esqueleto: `UsuarioYaExisteException`. **Falló:** `Expecting code to raise a throwable`. Commit [`deb48b7`](https://github.com/fabio2152/qruta/commit/deb48b7) · [ciclo-8-T25-red.txt](evidencias/ciclo-8-T25-red.txt)
+- **🟢 GREEN** – antes de crear la cuenta se busca el nombre de usuario en el repositorio. Commit [`deb3b9a`](https://github.com/fabio2152/qruta/commit/deb3b9a) · [ciclo-8-T25-green.txt](evidencias/ciclo-8-T25-green.txt)
+
+### T26 – Un correo sin formato válido se rechaza (RE-12)
+
+- **🔴 RED** – `unRegistroConUnCorreoSinFormatoValidoSeRechaza` con `rosa.quispe.correo.pe`. **Falló:** `Expecting code to raise a throwable`. Commit [`b5f73a5`](https://github.com/fabio2152/qruta/commit/b5f73a5) · [ciclo-8-T26-red.txt](evidencias/ciclo-8-T26-red.txt)
+- **🟢 GREEN** – el correo debe cumplir el patrón `texto@texto.texto`. Commit [`8727c8d`](https://github.com/fabio2152/qruta/commit/8727c8d) · [ciclo-8-T26-green.txt](evidencias/ciclo-8-T26-green.txt)
+
+### T27 – Un transportista con RUC de 10 dígitos se rechaza (RE-14, límite)
+
+- **🔴 RED** – `unTransportistaConUnRucDeDiezDigitosSeRechaza` con `2060123456`. **Falló:** `Expecting code to raise a throwable`. Commit [`59d4d8a`](https://github.com/fabio2152/qruta/commit/59d4d8a) · [ciclo-8-T27-red.txt](evidencias/ciclo-8-T27-red.txt)
+- **🟢 GREEN** – si el documento es RUC, debe tener exactamente 11 dígitos. Commit [`b29a8c3`](https://github.com/fabio2152/qruta/commit/b29a8c3) · [ciclo-8-T27-green.txt](evidencias/ciclo-8-T27-green.txt)
+
+### T28 – El registro público no admite reguladores (RE-11)
+
+- **🔴 RED** – `unRegistroPublicoConRolDeReguladorSeRechaza`. **Falló:** `Expecting code to raise a throwable`. Commit [`d74e744`](https://github.com/fabio2152/qruta/commit/d74e744) · [ciclo-8-T28-red.txt](evidencias/ciclo-8-T28-red.txt)
+- **🟢 GREEN** – una solicitud con `TipoCuenta.REGULADOR` lanza `OperacionNoAutorizadaException`. Commit [`ebb8450`](https://github.com/fabio2152/qruta/commit/ebb8450) · [ciclo-8-T28-green.txt](evidencias/ciclo-8-T28-green.txt)
+
+### T29 – Una cuenta PENDIENTE no puede iniciar sesión (RE-16)
+
+- **🔴 RED** – `LoginServiceTest#unaCuentaPendienteNoPuedeIniciarSesion`. La prueba arma su propio repositorio, sin tocar la preparación de T16 y T17. Esqueleto: `CuentaNoActivaException`. **Falló:** `Expecting code to raise a throwable`. Commit [`298015c`](https://github.com/fabio2152/qruta/commit/298015c) · [ciclo-8-T29-red.txt](evidencias/ciclo-8-T29-red.txt)
+- **🟢 GREEN** – después de verificar la contraseña, `LoginService` rechaza toda cuenta que no esté ACTIVA y explica el motivo: "pendiente de aprobación" o "suspendida". Commit [`4bbb098`](https://github.com/fabio2152/qruta/commit/4bbb098) · [ciclo-8-T29-green.txt](evidencias/ciclo-8-T29-green.txt)
+
+### T30 – El regulador aprueba al productor y ya puede iniciar sesión (RE-15)
+
+- **🔴 RED** – `elReguladorApruebaAlProductorYYaPuedeIniciarSesion`. Usa BCrypt de punta a punta: registro cifrado y login que verifica con el mismo cifrador. Esqueletos: `RegistroService.aprobar` vacío y el constructor `LoginService(usuarios, cifrador)`. **Falló:** `expected: ACTIVA but was: PENDIENTE`. Commit [`3f22d71`](https://github.com/fabio2152/qruta/commit/3f22d71) · [ciclo-8-T30-red.txt](evidencias/ciclo-8-T30-red.txt)
+- **🟢 GREEN** – Commit [`b5743fc`](https://github.com/fabio2152/qruta/commit/b5743fc) · [ciclo-8-T30-green.txt](evidencias/ciclo-8-T30-green.txt)
+  - `Usuario.activar()`.
+  - `aprobar` busca la cuenta, la activa y la vuelve a guardar.
+  - `LoginService` compara con `cifrador.coincide(...)`.
+  - El repositorio en memoria reemplaza a un usuario que ya existe en lugar de duplicarlo.
+
+### T31 – El regulador no puede aprobar un mercado (RE-15)
+
+- **🔴 RED** – `elReguladorIntentaAprobarUnMercadoYSeRechaza`. **Falló:** `Expecting code to raise a throwable`, porque el mercado se registraba como si fuera un productor. Commit [`fc4f88a`](https://github.com/fabio2152/qruta/commit/fc4f88a) · [ciclo-8-T31-red.txt](evidencias/ciclo-8-T31-red.txt)
+- **🟢 GREEN** – nace `Mercado`, con rol INTERMEDIARIO (D-02). `registrar` lo crea cuando la cuenta es de mercado, y `aprobar` rechaza que un regulador apruebe un mercado. Commit [`a4f2962`](https://github.com/fabio2152/qruta/commit/a4f2962) · [ciclo-8-T31-green.txt](evidencias/ciclo-8-T31-green.txt)
+
+### T32 – El token vence a las 8 horas (RE-17, límite)
+
+- **🔴 RED** – `SesionServiceTest#unTokenEmitidoALasOchoEsValidoALas1559YSeRechazaALas1600`. Usa un `RelojAjustable`, un `Clock` de prueba al que se le cambia la hora. Esqueletos: `SesionService` (`iniciar` y `validar` devolvían `null`) y `SesionInvalidaException`. **Falló:** `expected: Usuario@… but was: null`. Commit [`aaef3f2`](https://github.com/fabio2152/qruta/commit/aaef3f2) · [ciclo-8-T32-red.txt](evidencias/ciclo-8-T32-red.txt)
+- **🟢 GREEN** – Commit [`1db4235`](https://github.com/fabio2152/qruta/commit/1db4235) · [ciclo-8-T32-green.txt](evidencias/ciclo-8-T32-green.txt)
+  - `iniciar` genera un UUID y guarda el usuario con la hora de emisión, tomada del reloj inyectado.
+  - `validar` rechaza el token cuando `ahora` ya no es anterior a `emitida + 8 h`. Así las 15:59 pasan y las 16:00 no.
+
+### 🔵 REFACTOR del ciclo 8
+
+**Qué se mejoró y por qué:**
+- `registrar` había crecido con cinco validaciones y la creación de la cuenta en un solo método.
+- Las validaciones de formato pasan a `ValidadorDeFormato` (dominio), como sugiere la especificación. Se pueden reutilizar en otros registros, por ejemplo el del regulador del ciclo 14.
+- `registrar` queda en tres pasos: `validar`, `crearCuenta` y `guardar`.
+- Los números 8 (largo de la contraseña y horas de validez) pasan a constantes con nombre.
+- Se elimina `Usuario.tieneContrasena`, que quedó sin uso cuando el login empezó a verificar con el cifrador.
+
+**Código antes:**
+
+```java
+if (!solicitud.getCorreo().matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) { ... }
+if (solicitud.getTipoDocumento() == TipoDocumento.RUC
+        && !solicitud.getNumeroDocumento().matches("\\d{11}")) { ... }
+// ... y la creación del Productor o del Mercado en el mismo método
+```
+
+**Código después:**
+
+```java
+public Usuario registrar(SolicitudRegistro solicitud) {
+    validar(solicitud);
+    Usuario nuevo = crearCuenta(solicitud);
+    usuarios.guardar(nuevo);
+    return nuevo;
+}
+// validar(...) usa ValidadorDeFormato.esCorreoValido(...) y esRucValido(...)
+```
+
+- Resultado: `Tests run: 32, Failures: 0, Errors: 0`. Commit [`404bb0a`](https://github.com/fabio2152/qruta/commit/404bb0a) · [ciclo-8-refactor.txt](evidencias/ciclo-8-refactor.txt)
+
+### Decisiones de diseño del ciclo 8
+
+- **El dominio no depende de BCrypt.** Solo conoce la interfaz `CifradorDeContrasenas`; `CifradorBCrypt` vive en `configuracion`. Es inversión de dependencias, como con los repositorios del ciclo 7.
+- **Herencia para los datos y rol para los permisos (D-02).** `Productor` y `Mercado` heredan de `Usuario`. El mercado tiene rol INTERMEDIARIO, pero la regla de aprobación pregunta por su clase (`instanceof Mercado`).
+- **Sesiones en memoria.** Un token es un UUID guardado en `SesionService`, con la hora tomada del `Clock` inyectado. Si la aplicación se reinicia, hay que volver a iniciar sesión, lo que es aceptable para este alcance.
+- **Cobertura del dominio y los servicios al cerrar el ciclo:** 282 de 301 líneas (93,7 %).
 
 ---
 
