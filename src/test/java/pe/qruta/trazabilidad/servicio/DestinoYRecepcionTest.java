@@ -185,6 +185,21 @@ class DestinoYRecepcionTest {
     }
 
 
+    @Test
+    void unaRecepcionConOchentaYCincoGradosSeRechazaPorLecturaInvalida() {
+
+        // Dado
+        Producto palta = paltaEnDestino();
+
+        // Cuando / Entonces
+        assertThatThrownBy(() ->
+            recepcion.registrarRecepcion(palta.getId(), mercado, new BigDecimal("85"), new BigDecimal("85"))
+        )
+            .isInstanceOf(DatoInvalidoException.class)
+            .hasMessage("Lectura inválida del instrumento: la temperatura debe estar entre -40 °C y 60 °C");
+    }
+
+
     /** Palta aceptada, con destino mercado1, que viajó de 08:00 a 14:00 y está EN_DESTINO. */
     private Producto paltaEnDestino() {
 
