@@ -291,6 +291,21 @@ class RegulacionTest {
     }
 
 
+    @Test
+    void elProductorIntentaPublicarUnProductoBloqueadoYSeRechaza() {
+
+        // Dado
+        Producto pollo = servicio.crearProducto(datosDePollo(), productor);
+
+        regulacion.bloquear(pollo.getId(), regulador, "Sospecha de contaminación");
+
+        // Cuando / Entonces
+        assertThatThrownBy(() -> servicio.publicar(pollo.getId(), productor))
+            .isInstanceOf(CambioDeEstadoNoPermitidoException.class)
+            .hasMessage("Solo se publica un producto EN_ORIGEN y sin transportista");
+    }
+
+
     /** Pollo creado y publicado, todavía sin transportista. */
     private Producto polloPublicado() {
 
