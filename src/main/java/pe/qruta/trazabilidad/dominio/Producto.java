@@ -279,6 +279,12 @@ public class Producto {
             );
         }
 
+        if (!mediciones.isEmpty()) {
+            throw new CambioDeEstadoNoPermitidoException(
+                "La recepción del producto ya fue registrada"
+            );
+        }
+
         mediciones.add(medicion);
     }
 
