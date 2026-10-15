@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import pe.qruta.trazabilidad.dominio.cuenta.EstadoCuenta;
 import pe.qruta.trazabilidad.dominio.cuenta.PuntoDeRecepcion;
 import pe.qruta.trazabilidad.dominio.cuenta.Transportista;
 import pe.qruta.trazabilidad.dominio.evaluacion.Medicion;
@@ -226,8 +227,37 @@ public class Producto {
     }
 
 
-    public void asignarDestino(PuntoDeRecepcion destino) {
-        this.destino = destino;
+    /** RE-24 y RE-25: el transportista asignado elige, antes de llegar, un destino activo que necesite el producto. */
+    public void elegirDestino(
+            Usuario quienElige,
+            PuntoDeRecepcion nuevoDestino
+    ) {
+
+        if (!quienElige.equals(intermediarioAsignado)) {
+            throw new OperacionNoAutorizadaException(
+                "Solo el transportista asignado elige el destino"
+            );
+        }
+
+        if (estado != EstadoProducto.EN_ORIGEN && estado != EstadoProducto.EN_TRANSITO) {
+            throw new CambioDeEstadoNoPermitidoException(
+                "El destino solo se elige mientras el producto está EN_ORIGEN o EN_TRANSITO"
+            );
+        }
+
+        if (nuevoDestino.getEstadoCuenta() != EstadoCuenta.ACTIVA) {
+            throw new DatoInvalidoException(
+                nuevoDestino.getRazonSocial() + " no tiene la cuenta activa"
+            );
+        }
+
+        if (!nuevoDestino.necesita(tipoProducto)) {
+            throw new DatoInvalidoException(
+                nuevoDestino.getRazonSocial() + " no necesita " + tipoProducto
+            );
+        }
+
+        this.destino = nuevoDestino;
     }
 
 
