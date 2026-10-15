@@ -104,7 +104,7 @@ Prioridad: **M** = imprescindible para el sábado, **S** = importante si hay tie
 
 ### 3.2 Requisitos no funcionales
 
-- **RNF-01, disponibilidad.** La plataforma está desplegada y accesible por internet mediante HTTPS durante la demostración.
+- **RNF-01, disponibilidad.** La plataforma está desplegada y accesible por internet mediante HTTPS durante la demostración. *(Posterior al avance del sábado: ver la sección 13.)*
 - **RNF-02, seguridad.** Las contraseñas se guardan cifradas con BCrypt, nunca se devuelven en ninguna respuesta, y las operaciones protegidas exigen una sesión válida.
 - **RNF-03, privacidad.** La consulta pública nunca expone correos, documentos de identidad, teléfonos ni contraseñas.
 - **RNF-04, integridad.** El historial no se modifica: las correcciones se registran como eventos nuevos.
@@ -599,7 +599,7 @@ Una funcionalidad está terminada cuando:
 1. Todas sus pruebas pasaron por RED y GREEN, con sus commits.
 2. Las 21 pruebas originales y todas las nuevas siguen en verde.
 3. Tiene su endpoint y su pantalla en la interfaz web.
-4. Funciona en la versión desplegada, no solo en la computadora local.
+4. Funciona ejecutando la aplicación localmente (PostgreSQL en Docker y `./mvnw spring-boot:run`). El despliegue queda para después del avance del sábado (decisión del 14/10/2026, sección 13).
 5. Está registrada en la bitácora y en el README.
 
 ---
@@ -610,7 +610,6 @@ El orden respeta la prioridad: si el tiempo no alcanza, lo que queda fuera es lo
 
 **Día 1**
 
-- Desplegar **primero lo que ya existe**, para descubrir los problemas de despliegue cuando todavía hay tiempo (sección 13).
 - Ciclo 8: cuentas y sesión.
 - Ciclo 9: creación, publicación y aceptación.
 
@@ -625,7 +624,7 @@ El orden respeta la prioridad: si el tiempo no alcanza, lo que queda fuera es lo
 - Ciclo 12: regulación (el CSV, si hay tiempo).
 - Ciclo 13: consulta pública con código QR.
 - Pantallas del regulador y de la consulta pública.
-- Despliegue de todo lo nuevo y prueba completa del guion de la sección 14 **en la versión desplegada**.
+- Prueba completa del guion de la sección 14 **ejecutando la aplicación en local**, incluido escanear el QR con un celular conectado a la misma red Wi-Fi.
 
 **Día 4 (sábado)**
 
@@ -638,6 +637,10 @@ El orden respeta la prioridad: si el tiempo no alcanza, lo que queda fuera es lo
 ---
 
 ## 13. Despliegue
+
+> **Decisión del 14/10/2026:** el avance del sábado se demuestra **en local**, sin desplegar. Esta sección y RNF-01 quedan para una fase posterior, en Render.
+>
+> Para que el QR se pueda escanear con el celular, se abre la aplicación con la IP de la laptop en la red Wi-Fi (por ejemplo `http://192.168.1.20:8080`) y se permite el puerto 8080 en el firewall. Si la red no lo permite, el enlace del QR se abre en la misma laptop.
 
 - **Plataforma:** Render o Railway, que permiten desplegar un contenedor Docker con una base PostgreSQL administrada.
 - **Dockerfile en dos etapas:** la primera compila con Maven, sin ejecutar las pruebas, porque ya se ejecutan en GitHub Actions; la segunda ejecuta el `.jar` sobre una imagen solo con Java 21.
@@ -659,7 +662,7 @@ Muestra el problema resuelto de principio a fin: un producto que viajó mal no l
 4. **Aceptación:** el transportista acepta el lote y pasa a OCUPADO. Un segundo transportista ya no lo ve.
 5. **Destino:** el transportista elige el Mercado Mayorista, que necesita pollo, y avanza el lote a EN_TRANSITO y a EN_DESTINO.
 6. **Recepción:** el mercado registra la recepción a **7,1 °C**. La evaluación detecta ruptura de la cadena de frío y **bloquea el lote automáticamente**.
-7. **Consumidor:** se escanea el código QR con un celular y aparece **"NO APTO PARA CONSUMO"**, con el motivo y el recorrido completo.
+7. **Consumidor:** se escanea el código QR con un celular y aparece **"NO APTO PARA CONSUMO"**, con el motivo y el recorrido completo. El celular está en la misma red Wi-Fi que la laptop; si la red no lo permite, el enlace del QR se abre en la laptop.
 8. **Contraste:** se repite rápidamente con una palta recibida a 6 °C, que llega como APTA.
 9. **Control:** el regulador revisa el historial del lote bloqueado y descarga el reporte CSV.
 10. **Cierre:** `./mvnw test` con todas las pruebas en verde, y la pestaña Actions en GitHub.
